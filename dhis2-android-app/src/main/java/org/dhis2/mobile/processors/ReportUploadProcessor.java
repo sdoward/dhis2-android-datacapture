@@ -48,6 +48,7 @@ import org.dhis2.mobile.network.NetworkUtils;
 import org.dhis2.mobile.network.Response;
 import org.dhis2.mobile.network.URLConstants;
 import org.dhis2.mobile.utils.IsTimely;
+import org.dhis2.mobile.utils.KeyGenerator;
 import org.dhis2.mobile.utils.NotificationBuilder;
 import org.dhis2.mobile.utils.PrefUtils;
 import org.dhis2.mobile.utils.TextFileUtils;
@@ -99,6 +100,8 @@ public class ReportUploadProcessor {
     private static String prepareContent(DatasetInfoHolder info, ArrayList<Group> groups) {
         JsonObject content = new JsonObject();
         JsonArray values = putFieldValuesInJson(groups);
+
+
 
         //Check whether the report was timely or not
         String period = info.getPeriod().substring(5);
