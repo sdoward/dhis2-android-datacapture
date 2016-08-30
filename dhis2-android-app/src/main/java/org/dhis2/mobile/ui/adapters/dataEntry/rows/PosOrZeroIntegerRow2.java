@@ -105,6 +105,7 @@ public class PosOrZeroIntegerRow2 implements Row {
 
 
 
+
             
             holder = new EditTextHolder(label, editText, watcher,inputLayout);
 
@@ -167,6 +168,8 @@ public class PosOrZeroIntegerRow2 implements Row {
         assert holder4.inputLayout != null;
         holder4.inputLayout.setHint(">"+field4.getLabel().split(">")[1].split(",")[0]);
             holder4.editText.clearFocus();
+
+
 
 
 

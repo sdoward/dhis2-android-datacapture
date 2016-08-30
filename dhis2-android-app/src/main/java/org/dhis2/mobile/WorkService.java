@@ -54,6 +54,9 @@ import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+/**
+ * Background operations runners
+ */
 public class WorkService extends Service {
     public static final String METHOD = "method";
     public static final String METHOD_UPDATE_PROFILE_INFO = "updateProfileInfo";

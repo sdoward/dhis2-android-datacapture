@@ -39,6 +39,7 @@ import android.widget.BaseAdapter;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
+import org.dhis2.mobile.io.Constants;
 import org.dhis2.mobile.io.json.JsonHandler;
 import org.dhis2.mobile.io.json.ParsingException;
 import org.dhis2.mobile.io.models.Field;
@@ -93,12 +94,12 @@ public class FieldAdapter extends BaseAdapter {
             } else if (field.getType().equals(RowTypes.INTEGER_ZERO_OR_POSITIVE.name())) {
                 //Changed from the others to support grouping of Diseases
                 //Specific test case for eidsr form
-                if(i ==0 ) {
+                if(holdRow.size() == 0) {
                     holdRow.add(field);
                     id = field.getDataElement();
                 }else if(i > 0 && field.getDataElement().equals(id)){
                     holdRow.add(field);
-                }else if(i > 0 && !field.getDataElement().equals(id)){
+                }else if(i > 0 && !field.getDataElement().equals(id) && holdRow.size() > 0){
                     id = field.getDataElement();
                     rows.add(new PosOrZeroIntegerRow2(inflater, holdRow.get(holdRow.size()-4),holdRow.get(holdRow.size()-3),
                         holdRow.get(holdRow.size()-2),holdRow.get(holdRow.size()-1)));
@@ -109,7 +110,7 @@ public class FieldAdapter extends BaseAdapter {
             } else if (field.getType().equals(RowTypes.INTEGER_NEGATIVE.name())) {
                 rows.add(new NegativeIntegerRow(inflater, field));
             } else if (field.getType().equals(RowTypes.BOOLEAN.name())) {
-                if(!field.getDataElement().equals("BpG5Yq4EWMT")){
+                if(!field.getDataElement().equals(Constants.TIMELY)){
                     rows.add(new BooleanRow(inflater, field));
                 }
             } else if (field.getType().equals(RowTypes.TRUE_ONLY.name())) {

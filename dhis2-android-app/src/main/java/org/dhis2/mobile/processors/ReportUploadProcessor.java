@@ -63,6 +63,13 @@ public class ReportUploadProcessor {
     private ReportUploadProcessor() {
     }
 
+    /**
+     * Uploads a report to DHIS2 instance
+     * @param context Context
+     * @param info DatasetInfoHolder
+     * @param groups ArrayList<Group>
+     */
+
     public static void upload(Context context, DatasetInfoHolder info, ArrayList<Group> groups) {
         String data = prepareContent(info, groups);
 
@@ -97,21 +104,31 @@ public class ReportUploadProcessor {
         }
     }
 
+    /**
+     * Combines the dataset info and dataElements with their values into one JSON object and then returns it as a string
+     * @param info DatasetInfoHolder
+     * @param groups ArrayList<Group>
+     * @return String
+     */
+
     private static String prepareContent(DatasetInfoHolder info, ArrayList<Group> groups) {
         JsonObject content = new JsonObject();
         JsonArray values = putFieldValuesInJson(groups);
 
+        //Check whether a timely report has already been sent
+        if(!IsTimely.hasBeenSet(groups)) {
 
+            //Check whether the report was timely or not
+            //substring is used so as to only get the week number
+            String period = info.getPeriod().substring(5);
+            Boolean isTimely = IsTimely.check(Integer.parseInt(period));
 
-        //Check whether the report was timely or not
-        String period = info.getPeriod().substring(5);
-        Boolean isTimely = IsTimely.check(Integer.parseInt(period));
-
-        //Fill out timely dataElememt
-        JsonObject jField = new JsonObject();
-        jField.addProperty(Field.DATA_ELEMENT, "BpG5Yq4EWMT");
-        jField.addProperty(Field.VALUE, isTimely);
-        values.add(jField);
+            //Fill out timely dataElememt
+            JsonObject jField = new JsonObject();
+            jField.addProperty(Field.DATA_ELEMENT, Constants.TIMELY);
+            jField.addProperty(Field.VALUE, isTimely);
+            values.add(jField);
+        }
 
 
         // Retrieve current date

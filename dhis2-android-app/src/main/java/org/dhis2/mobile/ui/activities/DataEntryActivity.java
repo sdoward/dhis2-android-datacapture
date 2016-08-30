@@ -54,6 +54,9 @@ import java.util.Map;
 
 import static android.text.TextUtils.isEmpty;
 
+/**
+ * The activity in which all the data for the report is entered and uploaded
+ */
 public class DataEntryActivity extends BaseActivity implements LoaderManager.LoaderCallbacks<Form> {
     public static final String TAG = DataEntryActivity.class.getSimpleName();
 
@@ -348,8 +351,6 @@ public class DataEntryActivity extends BaseActivity implements LoaderManager.Loa
                     Toast.LENGTH_SHORT).show();
             return;
         }
-
-
 
             ArrayList<Group> groups = new ArrayList<>();
             for (FieldAdapter adapter : adapters) {
