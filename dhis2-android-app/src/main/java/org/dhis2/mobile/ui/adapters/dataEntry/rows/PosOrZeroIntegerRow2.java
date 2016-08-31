@@ -58,17 +58,17 @@ public class PosOrZeroIntegerRow2 implements Row {
     @Override
     public View getView(View convertView) {
         View view;
-        EditTextHolder holder;
-        EditTextHolder holder2;
-        EditTextHolder holder3;
-        EditTextHolder holder4;
+        final EditTextHolder holder;
+        final EditTextHolder holder2;
+        final EditTextHolder holder3;
+        final EditTextHolder holder4;
 
 
 
         if (convertView == null) {
-            ViewGroup rowRoot = (ViewGroup) inflater.inflate(R.layout.listview_row_integer_positive_or_zero_3, null);
+            ViewGroup rowRoot = (ViewGroup) inflater.inflate(R.layout.listview_row_integer_positive_or_zero_4, null);
             TextView label = (TextView) rowRoot.findViewById(R.id.text_label);
-            EditText editText = (EditText) rowRoot.findViewById(R.id.edit_integer_pos_row);
+            final EditText editText = (EditText) rowRoot.findViewById(R.id.edit_integer_pos_row);
             EditText editText2 = (EditText) rowRoot.findViewById(R.id.edit_integer_pos_row_2);
             EditText editText3 = (EditText) rowRoot.findViewById(R.id.edit_integer_pos_row_3);
             EditText editText4 = (EditText) rowRoot.findViewById(R.id.edit_integer_pos_row_4);
@@ -96,6 +96,13 @@ public class PosOrZeroIntegerRow2 implements Row {
 
             EditTextWatcher watcher4 = new EditTextWatcher(field4);
             editText4.addTextChangedListener(watcher4);
+
+//            editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+//                @Override
+//                public void onFocusChange(View view, boolean b) {
+//                    editText.setText("0");
+//                }
+//            });
 
 
 
@@ -129,16 +136,18 @@ public class PosOrZeroIntegerRow2 implements Row {
             holder4 = (EditTextHolder) view.getTag(R.id.TAG_HOLDER4_ID);
         }
 
-            String[] label = field.getLabel().split("<");
+            String[] label = field.getLabel().split(" EIDSR-");
 
             holder.textLabel.setText(label[0]);
 
             holder.textWatcher.setField(field);
             holder.editText.addTextChangedListener(holder.textWatcher);
             holder.editText.setText(field.getValue());
-        if (holder.inputLayout != null) {
-            holder.inputLayout.setHint("<"+field.getLabel().split("<")[1].split(",")[0]);
-        }
+            holder.editText.setSelectAllOnFocus(true);
+
+//        if (holder.inputLayout != null) {
+//            holder.inputLayout.setHint("<"+field.getLabel().split("<")[1].split(",")[0]);
+//        }
         holder.editText.clearFocus();
 
 
@@ -147,8 +156,9 @@ public class PosOrZeroIntegerRow2 implements Row {
             holder2.textWatcher.setField(field2);
             holder2.editText.addTextChangedListener(holder2.textWatcher);
             holder2.editText.setText(field2.getValue());
-        assert holder2.inputLayout != null;
-        holder2.inputLayout.setHint("<"+field2.getLabel().split("<")[1].split(",")[0]);
+        holder2.editText.setSelectAllOnFocus(true);
+//        assert holder2.inputLayout != null;
+//        holder2.inputLayout.setHint("<"+field2.getLabel().split("<")[1].split(",")[0]);
             holder2.editText.clearFocus();
 
 
@@ -156,8 +166,9 @@ public class PosOrZeroIntegerRow2 implements Row {
             holder3.textWatcher.setField(field3);
             holder3.editText.addTextChangedListener(holder3.textWatcher);
             holder3.editText.setText(field3.getValue());
-        assert holder3.inputLayout != null;
-        holder3.inputLayout.setHint(">"+field3.getLabel().split(">")[1].split(",")[0]);
+        holder3.editText.setSelectAllOnFocus(true);
+//        assert holder3.inputLayout != null;
+//        holder3.inputLayout.setHint(">"+field3.getLabel().split(">")[1].split(",")[0]);
             holder3.editText.clearFocus();
 
 
@@ -165,12 +176,19 @@ public class PosOrZeroIntegerRow2 implements Row {
             holder4.textWatcher.setField(field4);
             holder4.editText.addTextChangedListener(holder4.textWatcher);
             holder4.editText.setText(field4.getValue());
-        assert holder4.inputLayout != null;
-        holder4.inputLayout.setHint(">"+field4.getLabel().split(">")[1].split(",")[0]);
+            holder4.editText.setSelectAllOnFocus(true);
+//        assert holder4.inputLayout != null;
+//        holder4.inputLayout.setHint(">"+field4.getLabel().split(">")[1].split(",")[0]);
             holder4.editText.clearFocus();
 
 
+//do it on the edit text instead of the holder
 
+
+        setAutoZero(holder, holder2, holder3, holder4);
+        setAutoZero(holder2, holder3, holder4, holder);
+        setAutoZero(holder3, holder4, holder, holder2);
+        setAutoZero(holder4, holder, holder2, holder3);
 
 
 
@@ -199,5 +217,25 @@ public class PosOrZeroIntegerRow2 implements Row {
            
             return str;
         }       
+    }
+
+    private void setAutoZero(final EditTextHolder holder, final EditTextHolder holder2, final EditTextHolder holder3, final EditTextHolder holder4 ){
+        holder.editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean b) {
+                if(!b && holder2.editText.getText().toString().equals("")){
+                    holder2.editText.setText("0");
+                }
+                if(!b && holder3.editText.getText().toString().equals("")){
+                    holder3.editText.setText("0");
+                }
+                if(!b && holder4.editText.getText().toString().equals("")){
+                    holder4.editText.setText("0");
+                }
+                if(!b && holder.editText.getText().toString().equals("")){
+                    holder.editText.setText("0");
+                }
+            }
+        });
     }
 }

@@ -137,6 +137,8 @@ public class MyProfileFragment extends Fragment implements LoaderManager.LoaderC
                     Directory.ROOT,
                     FileNames.ACCOUNT_INFO);
 
+            Log.d("Profile", info);
+
             ArrayList<Field> fields = UserAccountHandler.toFields(getContext(), info);
 
             Group group = null;

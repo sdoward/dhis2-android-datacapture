@@ -113,6 +113,8 @@ class EditTextWatcher implements TextWatcher {
 
     @Override
     public void onTextChanged(CharSequence s, int start, int before, int count) { }
+
+
     
 }
 
@@ -137,23 +139,4 @@ class EditTextHolder {
         inputLayout = null;
     }
 
-}
-class EditTextHolder2 {
-    final TextView textLabel;
-    final EditText editText;
-    final EditText editText2;
-    final EditText editText3;
-    final EditText editText4;
-    final EditTextWatcher textWatcher;
-    final TextInputLayout inputLayout;
-
-    EditTextHolder2(TextView textLabel, EditText editText, EditText editText2, EditText editText3,EditText editText4, EditTextWatcher textWatcher, TextInputLayout inputLayout) {
-        this.textLabel = textLabel;
-        this.editText = editText;
-        this.editText2 = editText2;
-        this.editText3 = editText3;
-        this.editText4 = editText4;
-        this.textWatcher = textWatcher;
-        this.inputLayout = inputLayout;
-    }
 }

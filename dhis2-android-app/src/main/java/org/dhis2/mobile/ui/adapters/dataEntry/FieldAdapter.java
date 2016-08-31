@@ -104,6 +104,7 @@ public class FieldAdapter extends BaseAdapter {
                     rows.add(new PosOrZeroIntegerRow2(inflater, holdRow.get(holdRow.size()-4),holdRow.get(holdRow.size()-3),
                         holdRow.get(holdRow.size()-2),holdRow.get(holdRow.size()-1)));
                         holdRow.add(field);
+
                 }
             } else if (field.getType().equals(RowTypes.INTEGER_POSITIVE.name())) {
                 rows.add(new PosIntegerRow(inflater, field));
