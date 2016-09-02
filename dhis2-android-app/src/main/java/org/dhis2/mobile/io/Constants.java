@@ -41,4 +41,8 @@ public class Constants {
     public static final String DATA_VALUES = "dataValues";
     public static final String DATE_FORMAT = "YYYY-MM-dd";
     public static final String TIMELY = "BpG5Yq4EWMT";
+    public static final String DIARRHOEA  = "PcFw3MoOC94";
+    public static final String SEVERE_MALNUTRTION = "FHfwXBYnhhl";
+    public static final String MATERNAL_DEATHS = "JyHy4B7myv9";
+    public static final String NEONATAL_TETANUS = "zSzK3FHsJOy";
 }

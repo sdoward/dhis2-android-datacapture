@@ -106,7 +106,7 @@ public class HTTPClient {
 	}
 
     /**
-     *
+     *	Makes POST requests to the DHIS2 server.
      * @param server String The URL of the DHIS2 instance set by the user.
      * @param creds String The users credentials aka username and password
      * @param data String The data to be posted to the DHIS2 server.
@@ -193,6 +193,13 @@ public class HTTPClient {
 	public static boolean isError(int code) {
 		return code != HttpURLConnection.HTTP_OK;
 	}
+
+	/**
+	 * Get error message if there was an error from the HTTP request
+	 * @param context Context The current application context
+	 * @param code int The HTTP response code
+     * @return String The error message
+     */
 	
     public static String getErrorMessage(Context context, int code) {
     	switch (code) {

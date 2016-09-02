@@ -29,7 +29,10 @@
 
 package org.dhis2.mobile.ui.adapters.dataEntry.rows;
 
+import android.content.Context;
+import android.content.DialogInterface;
 import android.support.design.widget.TextInputLayout;
+import android.support.v7.app.AlertDialog;
 import android.text.InputFilter;
 import android.text.Spanned;
 import android.util.Log;
@@ -41,11 +44,16 @@ import android.widget.TextView;
 
 import org.dhis2.mobile.R;
 import org.dhis2.mobile.io.models.Field;
+import org.dhis2.mobile.utils.IsCritical;
+import org.dhis2.mobile.utils.IsDisabled;
 
 public class PosOrZeroIntegerRow2 implements Row {
     private final LayoutInflater inflater;
     private final Field field;
     private final Field field2, field3, field4;
+    private AlertDialog alertDialog;
+    private AlertDialog ciriticalAlertDialog;
+
 
     public PosOrZeroIntegerRow2(LayoutInflater inflater, Field field, Field field2, Field field3, Field field4 ) {
         this.inflater = inflater;
@@ -62,6 +70,7 @@ public class PosOrZeroIntegerRow2 implements Row {
         final EditTextHolder holder2;
         final EditTextHolder holder3;
         final EditTextHolder holder4;
+
 
 
 
@@ -97,20 +106,6 @@ public class PosOrZeroIntegerRow2 implements Row {
             EditTextWatcher watcher4 = new EditTextWatcher(field4);
             editText4.addTextChangedListener(watcher4);
 
-//            editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-//                @Override
-//                public void onFocusChange(View view, boolean b) {
-//                    editText.setText("0");
-//                }
-//            });
-
-
-
-
-
-
-
-
 
 
             
@@ -128,17 +123,23 @@ public class PosOrZeroIntegerRow2 implements Row {
 
 
             view = rowRoot;
+
+            alertDialog = new AlertDialog.Builder(view.getContext()).create();
+            ciriticalAlertDialog = new AlertDialog.Builder(view.getContext()).create();
         } else {
             view = convertView;
             holder = (EditTextHolder) view.getTag(R.id.TAG_HOLDER1_ID);
             holder2 = (EditTextHolder) view.getTag(R.id.TAG_HOLDER2_ID);
             holder3 = (EditTextHolder) view.getTag(R.id.TAG_HOLDER3_ID);
             holder4 = (EditTextHolder) view.getTag(R.id.TAG_HOLDER4_ID);
+
+            alertDialog = new AlertDialog.Builder(view.getContext()).create();
+            ciriticalAlertDialog = new AlertDialog.Builder(view.getContext()).create();
         }
 
             String[] label = field.getLabel().split(" EIDSR-");
 
-            holder.textLabel.setText(label[0]);
+            holder.textLabel.setText(label[0].substring(6));
 
             holder.textWatcher.setField(field);
             holder.editText.addTextChangedListener(holder.textWatcher);
@@ -149,6 +150,7 @@ public class PosOrZeroIntegerRow2 implements Row {
 //            holder.inputLayout.setHint("<"+field.getLabel().split("<")[1].split(",")[0]);
 //        }
         holder.editText.clearFocus();
+
 
 
 
@@ -166,7 +168,7 @@ public class PosOrZeroIntegerRow2 implements Row {
             holder3.textWatcher.setField(field3);
             holder3.editText.addTextChangedListener(holder3.textWatcher);
             holder3.editText.setText(field3.getValue());
-        holder3.editText.setSelectAllOnFocus(true);
+            holder3.editText.setSelectAllOnFocus(true);
 //        assert holder3.inputLayout != null;
 //        holder3.inputLayout.setHint(">"+field3.getLabel().split(">")[1].split(",")[0]);
             holder3.editText.clearFocus();
@@ -182,13 +184,19 @@ public class PosOrZeroIntegerRow2 implements Row {
             holder4.editText.clearFocus();
 
 
-//do it on the edit text instead of the holder
+        //check whether field should be diabled
+        IsDisabled.check(holder.editText, field);
+        IsDisabled.check(holder2.editText, field2);
+        IsDisabled.check(holder3.editText, field3);
+        IsDisabled.check(holder4.editText, field4);
 
 
-        setAutoZero(holder, holder2, holder3, holder4);
-        setAutoZero(holder2, holder3, holder4, holder);
-        setAutoZero(holder3, holder4, holder, holder2);
-        setAutoZero(holder4, holder, holder2, holder3);
+
+
+        setAutoZero(holder, holder2, holder3, holder4, null, null);
+        setAutoZero(holder2, holder3, holder4, holder, holder, holder2);
+        setAutoZero(holder3, holder4, holder, holder2, null, null);
+        setAutoZero(holder4, holder, holder2, holder3, holder3, holder4);
 
 
 
@@ -219,23 +227,112 @@ public class PosOrZeroIntegerRow2 implements Row {
         }       
     }
 
-    private void setAutoZero(final EditTextHolder holder, final EditTextHolder holder2, final EditTextHolder holder3, final EditTextHolder holder4 ){
+    private void setAutoZero(final EditTextHolder holder, final EditTextHolder holder2, final EditTextHolder holder3, final EditTextHolder holder4,
+                             final EditTextHolder casesHolder, final EditTextHolder deathsHolder){
         holder.editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View view, boolean b) {
-                if(!b && holder2.editText.getText().toString().equals("")){
-                    holder2.editText.setText("0");
+                Log.d("Changed", holder.textWatcher.hasChanged()+"");
+                if(!holder.editText.getText().toString().equals("")) {
+                    if (!b && holder2.editText.getText().toString().equals("")) {
+                        if(holder2.editText.isEnabled()) {
+                            holder2.editText.setText("0");
+                        }
+                    }
+                    if (!b && holder3.editText.getText().toString().equals("")) {
+                        if(holder3.editText.isEnabled()) {
+                            holder3.editText.setText("0");
+                        }
+                    }
+                    if (!b && holder4.editText.getText().toString().equals("")) {
+                        if(holder4.editText.isEnabled()) {
+                            holder4.editText.setText("0");
+                        }
+                    }
+                    if (!b && holder.editText.getText().toString().equals("")) {
+                        if(holder.editText.isEnabled()) {
+                            holder.editText.setText("0");
+                        }
+                    }
+                    if(!b && deathsHolder != null && casesHolder != null && holder.textWatcher.hasChanged() && !alertDialog.isShowing()){
+                        showValidation(casesHolder, deathsHolder, view.getContext());
+                    }
+                    if(!b && holder.textWatcher.hasChanged()){
+                        holder.textWatcher.setChanged(false);
+                        if(IsCritical.check(field)){
+                            showCriticalValidation(holder);
+                        }
+
+                    }
                 }
-                if(!b && holder3.editText.getText().toString().equals("")){
-                    holder3.editText.setText("0");
-                }
-                if(!b && holder4.editText.getText().toString().equals("")){
-                    holder4.editText.setText("0");
-                }
-                if(!b && holder.editText.getText().toString().equals("")){
-                    holder.editText.setText("0");
-                }
+
+
             }
         });
+    }
+    private void showValidation(EditTextHolder casesHolder, final EditTextHolder deathsHolder, Context context){
+        int deaths, cases;
+        if (deathsHolder.editText.getText().toString().equals("")){
+            deaths = 0;
+        }else{
+            deaths = Integer.parseInt(deathsHolder.editText.getText().toString());
+        }
+        if(casesHolder.editText.getText().toString().equals("")) {
+            cases = 0;
+        }else{
+            cases = Integer.parseInt(casesHolder.editText.getText().toString());
+        }
+        if(deaths > cases){
+
+            alertDialog.setTitle("Yo Dawg!");
+            alertDialog.setMessage("You have entered more deaths than cases. Are you sure thats the case?");
+            alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "YUP", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    dialogInterface.dismiss();
+                    if(IsCritical.check(field)){
+                        showCriticalValidation(deathsHolder);
+                    }
+                }
+            });
+
+            alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "NAH DAWG", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    deathsHolder.editText.setText("0");
+                    dialogInterface.dismiss();
+
+                }
+            });
+            if (!alertDialog.isShowing()) {
+                alertDialog.show();
+            }
+
+        }
+
+    }
+    private void showCriticalValidation(final EditTextHolder holder){
+        if(!alertDialog.isShowing()){
+            ciriticalAlertDialog.setTitle("Whoa, Nelly!");
+            ciriticalAlertDialog.setMessage("Thats a mighty critical disease you got there. Are you sure?");
+            ciriticalAlertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Yee Doggies!", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    dialogInterface.dismiss();
+                }
+            });
+
+            ciriticalAlertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "Nope", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    holder.editText.setText("0");
+                    dialogInterface.dismiss();
+                }
+            });
+            if (!ciriticalAlertDialog.isShowing()) {
+                ciriticalAlertDialog.show();
+            }
+        }
+
     }
 }

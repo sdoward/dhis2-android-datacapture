@@ -94,9 +94,12 @@ public class TextRow implements Row {
 
 class EditTextWatcher implements TextWatcher {
     private Field field;
+    private Boolean changed = false;
+    private String originalValue;
     
     EditTextWatcher(Field field) {
         this.field = field;
+
     }
     
     public void setField(Field field) {
@@ -105,7 +108,12 @@ class EditTextWatcher implements TextWatcher {
 
     @Override
     public void afterTextChanged(Editable arg) {
+        originalValue = field.getValue();
         field.setValue(arg.toString());
+        if(!originalValue.equals(arg.toString())){
+            changed = true;
+        }
+        originalValue = field.getValue();
     }
 
     @Override
@@ -114,7 +122,12 @@ class EditTextWatcher implements TextWatcher {
     @Override
     public void onTextChanged(CharSequence s, int start, int before, int count) { }
 
-
+    public Boolean hasChanged(){
+        return changed;
+    }
+    public void setChanged(Boolean change){
+        changed = change;
+    }
     
 }
 
