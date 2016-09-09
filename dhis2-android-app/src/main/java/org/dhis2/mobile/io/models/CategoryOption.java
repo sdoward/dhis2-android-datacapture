@@ -49,4 +49,8 @@ public class CategoryOption implements Serializable, Parcelable {
         parcel.writeString(id);
         parcel.writeString(label);
     }
+
+    public void setId(String id){
+        this.id = id;
+    }
 }

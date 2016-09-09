@@ -38,6 +38,10 @@ import java.util.Comparator;
 
 public class OrganizationUnit implements Serializable, Parcelable {
 
+    public OrganizationUnit(){
+
+    }
+
     // Comparator which is used to sort organization units in alphabetical order
     public static Comparator<OrganizationUnit> COMPARATOR = new Comparator<OrganizationUnit>() {
 
@@ -106,5 +110,8 @@ public class OrganizationUnit implements Serializable, Parcelable {
 
     public ArrayList<Form> getForms() {
         return forms;
+    }
+    public void setId(String id){
+        this.id = id;
     }
 }

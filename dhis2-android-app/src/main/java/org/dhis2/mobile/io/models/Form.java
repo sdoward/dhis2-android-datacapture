@@ -39,6 +39,10 @@ import java.util.Comparator;
 public class Form implements Serializable, Parcelable {
     public static final String TAG = Form.class.getSimpleName();
 
+    public Form(){
+        //empty constructor
+    }
+
     // Comparator which is used to sort forms in alphabetical order
     public static Comparator<Form> COMPARATOR = new Comparator<Form>() {
 
@@ -105,5 +109,9 @@ public class Form implements Serializable, Parcelable {
 
     public CategoryCombo getCategoryCombo() {
         return categoryCombo;
+    }
+
+    public void setId(String id){
+        this.id = id;
     }
 }

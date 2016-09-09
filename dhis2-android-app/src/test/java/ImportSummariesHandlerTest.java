@@ -1,20 +1,15 @@
-import android.support.test.filters.SmallTest;
-import android.support.test.runner.AndroidJUnit4;
-
 import org.dhis2.mobile.io.handlers.ImportSummariesHandler;
 import org.dhis2.mobile.network.Response;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
 /**
  * Created by george on 9/2/16.
  */
-@RunWith(AndroidJUnit4.class)
-@SmallTest
+
 public class ImportSummariesHandlerTest {
     private Response mBadResponse;
     private Response mGoodResponse;
@@ -40,7 +35,7 @@ public class ImportSummariesHandlerTest {
         assertThat(ImportSummariesHandler.getDescription(mBadResponse.getBody(), defaultValue), is(defaultValue));
     }
     @Test
-    public void descriptionIsDescription(){
+    public void descriptionIsImportDescription(){
         assertThat(ImportSummariesHandler.getDescription(mGoodResponse.getBody(), defaultValue), is(description));
     }
 

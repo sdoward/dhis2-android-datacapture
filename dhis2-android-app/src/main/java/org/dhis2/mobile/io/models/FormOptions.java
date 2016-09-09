@@ -48,6 +48,10 @@ public class FormOptions implements Serializable, Parcelable {
     private String captureCoordinates;
     private String type;
 
+    public FormOptions(){
+
+    }
+
     private FormOptions(Parcel in) {
         openFuturePeriods = in.readInt();
         periodType = in.readString();
@@ -113,5 +117,9 @@ public class FormOptions implements Serializable, Parcelable {
 
     public String getType() {
         return type;
+    }
+
+    public void setDescription(String description){
+        this.description = description;
     }
 }

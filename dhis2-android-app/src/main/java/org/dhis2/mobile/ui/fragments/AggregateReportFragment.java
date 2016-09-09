@@ -231,7 +231,7 @@ public class AggregateReportFragment extends Fragment
         pickerRecyclerViewOne.setLayoutManager(layoutManagerOne);
 
         pickerRecyclerViewOne.findViewHolderForLayoutPosition(0);
-//        pickerAdapterOne.onBindViewHolder(pickerRecyclerViewOne.findContainingViewHolder(root), 0);
+
 
 
 
@@ -450,6 +450,7 @@ public class AggregateReportFragment extends Fragment
 
             datasetInfoHolder.setCategoryOptions(categoryOptions);
             handleDataEntryButton(datasetInfoHolder);
+
         }
     }
 
@@ -682,7 +683,6 @@ public class AggregateReportFragment extends Fragment
                     rootNode.addChild(organisationUnitPicker);
                 }
             }
-
             return rootNode;
         }
     }

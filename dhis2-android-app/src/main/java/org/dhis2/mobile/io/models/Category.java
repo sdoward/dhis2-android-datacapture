@@ -58,4 +58,7 @@ public class Category implements Serializable, Parcelable {
     public String getLabel() {
         return label;
     }
+    public void setLabel(String label){
+        this.label = label;
+    }
 }

@@ -51,4 +51,7 @@ public class CategoryCombo implements Serializable, Parcelable {
         parcel.writeString(id);
         parcel.writeTypedList(categories);
     }
+    public void setId(String id){
+        this.id = id;
+    }
 }
