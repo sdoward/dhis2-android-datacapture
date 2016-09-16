@@ -34,4 +34,6 @@ public class DummyDataAndroidTest {
 
     public static final String REPORT_UPLOAD_REQUEST_BODY="{\"orgUnit\":\"tWi9XVPNNue\",\"dataSet\":\"w9c9UJ3Prus\",\"period\":\"2016W33\",\"completeDate\":\"2016-09-15\",\"dataValues\":[{\"dataElement\":\"KPMZxGkiqiQ\",\"categoryOptionCombo\":null,\"value\":\"2\"},{\"dataElement\":\"BpG5Yq4EWMT\",\"value\":false}]}";
 
+    public static final String USER_PROFILE = "{\"id\":\"mQCdPdUipPj\",\"username\":\"foo\",\"firstName\":\"foo\",\"surname\":\"bar\",\"email\":\"foo@foobar.com\",\"phoneNumber\":\"+232 400 400\",\"gender\":\"gender_male\",\"settings\":{\"keyDbLocale\":null,\"keyMessageSmsNotification\":\"true\",\"keyUiLocale\":\"en\",\"keyAnalysisDisplayProperty\":\"name\",\"keyMessageEmailNotification\":\"true\"}}";
+
 }
