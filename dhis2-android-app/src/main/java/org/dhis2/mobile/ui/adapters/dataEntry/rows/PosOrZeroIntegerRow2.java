@@ -146,11 +146,7 @@ public class PosOrZeroIntegerRow2 implements Row {
             holder.editText.addTextChangedListener(holder.textWatcher);
             holder.editText.setText(field.getValue());
             holder.editText.setSelectAllOnFocus(true);
-
-//        if (holder.inputLayout != null) {
-//            holder.inputLayout.setHint("<"+field.getLabel().split("<")[1].split(",")[0]);
-//        }
-        holder.editText.clearFocus();
+            holder.editText.clearFocus();
 
 
 
@@ -160,8 +156,6 @@ public class PosOrZeroIntegerRow2 implements Row {
             holder2.editText.addTextChangedListener(holder2.textWatcher);
             holder2.editText.setText(field2.getValue());
             holder2.editText.setSelectAllOnFocus(true);
-//        assert holder2.inputLayout != null;
-//        holder2.inputLayout.setHint("<"+field2.getLabel().split("<")[1].split(",")[0]);
             holder2.editText.clearFocus();
 
 
@@ -170,8 +164,6 @@ public class PosOrZeroIntegerRow2 implements Row {
             holder3.editText.addTextChangedListener(holder3.textWatcher);
             holder3.editText.setText(field3.getValue());
             holder3.editText.setSelectAllOnFocus(true);
-//        assert holder3.inputLayout != null;
-//        holder3.inputLayout.setHint(">"+field3.getLabel().split(">")[1].split(",")[0]);
             holder3.editText.clearFocus();
 
 
@@ -180,8 +172,6 @@ public class PosOrZeroIntegerRow2 implements Row {
             holder4.editText.addTextChangedListener(holder4.textWatcher);
             holder4.editText.setText(field4.getValue());
             holder4.editText.setSelectAllOnFocus(true);
-//        assert holder4.inputLayout != null;
-//        holder4.inputLayout.setHint(">"+field4.getLabel().split(">")[1].split(",")[0]);
             holder4.editText.clearFocus();
 
 
@@ -233,7 +223,6 @@ public class PosOrZeroIntegerRow2 implements Row {
         holder.editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View view, boolean b) {
-                Log.d("Changed", holder.textWatcher.hasChanged()+"");
                 if(!holder.editText.getText().toString().equals("")) {
                     if (!b && holder2.editText.getText().toString().equals("")) {
                         if(holder2.editText.isEnabled()) {
