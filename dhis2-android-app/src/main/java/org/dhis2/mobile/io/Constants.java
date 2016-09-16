@@ -45,4 +45,5 @@ public class Constants {
     public static final String SEVERE_MALNUTRTION = "FHfwXBYnhhl";
     public static final String MATERNAL_DEATHS = "JyHy4B7myv9";
     public static final String NEONATAL_TETANUS = "zSzK3FHsJOy";
+    public static final String SMS_NUMBER = "";
 }

@@ -166,9 +166,7 @@ public class AggregateReportFragment extends Fragment
 
     private void loadData() {
         getLoaderManager().restartLoader(AGGREGATE_REPORT_LOADER_ID, null, this).forceLoad();
-//        pickerRecyclerViewOne.findViewHolderForAdapterPosition(0);
-//        pickerAdapterOne.onBindViewHolder(pickerRecyclerViewOne.findContainingViewHolder(root),0 );
-//        pickerAdapterOne.setItem();
+
 
     }
 
@@ -223,6 +221,8 @@ public class AggregateReportFragment extends Fragment
                 .findViewById(R.id.recyclerview_pickers_one);
         RecyclerView pickerRecyclerViewTwo = (RecyclerView) root
                 .findViewById(R.id.recyclerview_pickers_two);
+
+
 
 
 

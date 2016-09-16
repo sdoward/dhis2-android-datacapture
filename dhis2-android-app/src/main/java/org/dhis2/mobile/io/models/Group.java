@@ -87,4 +87,8 @@ public class Group implements Serializable, Parcelable {
     public void setLabel(String label){
         this.label = label;
     }
+
+    public void setFields(ArrayList<Field> fields){
+        this.fields = fields;
+    }
 }

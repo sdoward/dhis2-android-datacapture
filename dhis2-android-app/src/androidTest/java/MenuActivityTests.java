@@ -1,3 +1,5 @@
+import android.app.Activity;
+import android.support.test.espresso.contrib.RecyclerViewActions;
 import android.support.test.filters.MediumTest;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
@@ -5,10 +7,12 @@ import android.view.Gravity;
 
 import org.dhis2.mobile.R;
 import org.dhis2.mobile.ui.activities.MenuActivity;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import static android.support.test.espresso.Espresso.onData;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
@@ -17,6 +21,10 @@ import static android.support.test.espresso.contrib.DrawerMatchers.isClosed;
 import static android.support.test.espresso.contrib.NavigationViewActions.navigateTo;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
+import static android.support.test.espresso.matcher.ViewMatchers.withText;
+import static org.hamcrest.Matchers.anything;
+import static org.hamcrest.Matchers.not;
+
 
 /**
  * Created by george on 9/8/16.
@@ -24,10 +32,20 @@ import static android.support.test.espresso.matcher.ViewMatchers.withId;
 @RunWith(AndroidJUnit4.class)
 @MediumTest
 public class MenuActivityTests {
+    private String CHOOSE_DATA_SET;
+    private String CHOOSE_PERIOD;
+    private Activity activity;
 
 
     @Rule
     public ActivityTestRule<MenuActivity> mActivityRule = new ActivityTestRule(MenuActivity.class);
+
+    @Before
+    public void setup(){
+        activity = mActivityRule.getActivity();
+        CHOOSE_DATA_SET =  activity.getString(R.string.choose_data_set);
+        CHOOSE_PERIOD = activity.getString(R.string.choose_period);
+    }
 
     @Test
     public void checkIfMenuIsDisplayed(){
@@ -36,32 +54,114 @@ public class MenuActivityTests {
 
     @Test
     public void shouldOpenNavigation(){
-        onView(withId(R.id.drawer_layout)).check(matches(isClosed(Gravity.LEFT))).perform(open());
+        onView(withId(R.id.drawer_layout)).check(matches(isClosed(Gravity.START))).perform(open());
     }
     @Test
     public void checkIfLetterAvatarIsDisplayed(){
-        onView(withId(R.id.drawer_layout)).check(matches(isClosed(Gravity.LEFT))).perform(open());
+        onView(withId(R.id.drawer_layout)).check(matches(isClosed(Gravity.START))).perform(open());
         onView(withId(R.id.side_nav_photo)).check(matches(isDisplayed()));
     }
     @Test
     public void checkIfUsernameIsDisplayed(){
-        onView(withId(R.id.drawer_layout)).check(matches(isClosed(Gravity.LEFT))).perform(open());
+        onView(withId(R.id.drawer_layout)).check(matches(isClosed(Gravity.START))).perform(open());
         onView(withId(R.id.side_nav_username)).check(matches(isDisplayed()));
     }
     @Test
     public void checkIfEmailIsDisplayed(){
-        onView(withId(R.id.drawer_layout)).check(matches(isClosed(Gravity.LEFT))).perform(open());
+        onView(withId(R.id.drawer_layout)).check(matches(isClosed(Gravity.START))).perform(open());
         onView(withId(R.id.side_nav_email)).check(matches(isDisplayed()));
     }
 
     @Test
     public void shouldOpenProfileFragment(){
-        onView(withId(R.id.drawer_layout)).check(matches(isClosed(Gravity.LEFT))).perform(open());
+        onView(withId(R.id.drawer_layout)).check(matches(isClosed(Gravity.START))).perform(open());
         onView(withId(R.id.navigation_view)).perform(navigateTo(R.id.drawer_item_profile));
         onView(withId(R.id.list_of_fields)).check(matches(isDisplayed()));
     }
     @Test
-    public void shouldShowPopup(){
-        onView(withId(R.id.recyclerview_pickers_one)).perform(click());
+    public void shouldShowChooseDataset(){
+        onView(withId(R.id.user_data_entry)).check(matches(not(isDisplayed())));
+        onView(withId(R.id.drawer_layout)).check(matches(isClosed(Gravity.START))).perform(open());
+        onView(withId(R.id.navigation_view)).perform(navigateTo(R.id.drawer_item_aggregate_report));
+        onView(withText(CHOOSE_DATA_SET
+        )).perform(click());
+        onData(anything()).inAdapterView(withId(R.id.listview_picker_items)).atPosition(0).perform(click());
+
+//        SystemClock.sleep(2000);
+
     }
+    @Test
+    public void shouldMakePeriodPickerVisible(){
+        onView(withId(R.id.user_data_entry)).check(matches(not(isDisplayed())));
+        onView(withId(R.id.drawer_layout)).check(matches(isClosed(Gravity.START))).perform(open());
+        onView(withId(R.id.navigation_view)).perform(navigateTo(R.id.drawer_item_aggregate_report));
+        onView(withText(CHOOSE_DATA_SET)).perform(click());
+        onData(anything()).inAdapterView(withId(R.id.listview_picker_items)).atPosition(0).perform(click());
+        onView(withText(CHOOSE_PERIOD)).check(matches(isDisplayed()));
+
+    }
+
+    @Test
+    public void shouldChooseAPeriod(){
+        onView(withId(R.id.user_data_entry)).check(matches(not(isDisplayed())));
+        onView(withId(R.id.drawer_layout)).check(matches(isClosed(Gravity.START))).perform(open());
+        onView(withId(R.id.navigation_view)).perform(navigateTo(R.id.drawer_item_aggregate_report));
+        onView(withText(CHOOSE_DATA_SET)).perform(click());
+        onData(anything()).inAdapterView(withId(R.id.listview_picker_items)).atPosition(0).perform(click());
+        onView(withText(CHOOSE_PERIOD)).check(matches(isDisplayed()));
+        onView(withText(CHOOSE_PERIOD)).perform(click());
+        onData(anything()).inAdapterView(withId(R.id.dates_listview)).atPosition(0).perform(click());
+
+    }
+
+    @Test
+    public void shouldMakeDataEntryButtonVisible(){
+        onView(withId(R.id.user_data_entry)).check(matches(not(isDisplayed())));
+        onView(withId(R.id.drawer_layout)).check(matches(isClosed(Gravity.START))).perform(open());
+        onView(withId(R.id.navigation_view)).perform(navigateTo(R.id.drawer_item_aggregate_report));
+        onView(withText(CHOOSE_DATA_SET)).perform(click());
+        onData(anything()).inAdapterView(withId(R.id.listview_picker_items)).atPosition(0).perform(click());
+        onView(withText(CHOOSE_PERIOD)).check(matches(isDisplayed()));
+        onView(withText(CHOOSE_PERIOD)).perform(click());
+        onData(anything()).inAdapterView(withId(R.id.dates_listview)).atPosition(0).perform(click());
+        onView(withId(R.id.user_data_entry)).check(matches((isDisplayed())));
+    }
+
+    @Test
+    public void shouldOpenValidDataEntryActivity(){
+        onView(withId(R.id.user_data_entry)).check(matches(not(isDisplayed())));
+        onView(withId(R.id.drawer_layout)).check(matches(isClosed(Gravity.START))).perform(open());
+        onView(withId(R.id.navigation_view)).perform(navigateTo(R.id.drawer_item_aggregate_report));
+        onView(withText(CHOOSE_DATA_SET)).perform(click());
+        onData(anything()).inAdapterView(withId(R.id.listview_picker_items)).atPosition(0).perform(click());
+        onView(withText(CHOOSE_PERIOD)).check(matches(isDisplayed()));
+        onView(withText(CHOOSE_PERIOD)).perform(click());
+        onData(anything()).inAdapterView(withId(R.id.dates_listview)).atPosition(0).perform(click());
+        onView(withId(R.id.user_data_entry)).check(matches((isDisplayed())));
+        onView(withId(R.id.user_data_entry)).perform(click());
+        onView(withId(R.id.data_entry_frame)).check(matches(isDisplayed()));
+
+
+    }
+
+    @Test
+    public void shouldRemoveDatasetPicker(){
+        onView(withId(R.id.recyclerview_pickers_one))
+                .perform(RecyclerViewActions.actionOnItemAtPosition(0,MyViewAction.clickChildViewWithId(R.id.imageview_cancel)));
+
+    }
+
+    @Test
+    public void shouldRemovePeriodPicker(){
+        onView(withId(R.id.recyclerview_pickers_one)).check(matches(isDisplayed()));
+        onView(withId(R.id.recyclerview_pickers_one)).perform(RecyclerViewActions.actionOnItemAtPosition(1, click()));
+        onData(anything()).inAdapterView(withId(R.id.listview_picker_items)).atPosition(0).perform(click());
+        onView(withText(CHOOSE_PERIOD)).check(matches(isDisplayed()));
+        onView(withId(R.id.recyclerview_pickers_one))
+                .perform(RecyclerViewActions.actionOnItemAtPosition(1,MyViewAction.clickChildViewWithId(R.id.imageview_cancel)));
+    }
+
+
+
+
 }

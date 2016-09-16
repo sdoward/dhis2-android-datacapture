@@ -40,7 +40,7 @@ public class SendSmsProcessor {
     public static void send (Context context, DatasetInfoHolder info, ArrayList<Group> groups){
         String data = prepareContent(groups);
         //insert destination number
-        sendSMS(context, "<insert number here>", data);
+        sendSMS(context, Constants.SMS_NUMBER, data);
         //Save dataset for upload when there is internet connection
         if (!NetworkUtils.checkConnection(context)) {
             saveDataset(context, data, info);

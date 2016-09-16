@@ -10,16 +10,27 @@ android {
         versionCode 14
         versionName "1.6"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+        // Enabling multidex support.
+        multiDexEnabled true
+    }
+    dexOptions {
+        javaMaxHeapSize "2g"
     }
 
     buildTypes {
         debug {
             // Run code coverage reports by default on debug builds.
-            testCoverageEnabled = true
+//            testCoverageEnabled = true
         }
     }
     configurations.all {
         resolutionStrategy.force 'com.android.support:support-annotations:24.2.0'
+    }
+
+    packagingOptions {
+        exclude 'META-INF/maven/com.google.guava/guava/pom.properties'
+        exclude 'META-INF/maven/com.google.guava/guava/pom.xml'
     }
 }
 
@@ -35,40 +46,34 @@ dependencies {
     compile 'joda-time:joda-time:2.6'
     compile 'commons-net:commons-net:3.3'
     compile 'com.android.support:support-annotations:24.2.0'
-
-
-
-
     // Required -- JUnit 4 framework
     testCompile 'junit:junit:4.12'
-
+    // Required -- JUnit 4 framework
+    androidTestCompile 'junit:junit:4.12'
+    // Android JUnit Runner
+    androidTestCompile 'com.android.support.test:runner:0.5'
+    // JUnit4 Rules
+    androidTestCompile 'com.android.support.test:rules:0.5'
     //Mockito
     testCompile 'org.mockito:mockito-core:1.10.19'
     androidTestCompile 'com.google.dexmaker:dexmaker:1.1'
     androidTestCompile 'com.google.dexmaker:dexmaker-mockito:1.1'
-
-
     //Mockito Framework
     androidTestCompile 'org.mockito:mockito-core:1.10.19'
-    // Android JUnit Runner
-    androidTestCompile 'com.android.support.test:runner:0.5'
-
-    // JUnit4 Rules
-    androidTestCompile 'com.android.support.test:rules:0.5'
-
     // Espresso core
-    androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.2'
-
-    androidTestCompile ('com.android.support.test.espresso:espresso-contrib:2.2.2'){
+    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2') {
+        exclude group: 'javax.inject'
+    }
+    androidTestCompile('com.android.support.test.espresso:espresso-contrib:2.2.2') {
+        exclude group: 'javax.inject'
         exclude group: 'com.android.support'
     }
     // Espresso-web for WebView supports
-//    androidTestCompile 'com.android.support.test.espresso:espresso-web:2.2.2'
+    //    androidTestCompile 'com.android.support.test.espresso:espresso-web:2.2.2'
     // Espresso-idling-resource for synchronization with background jobs
     androidTestCompile 'com.android.support.test.espresso:espresso-idling-resource:2.2.2'
     // Espresso-intents for validation and stubbing of Intents
     androidTestCompile 'com.android.support.test.espresso:espresso-intents:2.2.2'
-
-
+    androidTestCompile 'com.squareup.okhttp:mockwebserver:2.7.5'
 }
 

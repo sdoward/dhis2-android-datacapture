@@ -30,6 +30,7 @@
 package org.dhis2.mobile.utils;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 
 public class PrefUtils {
@@ -116,6 +117,11 @@ public class PrefUtils {
         context.getSharedPreferences(RESOURCE_STATE, Context.MODE_PRIVATE).edit().clear().commit();
     }
 
+    public static void setUrl(Context context, String url){
+        SharedPreferences.Editor userData = context.getSharedPreferences(USER_DATA, Context.MODE_PRIVATE).edit();
+        userData.putString(URL, url).commit();
+    }
+
     @Deprecated
     public static boolean areFormsAvailable(Context context) {
         return context.getSharedPreferences(APP_DATA, Context.MODE_PRIVATE).getBoolean(
@@ -156,4 +162,6 @@ public class PrefUtils {
     public static String getOfflineReportInfo(Context context, String id) {
         return context.getSharedPreferences(OFFLINE_REPORTS_INFO, Context.MODE_PRIVATE).getString(id, null);
     }
+
+
 }
