@@ -83,14 +83,6 @@ public class ReportUploadProcessorTest {
         response.setResponseCode(200);
         response.setBody(DummyDataAndroidTest.GOOD_IMPORT_RESPONSE);
 
-        int weekNumber = Calendar.getInstance().get(Calendar.WEEK_OF_YEAR);
-        int first = Calendar.getInstance().getFirstDayOfWeek();
-        int minimal = Calendar.getInstance().getMinimalDaysInFirstWeek();
-        Log.d("TEST", weekNumber+"");
-        Log.d("TEST 2", first+"");
-        Log.d("TEST 3", minimal+"");
-
-
         server.enqueue(response);
 
         HttpUrl url = server.url("/");
