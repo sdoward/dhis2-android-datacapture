@@ -225,12 +225,6 @@ public class DataEntryActivity extends BaseActivity implements LoaderManager.Loa
 
     private void setupListView() {
         dataEntryListView = (ListView) findViewById(R.id.list_of_fields);
-//        LayoutInflater inflater = getLayoutInflater();
-//        ViewGroup header = (ViewGroup)inflater.inflate(R.layout.listview_header, dataEntryListView, false);
-//        dataEntryListView.addHeaderView(header);
-
-
-
     }
 
     private void setupUploadButton() {

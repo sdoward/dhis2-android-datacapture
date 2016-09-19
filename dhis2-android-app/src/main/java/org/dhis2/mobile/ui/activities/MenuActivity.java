@@ -78,7 +78,7 @@ public class MenuActivity extends BaseActivity implements OnNavigationItemSelect
         if (navigationView != null) {
             navigationView.inflateMenu(R.menu.menu_drawer);
             navigationView.setNavigationItemSelectedListener(this);
-            setupUserDetails();
+//            setupUserDetails();
 
         }
 

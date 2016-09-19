@@ -41,6 +41,7 @@ public class SendSmsProcessor {
         String data = prepareContent(groups);
         //insert destination number
         sendSMS(context, Constants.SMS_NUMBER, data);
+
         //Save dataset for upload when there is internet connection
         if (!NetworkUtils.checkConnection(context)) {
             saveDataset(context, data, info);

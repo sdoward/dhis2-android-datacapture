@@ -82,9 +82,7 @@ public class MyProfileProcessorTest {
 
         HttpUrl url = server.url("/");
 
-        SharedPreferences.Editor userData = context.getSharedPreferences(USER_DATA, Context.MODE_PRIVATE).edit();
-        userData.putString(URL, url.toString());
-        userData.commit();
+        PrefUtils.setUrl(context, url.toString());
 
 
     }
@@ -109,8 +107,6 @@ public class MyProfileProcessorTest {
 
     @Test
     public void testUpdateProfileInfo() throws Exception {
-
-
         MyProfileProcessor.updateProfileInfo(context);
         BroadcastReceiver receiver = new BroadcastReceiver() {
             @Override
@@ -123,13 +119,11 @@ public class MyProfileProcessorTest {
         LocalBroadcastManager.getInstance(context)
                 .registerReceiver(receiver, new IntentFilter(MyProfileFragment.ON_UPDATE_FINISHED_LISTENER_TAG));
 
-
     }
 
     @After
     public void tearDown() throws Exception {
         server.shutdown();
-
     }
 
 }
