@@ -116,7 +116,6 @@ public class ReportUploadProcessor {
 
         //Check whether a timely report has already been sent
         if(!IsTimely.hasBeenSet(groups)) {
-
             //Check whether the report was timely or not
             //substring is used so as to only get the week number
             String period = info.getPeriod().substring(5);

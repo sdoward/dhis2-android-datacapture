@@ -5,6 +5,7 @@ package org.dhis2.mobile.utils;
  */
 
 
+import android.util.Log;
 import android.widget.EditText;
 
 import org.dhis2.mobile.io.Constants;
@@ -26,7 +27,7 @@ public class IsDisabled {
      *
      */
 
-    public static void check( final EditText editText, Field field){
+    public static void check( final EditText editText, final Field field){
         Boolean isEnabled = true;
         if(Arrays.asList(dElementsIds).contains(field.getDataElement())){
             switch (field.getDataElement()){
