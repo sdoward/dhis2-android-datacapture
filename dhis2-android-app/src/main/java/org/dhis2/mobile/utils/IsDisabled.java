@@ -20,6 +20,7 @@ public class IsDisabled {
     private static final String [] dElementsIds = new String[] {Constants.DIARRHOEA, Constants.SEVERE_MALNUTRTION, Constants.MATERNAL_DEATHS,
             Constants.NEONATAL_TETANUS};
 
+
     /**
      * Checks whether a field is disabled in the E-idsr form
      * @param editText EditText
@@ -32,30 +33,26 @@ public class IsDisabled {
         if(Arrays.asList(dElementsIds).contains(field.getDataElement())){
             switch (field.getDataElement()){
                 case Constants.DIARRHOEA:
-                    if(field.getCategoryOptionCombo().equals("jpmVF8rhBNA") || field.getCategoryOptionCombo().equals("Ciavs7v4qYa")){
+                    if(field.getCategoryOptionCombo().equals(Constants.OVER_FIVE_CASES) || field.getCategoryOptionCombo().equals(Constants.OVER_FIVE_DEATHS)){
                         isEnabled = false;
                     }
                     break;
                 case Constants.SEVERE_MALNUTRTION:
-                    if(field.getCategoryOptionCombo().equals("jpmVF8rhBNA") || field.getCategoryOptionCombo().equals("Ciavs7v4qYa")){
+                    if(field.getCategoryOptionCombo().equals(Constants.OVER_FIVE_CASES) || field.getCategoryOptionCombo().equals(Constants.OVER_FIVE_DEATHS)){
                         isEnabled = false;
                     }
                     break;
                 case Constants.MATERNAL_DEATHS:
-                    if(field.getCategoryOptionCombo().equals("e079rjYqlMH") || field.getCategoryOptionCombo().equals("jpmVF8rhBNA")
-                            || field.getCategoryOptionCombo().equals("C5qLGpw4uet")){
+                    if(field.getCategoryOptionCombo().equals(Constants.UNDER_FIVE_CASES) || field.getCategoryOptionCombo().equals(Constants.OVER_FIVE_CASES)
+                            || field.getCategoryOptionCombo().equals(Constants.UNDER_FIVE_DEATHS)){
                         isEnabled = false;
                     }
                     break;
                 case Constants.NEONATAL_TETANUS:
-                    if(field.getCategoryOptionCombo().equals("jpmVF8rhBNA") || field.getCategoryOptionCombo().equals("Ciavs7v4qYa")){
+                    if(field.getCategoryOptionCombo().equals(Constants.OVER_FIVE_CASES) || field.getCategoryOptionCombo().equals(Constants.OVER_FIVE_DEATHS)){
                         isEnabled = false;
                     }
                     break;
-                default:
-//                    isEnabled = false;
-                    break;
-
 
             }
         }
