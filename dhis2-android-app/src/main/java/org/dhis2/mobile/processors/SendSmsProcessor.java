@@ -42,19 +42,32 @@ public class SendSmsProcessor {
         //insert destination number
         sendSMS(context, Constants.SMS_NUMBER, data);
 
-        //Save dataset for upload when there is internet connection
-        if (!NetworkUtils.checkConnection(context)) {
-            saveDataset(context, data, info);
-            return;
-        }
+        saveDataset(context, data, info);
+
 
     }
-    private static String prepareContent(ArrayList<Group> groups){
-        KeyGenerator generator = new KeyGenerator();
-        String msg = generator.parse(groups, "command");
+    private static String prepareContent(ArrayList<Group> submissionData){
+        KeyGenerator keyGenerator = new KeyGenerator();
+        String commandName = Constants.COMMAND_NAME;
+
+        String message = "";
+        message += commandName+" ";
+        //TODO: insert period
+        //TODO: insert org unit
 
 
-        return msg;
+        //This is for the data elements and their values
+        for (Group group : submissionData) {
+            for (Field field : group.getFields()) {
+                if(!field.getValue().equals("")) {
+                    message += keyGenerator.generate(field.getDataElement(), field.getCategoryOptionCombo(), 2)+",";
+                    message += field.getValue()+",";
+
+                }
+            }
+        }
+
+        return message;
     }
 
     /**
