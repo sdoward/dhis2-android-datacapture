@@ -133,7 +133,6 @@ public class PosOrZeroIntegerRow2 implements Row {
             holder2 = (EditTextHolder) view.getTag(R.id.TAG_HOLDER2_ID);
             holder3 = (EditTextHolder) view.getTag(R.id.TAG_HOLDER3_ID);
             holder4 = (EditTextHolder) view.getTag(R.id.TAG_HOLDER4_ID);
-
             alertDialog = new AlertDialog.Builder(view.getContext()).create();
             ciriticalAlertDialog = new AlertDialog.Builder(view.getContext()).create();
         }
@@ -184,10 +183,10 @@ public class PosOrZeroIntegerRow2 implements Row {
 
 
 
-        setAutoZero(holder, holder2, holder3, holder4, null, null);
-        setAutoZero(holder2, holder3, holder4, holder, holder, holder2);
-        setAutoZero(holder3, holder4, holder, holder2, null, null);
-        setAutoZero(holder4, holder, holder2, holder3, holder3, holder4);
+        setAutoZero(holder, holder2, holder3, holder4, null, null, view.getContext());
+        setAutoZero(holder2, holder3, holder4, holder, holder, holder2, view.getContext());
+        setAutoZero(holder3, holder4, holder, holder2, null, null, view.getContext());
+        setAutoZero(holder4, holder, holder2, holder3, holder3, holder4, view.getContext());
 
 
 
@@ -219,7 +218,7 @@ public class PosOrZeroIntegerRow2 implements Row {
     }
 
     private void setAutoZero(final EditTextHolder holder, final EditTextHolder holder2, final EditTextHolder holder3, final EditTextHolder holder4,
-                             final EditTextHolder casesHolder, final EditTextHolder deathsHolder){
+                             final EditTextHolder casesHolder, final EditTextHolder deathsHolder, final Context context){
         holder.editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View view, boolean b) {
@@ -251,7 +250,7 @@ public class PosOrZeroIntegerRow2 implements Row {
                     if(!b && holder.textWatcher.hasChanged()  && Integer.parseInt(holder.editText.getText().toString()) > 0 ){
                         holder.textWatcher.setChanged(false);
                         if(IsCritical.check(field)){
-                            showCriticalValidation(holder);
+                            showCriticalValidation(holder, context);
                         }
 
                     }
@@ -261,7 +260,7 @@ public class PosOrZeroIntegerRow2 implements Row {
             }
         });
     }
-    private void showValidation(EditTextHolder casesHolder, final EditTextHolder deathsHolder, Context context){
+    private void showValidation(EditTextHolder casesHolder, final EditTextHolder deathsHolder, final Context context){
         int deaths, cases;
         if (deathsHolder.editText.getText().toString().equals("")){
             deaths = 0;
@@ -275,19 +274,19 @@ public class PosOrZeroIntegerRow2 implements Row {
         }
         if(deaths > cases){
 
-            alertDialog.setTitle("Validation");
+            alertDialog.setTitle(context.getString(R.string.validation_alert_dialog_title));
             alertDialog.setMessage("You are about to submit more deaths than cases for "+field.getLabel().split(PREFIX)[0].substring(6) );
-            alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Yes", new DialogInterface.OnClickListener() {
+            alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, context.getString(R.string.validation_alert_dialog_confirmation), new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
                     dialogInterface.dismiss();
                     if(IsCritical.check(field)){
-                        showCriticalValidation(deathsHolder);
+                        showCriticalValidation(deathsHolder, context);
                     }
                 }
             });
 
-            alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "Delete Value", new DialogInterface.OnClickListener() {
+            alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, context.getString(R.string.validation_alert_dialog_rejection), new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
                     deathsHolder.editText.setText("0");
@@ -302,18 +301,18 @@ public class PosOrZeroIntegerRow2 implements Row {
         }
 
     }
-    private void showCriticalValidation(final EditTextHolder holder){
+    private void showCriticalValidation(final EditTextHolder holder,Context context ){
         if(!alertDialog.isShowing()){
-            ciriticalAlertDialog.setTitle("Validation");
+            ciriticalAlertDialog.setTitle(context.getString(R.string.validation_alert_dialog_title));
             ciriticalAlertDialog.setMessage("You are about to submit "+ holder.editText.getText()+" death(s) for "+ field.getLabel().split(PREFIX)[0].substring(6));
-            ciriticalAlertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Yes", new DialogInterface.OnClickListener() {
+            ciriticalAlertDialog.setButton(AlertDialog.BUTTON_POSITIVE, context.getString(R.string.validation_alert_dialog_confirmation), new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
                     dialogInterface.dismiss();
                 }
             });
 
-            ciriticalAlertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "Delete Value", new DialogInterface.OnClickListener() {
+            ciriticalAlertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, context.getString(R.string.validation_alert_dialog_rejection), new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
                     holder.editText.setText("0");

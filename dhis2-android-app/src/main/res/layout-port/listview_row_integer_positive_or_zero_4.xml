@@ -44,6 +44,7 @@
                     android:layout_height="wrap_content"
                     android:imeOptions="actionNext|flagNoExtractUi"
                     android:inputType="number"
+                    android:selectAllOnFocus="true"
                     />
 
             </android.support.design.widget.TextInputLayout>
@@ -54,13 +55,15 @@
                 android:id="@+id/edit_integer_pos_layout_2"
                 android:layout_weight="1"
                 >
-                <!-- cases integer row-->
+                <!-- deaths integer row-->
                 <EditText
                     android:id="@+id/edit_integer_pos_row_2"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:imeOptions="actionNext|flagNoExtractUi"
                     android:inputType="number"
+                    android:selectAllOnFocus="true"
+
                     />
 
             </android.support.design.widget.TextInputLayout>
@@ -77,6 +80,8 @@
                     android:layout_height="wrap_content"
                     android:imeOptions="actionNext|flagNoExtractUi"
                     android:inputType="number"
+                    android:selectAllOnFocus="true"
+
                     />
 
             </android.support.design.widget.TextInputLayout>
@@ -88,13 +93,16 @@
                 android:id="@+id/edit_integer_pos_layout_4"
                 android:layout_weight="1"
                 >
-                <!-- cases integer row-->
+                <!-- deaths integer row-->
                 <EditText
                     android:id="@+id/edit_integer_pos_row_4"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:imeOptions="actionNext|flagNoExtractUi"
                     android:inputType="number"
+                    android:selectAllOnFocus="true"
+
+
                     />
 
             </android.support.design.widget.TextInputLayout>
