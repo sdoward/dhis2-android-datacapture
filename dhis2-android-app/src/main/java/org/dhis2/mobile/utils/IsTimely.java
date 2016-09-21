@@ -1,8 +1,5 @@
 package org.dhis2.mobile.utils;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-
 import org.dhis2.mobile.io.Constants;
 import org.dhis2.mobile.io.models.Field;
 import org.dhis2.mobile.io.models.Group;

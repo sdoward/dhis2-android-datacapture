@@ -1,6 +1,6 @@
 /**
  * Contains networking related files.
- * Requests, Network Exceptions, Utilities, urls, reponses
+ * Requests, Network Exceptions, Utilities, urls, responses
  */
 
 

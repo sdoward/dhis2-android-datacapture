@@ -14,14 +14,13 @@ import static org.junit.Assert.*;
  * Created by george on 9/6/16.
  */
 public class JsonHandlerTest {
-    private Response response;
-    private String jsonExceptionString = "The incoming Json is bad/malicious";
+    private Response responseObject;
     private ParsingException exception;
 
     @Before
     public void setup(){
-        response = new Response(200, DummyDataTest.GOOD_GET_FORM_RESPONSE);
-        exception = new ParsingException(jsonExceptionString);
+        responseObject = new Response(200, DummyDataTest.GOOD_GET_METHOD_FORM_RESPONSE);
+        exception = new ParsingException(DummyDataTest.JSON_EXCEPTION_STRING);
     }
 
     @Test(expected = ParsingException.class)
@@ -32,17 +31,17 @@ public class JsonHandlerTest {
 
     @Test
     public void shouldBuildJsonObject() throws ParsingException {
-        assertThat(JsonHandler.buildJsonObject(response.getBody()), instanceOf(JsonElement.class));
+        assertThat(JsonHandler.buildJsonObject(responseObject.getBody()), instanceOf(JsonElement.class));
     }
 
     @Test
     public void shouldBuildJsonArray() throws ParsingException {
-        assertThat(JsonHandler.buildJsonArray(DummyDataTest.GOOD_GET_FORM_RESPONSE_ARRAY).get(0).toString(), is(DummyDataTest.GOOD_GET_FORM_RESPONSE));
+        assertThat(JsonHandler.buildJsonArray(DummyDataTest.GOOD_GET_METHOD_FORM_RESPONSE_ARRAY).get(0).toString(), is(DummyDataTest.GOOD_GET_METHOD_FORM_RESPONSE));
     }
     @Test(expected = ParsingException.class)
     public void shouldNotBuildJsonArray() throws ParsingException {
-        //response body is not an array. Should throw an error.
-        JsonHandler.buildJsonArray(response.getBody());
+        //responseObject body is not an array. Should throw an error.
+        JsonHandler.buildJsonArray(responseObject.getBody());
     }
 
 

@@ -13,13 +13,13 @@ import static org.junit.Assert.assertThat;
 public class ImportSummariesHandlerTest {
     private Response mBadResponse;
     private Response mGoodResponse;
-    private String defaultValue = "Import process was aborted";
-    private String description = "Import process completed successfully";
+    private String errorDesc = "Import process was aborted";
+    private String successDesc = "Import process completed successfully";
 
     @Before
     public  void createResponse(){
-        mBadResponse = new Response(200, DummyDataTest.badResponse);
-        mGoodResponse = new Response(200, DummyDataTest.goodImport);
+        mBadResponse = new Response(200, DummyDataTest.ERROR_IMPORT_RESPONSE);
+        mGoodResponse = new Response(200, DummyDataTest.SUCCESSFUL_IMPORT_RESPONSE);
     }
 
     @Test
@@ -31,12 +31,12 @@ public class ImportSummariesHandlerTest {
         assertThat(ImportSummariesHandler.isSuccess(mGoodResponse.getBody()), is(true));
     }
     @Test
-    public void descriptionIsDefault(){
-        assertThat(ImportSummariesHandler.getDescription(mBadResponse.getBody(), defaultValue), is(defaultValue));
+    public void checkDescriptionForBadResponse(){
+        assertThat(ImportSummariesHandler.getDescription(mBadResponse.getBody(), errorDesc), is(errorDesc));
     }
     @Test
-    public void descriptionIsImportDescription(){
-        assertThat(ImportSummariesHandler.getDescription(mGoodResponse.getBody(), defaultValue), is(description));
+    public void checkDescriptionForGoodResponse(){
+        assertThat(ImportSummariesHandler.getDescription(mGoodResponse.getBody(), errorDesc), is(successDesc));
     }
 
 }

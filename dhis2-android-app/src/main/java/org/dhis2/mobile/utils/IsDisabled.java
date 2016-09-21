@@ -5,7 +5,6 @@ package org.dhis2.mobile.utils;
  */
 
 
-import android.util.Log;
 import android.widget.EditText;
 
 import org.dhis2.mobile.io.Constants;
