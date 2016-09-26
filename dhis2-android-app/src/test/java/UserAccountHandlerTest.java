@@ -1,7 +1,10 @@
 import android.content.Context;
+import android.content.res.TypedArray;
 
+import org.dhis2.mobile.R;
 import org.dhis2.mobile.io.handlers.UserAccountHandler;
 import org.dhis2.mobile.io.models.Field;
+import org.dhis2.mobile.utils.IsDisabled;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -52,6 +55,7 @@ public class UserAccountHandlerTest {
     public void checkProfileFields(){
         assertThat(UserAccountHandler.fromFields(fields), is(DummyTestData.PROCESSED_PROFILE_DATA));
     }
+
 
 
 }

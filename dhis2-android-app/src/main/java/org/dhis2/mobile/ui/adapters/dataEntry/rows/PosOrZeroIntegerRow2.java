@@ -31,11 +31,9 @@ package org.dhis2.mobile.ui.adapters.dataEntry.rows;
 
 import android.content.Context;
 import android.content.DialogInterface;
-import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AlertDialog;
 import android.text.InputFilter;
 import android.text.Spanned;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,13 +45,16 @@ import org.dhis2.mobile.io.models.Field;
 import org.dhis2.mobile.utils.IsCritical;
 import org.dhis2.mobile.utils.IsDisabled;
 
+import java.util.ArrayList;
+
 public class PosOrZeroIntegerRow2 implements Row {
     public static final String PREFIX = " EIDSR-";
     private final LayoutInflater inflater;
-    private final Field field;
-    private final Field field2, field3, field4;
+    private final Field field,field2, field3, field4;
     private AlertDialog alertDialog;
-    private AlertDialog ciriticalAlertDialog;
+    private AlertDialog criticalAlertDialog;
+    private final Boolean isCasesField = true;
+    private final Boolean isDeathsField = false;
 
 
     public PosOrZeroIntegerRow2(LayoutInflater inflater, Field field, Field field2, Field field3, Field field4 ) {
@@ -72,6 +73,15 @@ public class PosOrZeroIntegerRow2 implements Row {
         final EditTextHolder holder3;
         final EditTextHolder holder4;
 
+        ArrayList<Field> fields = new ArrayList<>();
+        fields.add(field);
+        fields.add(field2);
+        fields.add(field3);
+        fields.add(field4);
+
+
+
+
 
 
 
@@ -83,10 +93,12 @@ public class PosOrZeroIntegerRow2 implements Row {
             EditText editText3 = (EditText) rowRoot.findViewById(R.id.edit_integer_pos_row_3);
             EditText editText4 = (EditText) rowRoot.findViewById(R.id.edit_integer_pos_row_4);
 
-            TextInputLayout inputLayout = (TextInputLayout) rowRoot.findViewById(R.id.edit_integer_pos_layout);
-            TextInputLayout inputLayout2 = (TextInputLayout) rowRoot.findViewById(R.id.edit_integer_pos_layout_2);
-            TextInputLayout inputLayout3 = (TextInputLayout) rowRoot.findViewById(R.id.edit_integer_pos_layout_3);
-            TextInputLayout inputLayout4 = (TextInputLayout) rowRoot.findViewById(R.id.edit_integer_pos_layout_4);
+
+            ArrayList<EditText> editTexts = new ArrayList<>();
+            editTexts.add(editText);
+            editTexts.add(editText2);
+            editTexts.add(editText3); editTexts.add(editText4);
+
 
 
             editText.setFilters(new InputFilter[]{new InpFilter()});
@@ -109,24 +121,25 @@ public class PosOrZeroIntegerRow2 implements Row {
 
 
 
-            
-            holder = new EditTextHolder(label, editText, watcher,inputLayout);
+
+            holder = new EditTextHolder(label, editText, watcher, isCasesField);
+            holder2 = new EditTextHolder(label, editText2, watcher2, isDeathsField);
+            holder3 = new EditTextHolder(label, editText3, watcher3, isCasesField);
+            holder4 = new EditTextHolder(label, editText4, watcher4, isDeathsField);
 
 
-            holder2 = new EditTextHolder(label, editText2, watcher2,inputLayout2);
-            holder3 = new EditTextHolder(label, editText3, watcher3,inputLayout3);
-            holder4 = new EditTextHolder(label, editText4, watcher4,inputLayout4);
             rowRoot.setTag(R.id.TAG_HOLDER1_ID, holder);
             rowRoot.setTag(R.id.TAG_HOLDER2_ID, holder2);
             rowRoot.setTag(R.id.TAG_HOLDER3_ID, holder3);
             rowRoot.setTag(R.id.TAG_HOLDER4_ID, holder4);
 
-
+//            setupFields(editTexts, fields, rowRoot);
 
             view = rowRoot;
 
+//            setupFields(editTexts, fields, rowRoot, view);
             alertDialog = new AlertDialog.Builder(view.getContext()).create();
-            ciriticalAlertDialog = new AlertDialog.Builder(view.getContext()).create();
+            criticalAlertDialog = new AlertDialog.Builder(view.getContext()).create();
         } else {
             view = convertView;
             holder = (EditTextHolder) view.getTag(R.id.TAG_HOLDER1_ID);
@@ -134,59 +147,19 @@ public class PosOrZeroIntegerRow2 implements Row {
             holder3 = (EditTextHolder) view.getTag(R.id.TAG_HOLDER3_ID);
             holder4 = (EditTextHolder) view.getTag(R.id.TAG_HOLDER4_ID);
             alertDialog = new AlertDialog.Builder(view.getContext()).create();
-            ciriticalAlertDialog = new AlertDialog.Builder(view.getContext()).create();
+            criticalAlertDialog = new AlertDialog.Builder(view.getContext()).create();
         }
 
-            String[] label = field.getLabel().split(PREFIX);
-
-            holder.textLabel.setText(label[0].substring(6));
-
-            holder.textWatcher.setField(field);
-            holder.editText.addTextChangedListener(holder.textWatcher);
-            holder.editText.setText(field.getValue());
-            holder.editText.setSelectAllOnFocus(true);
-            holder.editText.clearFocus();
+        ArrayList<EditTextHolder> holders = new ArrayList<>();
+        holders.add(holder);
+        holders.add(holder2);
+        holders.add(holder3);
+        holders.add(holder4);
 
 
+        setupFields2(holders, fields, view);
 
-
-
-            holder2.textWatcher.setField(field2);
-            holder2.editText.addTextChangedListener(holder2.textWatcher);
-            holder2.editText.setText(field2.getValue());
-            holder2.editText.setSelectAllOnFocus(true);
-            holder2.editText.clearFocus();
-
-
-
-            holder3.textWatcher.setField(field3);
-            holder3.editText.addTextChangedListener(holder3.textWatcher);
-            holder3.editText.setText(field3.getValue());
-            holder3.editText.setSelectAllOnFocus(true);
-            holder3.editText.clearFocus();
-
-
-
-            holder4.textWatcher.setField(field4);
-            holder4.editText.addTextChangedListener(holder4.textWatcher);
-            holder4.editText.setText(field4.getValue());
-            holder4.editText.setSelectAllOnFocus(true);
-            holder4.editText.clearFocus();
-
-
-        //check whether field should be disabled
-        IsDisabled.check(holder.editText, field);
-        IsDisabled.check(holder2.editText, field2);
-        IsDisabled.check(holder3.editText, field3);
-        IsDisabled.check(holder4.editText, field4);
-
-
-
-
-        setAutoZero(holder, holder2, holder3, holder4, null, null, view.getContext());
-        setAutoZero(holder2, holder3, holder4, holder, holder, holder2, view.getContext());
-        setAutoZero(holder3, holder4, holder, holder2, null, null, view.getContext());
-        setAutoZero(holder4, holder, holder2, holder3, holder3, holder4, view.getContext());
+        setOnFocusChangeListener(holders, view.getContext());
 
 
 
@@ -217,48 +190,43 @@ public class PosOrZeroIntegerRow2 implements Row {
         }       
     }
 
-    private void setAutoZero(final EditTextHolder holder, final EditTextHolder holder2, final EditTextHolder holder3, final EditTextHolder holder4,
-                             final EditTextHolder casesHolder, final EditTextHolder deathsHolder, final Context context){
-        holder.editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View view, boolean b) {
-                if(!holder.editText.getText().toString().equals("")) {
-                    if (!b && holder2.editText.getText().toString().equals("")) {
-                        if(holder2.editText.isEnabled()) {
-                            holder2.editText.setText("0");
-                        }
-                    }
-                    if (!b && holder3.editText.getText().toString().equals("")) {
-                        if(holder3.editText.isEnabled()) {
-                            holder3.editText.setText("0");
-                        }
-                    }
-                    if (!b && holder4.editText.getText().toString().equals("")) {
-                        if(holder4.editText.isEnabled()) {
-                            holder4.editText.setText("0");
-                        }
-                    }
-                    if (!b && holder.editText.getText().toString().equals("")) {
-                        if(holder.editText.isEnabled()) {
-                            holder.editText.setText("0");
-                        }
-                    }
-                    if(!b && deathsHolder != null && casesHolder != null && holder.textWatcher.hasChanged()
-                           && !alertDialog.isShowing()){
-                        showValidation(casesHolder, deathsHolder, view.getContext());
-                    }
-                    if(!b && holder.textWatcher.hasChanged()  && Integer.parseInt(holder.editText.getText().toString()) > 0 ){
-                        holder.textWatcher.setChanged(false);
-                        if(IsCritical.check(field)){
-                            showCriticalValidation(holder, context);
-                        }
 
+    private void setOnFocusChangeListener(final ArrayList<EditTextHolder> holders, final Context context){
+        for( int i = 0; i < holders.size(); i++){
+            final int finalI = i;
+            holders.get(i).editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                @Override
+                public void onFocusChange(View view, boolean hasFocus) {
+                    if (!hasFocus && !holders.get(finalI).editText.getText().toString().equals("")) {
+                        setAutoZero(holders);
+                        setupValidations(holders.get(finalI),holders, finalI, context);
                     }
                 }
+            });
+        }
+    }
 
-
+    private void setAutoZero(final ArrayList<EditTextHolder> holders) {
+            for(int i = 0; i < holders.size(); i++){
+                if (holders.get(i).editText.getText().toString().equals("")) {
+                    if (holders.get(i).editText.isEnabled()) {
+                        holders.get(i).editText.setText("0");
+                    }
+                }
             }
-        });
+    }
+    private void setupValidations(EditTextHolder holder, final ArrayList<EditTextHolder> holders, int currentIndex, Context context){
+        if(!holder.isCasesField  && holder.textWatcher.hasChanged()
+                && !alertDialog.isShowing()){
+            showValidation(getCasesField(holders, currentIndex), holders.get(currentIndex), context);
+        }
+        if(holder.textWatcher.hasChanged()  && Integer.parseInt(holder.editText.getText().toString()) > 0 ){
+            holder.textWatcher.setChanged(false);
+            if(IsCritical.check(field, context)){
+                showCriticalValidation(holder, context);
+            }
+
+        }
     }
     private void showValidation(EditTextHolder casesHolder, final EditTextHolder deathsHolder, final Context context){
         int deaths, cases;
@@ -275,12 +243,12 @@ public class PosOrZeroIntegerRow2 implements Row {
         if(deaths > cases){
 
             alertDialog.setTitle(context.getString(R.string.validation_alert_dialog_title));
-            alertDialog.setMessage("You are about to submit more deaths than cases for "+field.getLabel().split(PREFIX)[0].substring(6) );
+            alertDialog.setMessage("You are about to submit more deaths than cases for "+field.getLabel().split(PREFIX)[0].substring(6));
             alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, context.getString(R.string.validation_alert_dialog_confirmation), new DialogInterface.OnClickListener() {
                 @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
+                public void onClick(DialogInterface dialogInterface, int pos) {
                     dialogInterface.dismiss();
-                    if(IsCritical.check(field)){
+                    if(IsCritical.check(field, context)){
                         showCriticalValidation(deathsHolder, context);
                     }
                 }
@@ -288,7 +256,7 @@ public class PosOrZeroIntegerRow2 implements Row {
 
             alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, context.getString(R.string.validation_alert_dialog_rejection), new DialogInterface.OnClickListener() {
                 @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
+                public void onClick(DialogInterface dialogInterface, int pos) {
                     deathsHolder.editText.setText("0");
                     dialogInterface.dismiss();
 
@@ -303,26 +271,66 @@ public class PosOrZeroIntegerRow2 implements Row {
     }
     private void showCriticalValidation(final EditTextHolder holder,Context context ){
         if(!alertDialog.isShowing()){
-            ciriticalAlertDialog.setTitle(context.getString(R.string.validation_alert_dialog_title));
-            ciriticalAlertDialog.setMessage("You are about to submit "+ holder.editText.getText()+" death(s) for "+ field.getLabel().split(PREFIX)[0].substring(6));
-            ciriticalAlertDialog.setButton(AlertDialog.BUTTON_POSITIVE, context.getString(R.string.validation_alert_dialog_confirmation), new DialogInterface.OnClickListener() {
+            criticalAlertDialog.setTitle(context.getString(R.string.validation_alert_dialog_title));
+            criticalAlertDialog.setMessage("You are about to submit "+ holder.editText.getText()+" death(s) for "+ field.getLabel().split(PREFIX)[0].substring(6));
+            criticalAlertDialog.setButton(AlertDialog.BUTTON_POSITIVE, context.getString(R.string.validation_alert_dialog_confirmation), new DialogInterface.OnClickListener() {
                 @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
+                public void onClick(DialogInterface dialogInterface, int pos) {
                     dialogInterface.dismiss();
                 }
             });
 
-            ciriticalAlertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, context.getString(R.string.validation_alert_dialog_rejection), new DialogInterface.OnClickListener() {
+            criticalAlertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, context.getString(R.string.validation_alert_dialog_rejection), new DialogInterface.OnClickListener() {
                 @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
+                public void onClick(DialogInterface dialogInterface, int pos) {
                     holder.editText.setText("0");
                     dialogInterface.dismiss();
                 }
             });
-            if (!ciriticalAlertDialog.isShowing()) {
-                ciriticalAlertDialog.show();
+            if (!criticalAlertDialog.isShowing()) {
+                criticalAlertDialog.show();
             }
         }
 
+    }
+
+    private void setupFields(ArrayList<EditText> editTexts, ArrayList<Field> fields, ViewGroup rowRoot){
+        TextView label = (TextView) rowRoot.findViewById(R.id.text_label);
+        ArrayList<Integer> tagsIds = new ArrayList<>();
+        tagsIds.add(R.id.TAG_HOLDER1_ID);
+        tagsIds.add(R.id.TAG_HOLDER2_ID);
+        tagsIds.add(R.id.TAG_HOLDER3_ID);
+        tagsIds.add(R.id.TAG_HOLDER4_ID);
+
+        for(int i = 0; i < editTexts.size(); i++){
+            editTexts.get(i).setFilters(new InputFilter[]{new InpFilter()});
+            EditTextWatcher watcher = new EditTextWatcher(fields.get(i));
+            editTexts.get(i).addTextChangedListener(watcher);
+            EditTextHolder holder = new EditTextHolder(label, editTexts.get(i), watcher);
+            rowRoot.setTag(tagsIds.get(i), holder);
+
+        }
+    }
+
+    private void setupFields2(ArrayList<EditTextHolder> holders, ArrayList<Field> fields, View view){
+        for(int i = 0; i < holders.size(); i++){
+
+            String[] label = fields.get(i).getLabel().split(PREFIX);
+
+            holders.get(i).textLabel.setText(label[0].substring(6));
+
+            holders.get(i).textWatcher.setField(fields.get(i));
+            holders.get(i).editText.addTextChangedListener(holders.get(i).textWatcher);
+            holders.get(i).editText.setText(fields.get(i).getValue());
+            holders.get(i).editText.setSelectAllOnFocus(true);
+            holders.get(i).editText.clearFocus();
+
+            IsDisabled.setEnabled(holders.get(i).editText, fields.get(i), view.getContext());
+
+        }
+    }
+
+    private EditTextHolder getCasesField(ArrayList<EditTextHolder> holders, int currentIndex){
+        return holders.get(currentIndex -1);
     }
 }

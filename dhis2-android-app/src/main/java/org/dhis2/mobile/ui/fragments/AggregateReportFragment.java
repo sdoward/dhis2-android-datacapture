@@ -434,7 +434,7 @@ public class AggregateReportFragment extends Fragment
         }
 
         if (dataSetPickerChild.areChildrenPseudoRoots()) {
-            // we need to check if all pseudo roots have values
+            // we need to setEnabled if all pseudo roots have values
             if (!areAllSecondaryPickersPresent(pickerListTwo)) {
                 handleDataEntryButton(null);
                 return;

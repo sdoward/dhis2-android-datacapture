@@ -1,7 +1,12 @@
+import android.content.Context;
 import android.os.Parcel;
+import android.support.test.InstrumentationRegistry;
 import android.support.test.filters.SmallTest;
 import android.support.test.runner.AndroidJUnit4;
+import android.util.Log;
 
+import org.dhis2.mobile.io.Constants;
+import org.dhis2.mobile.io.json.ParsingException;
 import org.dhis2.mobile.io.models.Category;
 import org.dhis2.mobile.io.models.CategoryCombo;
 import org.dhis2.mobile.io.models.CategoryOption;
@@ -11,11 +16,16 @@ import org.dhis2.mobile.io.models.FormOptions;
 import org.dhis2.mobile.io.models.Group;
 import org.dhis2.mobile.io.models.Option;
 import org.dhis2.mobile.io.models.OrganizationUnit;
+import org.dhis2.mobile.io.models.eidsr.Disease;
+import org.dhis2.mobile.utils.DiseaseImporter;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Map;
 
+import static android.R.attr.value;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
@@ -110,7 +120,6 @@ public class IOModelsTest {
         option.setId(DummyDataAndroidTest.FORM_ID);
       //  new ObjectOutputStream(new ByteArrayOutputStream()).writeObject(myObject);
 
-
     }
 
     @Test
@@ -123,5 +132,47 @@ public class IOModelsTest {
         OrganizationUnit parceledOrg = OrganizationUnit.CREATOR.createFromParcel(parcel);
         assertThat(org.getId(), is(parceledOrg.getId()));
     }
+
+    @Test
+    public void test2() throws IOException, ParsingException, NoSuchFieldException {
+        Context context = InstrumentationRegistry.getTargetContext();
+
+//        JsonObject obj = DiseaseImporter.importDiseases(context);
+////      JsonArray array = DiseaseImporter.getCriticalDiseases(context);
+//        ArrayList<String> arrayList = DiseaseImporter.getCriticalDiseases(context);
+//        Map disables = DiseaseImporter.getDiseasesWithDisabledFields(context);
+//        Log.d("OBBBJJJ", obj+ "");
+//        Log.d("OBBJJJ", obj.has("ZybYDdwk3O2")+"");
+//        Log.d("OBBJJ", obj.get("BR2cqsVasFd").getAsJsonObject().get("isCritical")+"");
+//        Log.d("OBBJJ", obj.get("zSzK3FHsJOy").getAsJsonObject().get("disabledFields")+"");
+//        Log.d("OBBJJ", obj.get("zSzK3FHsJOy").getAsJsonObject().get("disabledFields").toString().contains("e079rjYqlMH")+"");
+
+//        Log.d("Neewww", arrayList.toString()+"");
+//        Log.d("Neewww", arrayList.toString().contains("BR2cqsVasFd")+"");
+//
+//        Log.d("RAAAAA", disables+"");
+
+
+        Map diseasez = DiseaseImporter.importDiseases(context);
+
+        Disease df = (Disease) diseasez.get("zSzK3FHsJOy");
+        Log.d("LOOKIE", df+"");
+        Log.d("COD", df.getLabel());
+        Log.d("FIELDS", df.getDisabledFields().toString());
+        Log.d("BOOLEAN", df.isCritical()+"");
+
+        Log.d("tsfdsf", Constants.class.getField("UNDER_FIVE_DEATHS").toString());
+
+        String cases = null;
+        try {
+            cases = String.valueOf(Constants.class.getDeclaredField("UNDER_FIVE_CASES").get(String.class));
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+
+        Log.d("CONST", cases+"");
+        Log.d("CONST", Arrays.toString(Constants.class.getDeclaredFields()).contains("public static final java.lang.String org.dhis2.mobile.io.Constants.UNDER_FIVE_DEATHS")+"");
+    }
+
 
 }

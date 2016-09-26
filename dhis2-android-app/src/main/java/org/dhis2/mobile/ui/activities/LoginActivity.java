@@ -131,7 +131,7 @@ public class LoginActivity extends AppCompatActivity {
         mUsername.addTextChangedListener(textWatcher);
         mPassword.addTextChangedListener(textWatcher);
 
-        // Call method in order to check the fields
+        // Call method in order to setEnabled the fields
         // and change state of login button
         checkEditTextFields();
 

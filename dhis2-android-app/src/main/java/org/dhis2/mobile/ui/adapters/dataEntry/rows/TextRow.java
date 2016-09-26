@@ -135,13 +135,14 @@ class EditTextHolder {
     final TextView textLabel;
     final EditText editText;
     final EditTextWatcher textWatcher;
-    final TextInputLayout inputLayout;
+    final Boolean isCasesField;
 
-    EditTextHolder(TextView textLabel, EditText editText, EditTextWatcher textWatcher, TextInputLayout inputLayout) {
+    EditTextHolder(TextView textLabel, EditText editText, EditTextWatcher textWatcher, Boolean isCasesField) {
         this.textLabel = textLabel;
         this.editText = editText;
         this.textWatcher = textWatcher;
-        this.inputLayout = inputLayout;
+        this.isCasesField = isCasesField;
+
     }
 
 
@@ -149,7 +150,7 @@ class EditTextHolder {
         this.textLabel = textLabel;
         this.editText = editText;
         this.textWatcher = textWatcher;
-        inputLayout = null;
+        isCasesField = null;
     }
 
 }

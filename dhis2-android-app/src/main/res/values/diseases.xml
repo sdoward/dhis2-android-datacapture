@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+
+    <!-- Category combo ids -->
+    <string name="under_five_cases">e079rjYqlMH</string>
+    <string name="under_five_deaths">C5qLGpw4uet</string>
+    <string name="over_five_cases">jpmVF8rhBNA</string>
+    <string name="over_five_deaths">Ciavs7v4qYa</string>
+
+    <array name="test2">
+        <item>@array/diarrhoea_disabled_fields</item>
+        <item>@array/diarrhoea_disabled_fields</item>
+        <item>@array/critical_diseases</item>
+        <item>e079rjYqlMH</item>
+    </array>
+
+    <string-array name="diarrhoea_disabled_fields">
+        <item>@string/over_five_cases</item>
+        <item>@string/over_five_deaths</item>
+    </string-array>
+
+    <string-array name="severe_malnutrition_disabled_fields">
+        <item>@string/over_five_cases</item>
+        <item>@string/over_five_deaths</item>
+    </string-array>
+
+    <string-array name="maternal_deaths_disabled_fields">
+        <item>@string/over_five_cases</item>
+        <item>@string/over_five_deaths</item>
+    </string-array>
+
+    <string-array name="neonatal_deaths_disabled_fields">
+        <item>@string/under_five_cases</item>
+        <item>@string/under_five_deaths</item>
+        <item>@string/over_five_deaths</item>
+    </string-array>
+
+    <string name="diarrhoea">PcFw3MoOC94</string>
+    <string name="severe_malnutrition">FHfwXBYnhhl</string>
+    <string name="maternal_deaths">JyHy4B7myv9</string>
+    <string name="neonatal_tetanus">zSzK3FHsJOy</string>
+
+    <string name="acute_flaccid_paralysis">ZybYDdwk3O2</string>
+    <string name="acute_viral_hemorrhagic_fever">gqQhU8INQKw</string>
+    <string name="cholera">BR2cqsVasFd</string>
+    <string name="dracunculiasis">u67EkxdKDbQ</string>
+    <string name="monkey_pox">FtexyU70UDV</string>
+    <string name="plague">dx9dXyT0Gt8</string>
+    <string name="small_pox">DyaUOTqqGip</string>
+
+
+    <string-array name="critical_diseases">
+        <item>@string/acute_flaccid_paralysis</item>
+        <item>@string/acute_viral_hemorrhagic_fever</item>
+        <item>@string/cholera</item>
+        <item>@string/dracunculiasis</item>
+        <item>@string/monkey_pox</item>
+        <item>@string/plague</item>
+        <item>@string/small_pox</item>
+    </string-array>
+
+</resources>

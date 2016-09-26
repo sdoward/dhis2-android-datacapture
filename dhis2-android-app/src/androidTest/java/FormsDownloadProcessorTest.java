@@ -69,7 +69,7 @@ public class FormsDownloadProcessorTest {
 
         FormsDownloadProcessor.updateDatasets(context);
 
-        //check whether preferences got updated
+        //setEnabled whether preferences got updated
         assertThat(PrefUtils.getResourceState(context, PrefUtils.Resources.DATASETS), is(PrefUtils.State.UP_TO_DATE));
 
         //test the request path
@@ -81,7 +81,7 @@ public class FormsDownloadProcessorTest {
         onFormsUpdateListener = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                //check that response code is 200 aand that broadcast was sent
+                //setEnabled that response code is 200 aand that broadcast was sent
                 assertThat(intent.getExtras().getInt(Response.CODE), is(200));
             }
         };

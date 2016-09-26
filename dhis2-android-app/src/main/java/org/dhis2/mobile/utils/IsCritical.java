@@ -1,23 +1,30 @@
 package org.dhis2.mobile.utils;
 
-import org.dhis2.mobile.io.models.Field;
+import android.content.Context;
 
-import java.util.Arrays;
+import org.dhis2.mobile.io.models.Field;
+import org.dhis2.mobile.io.models.eidsr.Disease;
+
+import java.util.Map;
 
 /**
  * Created by george on 9/1/16.
  */
 public class IsCritical {
-    private static final String [] criticalItems = new String[] {"ZybYDdwk3O2", "gqQhU8INQKw", "BR2cqsVasFd","u67EkxdKDbQ",
-            "JyHy4B7myv9", "FtexyU70UDV","dx9dXyT0Gt8","DyaUOTqqGip"} ;
 
-    public static Boolean check(Field field){
-        Boolean isCtritical = false;
+    public static Boolean check(Field field, Context context){
+        Boolean isCritical = false;
 
-        if(Arrays.asList(criticalItems).contains(field.getDataElement())){
-            isCtritical = true;
+        Map diseases = DiseaseImporter.importDiseases(context);
+        assert diseases != null;
+        if(diseases.get(field.getDataElement()) != null) {
+            Disease disease = (Disease) diseases.get(field.getDataElement());
+
+            if (disease.isCritical()) {
+                isCritical = true;
+            }
         }
 
-        return isCtritical;
+        return isCritical;
     }
 }

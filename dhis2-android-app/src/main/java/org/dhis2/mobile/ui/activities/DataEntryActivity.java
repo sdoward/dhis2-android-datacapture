@@ -239,7 +239,7 @@ public class DataEntryActivity extends BaseActivity implements LoaderManager.Loa
     }
 
     private void attemptToDownloadReport(Bundle savedInstanceState) {
-        // first, we need to check if previous instances of
+        // first, we need to setEnabled if previous instances of
         // activities already tried to download values
         if (savedInstanceState != null) {
             downloadAttempted = savedInstanceState
@@ -249,7 +249,7 @@ public class DataEntryActivity extends BaseActivity implements LoaderManager.Loa
         if (!downloadAttempted && !isProgressBarVisible()) {
             downloadAttempted = true;
 
-            // we need to check if connection is there first
+            // we need to setEnabled if connection is there first
             if (NetworkUtils.checkConnection(this)) {
                 getLatestValues();
             }
