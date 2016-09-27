@@ -154,7 +154,7 @@ public class PosOrZeroIntegerRow2 implements Row {
                         setAutoZero(holders);
                         setupValidations(holders.get(finalI),holders, finalI, context);
                     }
-                }t
+                }
             });
         }
     }
