@@ -103,7 +103,6 @@ public class FieldAdapter extends BaseAdapter {
                             groupedFields.get(groupedFields.size()-2),
                             groupedFields.get(groupedFields.size()-1)));
 
-                    groupedFields.clear();
                 }
                 groupedFields.add(field);
                 previousFieldId = field.getDataElement();

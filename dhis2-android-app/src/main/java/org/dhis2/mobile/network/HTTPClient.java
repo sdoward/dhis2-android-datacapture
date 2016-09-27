@@ -116,6 +116,7 @@ public class HTTPClient {
 
 	public static Response post(String server, String creds, String data) {
         Log.i("POST", server);
+		Log.d("DATA", data);
 		int code = -1;
 		String body = "";
 

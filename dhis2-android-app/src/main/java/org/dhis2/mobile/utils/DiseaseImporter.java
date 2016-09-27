@@ -65,9 +65,9 @@ public class DiseaseImporter {
 
             //get array of disabled fields ids using reflection
             ArrayList<String> disabledFieldsIds = new ArrayList<>();
-            for (JsonElement test : entry.getValue().getAsJsonObject().get(DISABLED_FIELDS).getAsJsonArray()){
+            for (JsonElement element : entry.getValue().getAsJsonObject().get(DISABLED_FIELDS).getAsJsonArray()){
                 try {
-                    disabledFieldsIds.add(String.valueOf(Constants.class.getDeclaredField(test.getAsString()).get(String.class)));
+                    disabledFieldsIds.add(String.valueOf(Constants.class.getDeclaredField(element.getAsString()).get(String.class)));
                 } catch (IllegalAccessException e) {
                     e.printStackTrace();
                 } catch (NoSuchFieldException e) {
