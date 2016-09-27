@@ -64,6 +64,7 @@ import org.dhis2.mobile.ui.adapters.dataEntry.rows.TextRow;
 import org.dhis2.mobile.utils.TextFileUtils;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class FieldAdapter extends BaseAdapter {
     private ArrayList<Row> rows;
@@ -72,6 +73,7 @@ public class FieldAdapter extends BaseAdapter {
 
     public FieldAdapter(Group group, Context context) {
         ArrayList<Field> fields = group.getFields();
+        Collections.sort(fields, Field.COMPARATOR);
         ArrayList<Field> groupedFields = new ArrayList<Field>();
         String previousFieldId = "";
         this.group = group;
@@ -106,6 +108,7 @@ public class FieldAdapter extends BaseAdapter {
                 }
                 groupedFields.add(field);
                 previousFieldId = field.getDataElement();
+                Log.d("SIZE", groupedFields.size()+"");
 
 
             } else if (field.getType().equals(RowTypes.INTEGER_POSITIVE.name())) {
@@ -124,7 +127,6 @@ public class FieldAdapter extends BaseAdapter {
                 rows.add(new GenderRow(inflater, field));
             }
         }
-
 
     }
 
