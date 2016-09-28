@@ -78,8 +78,12 @@ public class DataEntryActivity extends BaseActivity implements LoaderManager.Loa
     // state
     private boolean downloadAttempted;
 
+    //info
+    private static DatasetInfoHolder infoHolder;
+
     public static void navigateTo(Activity activity, DatasetInfoHolder info) {
         if (info != null && activity != null) {
+            infoHolder = info;
             Intent intent = new Intent(activity, DataEntryActivity.class);
             intent.putExtra(DatasetInfoHolder.TAG, info);
 
@@ -131,6 +135,7 @@ public class DataEntryActivity extends BaseActivity implements LoaderManager.Loa
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
+
 
         if (adapters != null) {
             ArrayList<Group> groups = new ArrayList<>();
@@ -194,6 +199,8 @@ public class DataEntryActivity extends BaseActivity implements LoaderManager.Loa
             getSupportActionBar().setDisplayShowTitleEnabled(false);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setHomeButtonEnabled(true);
+            toolbar.setTitle(infoHolder.getOrgUnitLabel());
+            toolbar.setSubtitle(infoHolder.getPeriodLabel().substring(0,3));
         }
     }
 

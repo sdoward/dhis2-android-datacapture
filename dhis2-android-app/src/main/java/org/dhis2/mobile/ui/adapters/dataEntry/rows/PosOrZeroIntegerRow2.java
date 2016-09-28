@@ -44,6 +44,7 @@ import android.widget.TextView;
 import org.dhis2.mobile.R;
 import org.dhis2.mobile.io.Constants;
 import org.dhis2.mobile.io.models.Field;
+import org.dhis2.mobile.utils.IsAdditionalDisease;
 import org.dhis2.mobile.utils.IsCritical;
 import org.dhis2.mobile.utils.IsDisabled;
 
@@ -272,6 +273,9 @@ public class PosOrZeroIntegerRow2 implements Row {
             holders.get(i).editText.setText(fields.get(i).getValue());
             holders.get(i).editText.setSelectAllOnFocus(true);
             holders.get(i).editText.clearFocus();
+
+            IsAdditionalDisease.check(holders.get(i).textLabel, fields.get(i), view.getContext());
+
 
             IsDisabled.setEnabled(holders.get(i).editText, fields.get(i), view.getContext());
 

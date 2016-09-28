@@ -2,57 +2,87 @@
   "diarrhoea" :{
     "id": "PcFw3MoOC94",
     "disabledFields": ["OVER_FIVE_CASES", "OVER_FIVE_DEATHS"],
-    "isCritical": false
+    "isCritical": false,
+    "isAdditionalDisease": false
   },
   "severe malnutrition":{
     "id": "FHfwXBYnhhl",
     "disabledFields": ["OVER_FIVE_CASES", "OVER_FIVE_DEATHS"],
-    "isCritical":false
+    "isCritical":false,
+    "isAdditionalDisease": false
   },
   "maternal deaths":{
     "id": "JyHy4B7myv9",
     "disabledFields": ["OVER_FIVE_CASES", "OVER_FIVE_DEATHS"],
-    "isCritical": false
+    "isCritical": false,
+    "isAdditionalDisease": false
   },
   "neonatal tetanus":{
     "id":"zSzK3FHsJOy",
     "disabledFields": ["UNDER_FIVE_CASES", "UNDER_FIVE_DEATHS", "OVER_FIVE_DEATHS"],
-    "isCritical": false
+    "isCritical": false,
+    "isAdditionalDisease": false
   },
   "acute flaccid paralysis":{
     "id": "ZybYDdwk3O2",
     "disabledFields":[],
-    "isCritical": true
+    "isCritical": true,
+    "isAdditionalDisease": false
   },
   "acute viral hemorrhagic fever": {
     "id": "gqQhU8INQKw",
     "disabledFields":[],
-    "isCritical":true
+    "isCritical":true,
+    "isAdditionalDisease": false
   },
   "cholera":{
     "id":"BR2cqsVasFd",
     "disabledFields":[],
-    "isCritical": true
+    "isCritical": true,
+    "isAdditionalDisease": false
   },
   "dracunculiasis":{
     "id":"u67EkxdKDbQ",
     "disabledFields":[],
-    "isCritical":true
+    "isCritical":true,
+    "isAdditionalDisease": false
   },
   "monkey pox": {
     "id": "FtexyU70UDV",
     "disabledFields":[],
-    "isCritical":true
+    "isCritical":true,
+    "isAdditionalDisease": false
   },
   "plague": {
     "id": "dx9dXyT0Gt8",
     "disabledFields":[],
-    "isCritical":true
+    "isCritical":true,
+    "isAdditionalDisease": false
   },
   "small pox": {
     "id": "dx9dXyT0Gt8",
     "disabledFields":[],
-    "isCritical": true
+    "isCritical": true,
+    "isAdditionalDisease": false
+  },
+  "diabetes":{
+    "id": "nPmRU2oQYGR",
+    "disabledFields":[],
+    "isCritical": false,
+    "isAdditionalDisease": true
+  },
+  "epilepsy":{
+    "id": "m2D66oBDCaG",
+    "disabledFields":[],
+    "isCritical": false,
+    "isAdditionalDisease": true
+  },
+  "foodborne illness":{
+    "id":"iHJsq3zGWvM",
+    "disabledFields":[],
+    "isCritical": false,
+    "isAdditionalDisease": true
   }
+
 }
 

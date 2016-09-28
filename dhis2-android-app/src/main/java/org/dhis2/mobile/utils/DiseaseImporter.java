@@ -81,6 +81,7 @@ public class DiseaseImporter {
                             entry.getKey(),
                             entry.getValue().getAsJsonObject().get(ID).getAsString(),
                             entry.getValue().getAsJsonObject().get(IS_CRITICAL_FIELD).getAsBoolean(),
+                            entry.getValue().getAsJsonObject().get("isAdditionalDisease").getAsBoolean(),
                             disabledFieldsIds
                     );
 

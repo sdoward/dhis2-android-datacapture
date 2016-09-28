@@ -61,6 +61,7 @@ import org.dhis2.mobile.ui.adapters.dataEntry.rows.PosOrZeroIntegerRow2;
 import org.dhis2.mobile.ui.adapters.dataEntry.rows.Row;
 import org.dhis2.mobile.ui.adapters.dataEntry.rows.RowTypes;
 import org.dhis2.mobile.ui.adapters.dataEntry.rows.TextRow;
+import org.dhis2.mobile.utils.IsAdditionalDisease;
 import org.dhis2.mobile.utils.TextFileUtils;
 
 import java.util.ArrayList;
@@ -96,7 +97,7 @@ public class FieldAdapter extends BaseAdapter {
             } else if (field.getType().equals(RowTypes.INTEGER_ZERO_OR_POSITIVE.name())) {
                 //Changed from the others to support grouping of Diseases
                 //Specific test case for eidsr form
-                if(!field.getDataElement().equals(previousFieldId) && groupedFields.size() > 0){
+                if(!field.getDataElement().equals(previousFieldId) && groupedFields.size() > 0 && !IsAdditionalDisease.check3(previousFieldId, context)){
                     //each disease has four fields.
                     //we create a row from the last for fields added
                     rows.add(new PosOrZeroIntegerRow2(inflater,
@@ -108,7 +109,6 @@ public class FieldAdapter extends BaseAdapter {
                 }
                 groupedFields.add(field);
                 previousFieldId = field.getDataElement();
-                Log.d("SIZE", groupedFields.size()+"");
 
 
             } else if (field.getType().equals(RowTypes.INTEGER_POSITIVE.name())) {
@@ -179,4 +179,6 @@ public class FieldAdapter extends BaseAdapter {
         }
         return null;
     }
+
+
 }
