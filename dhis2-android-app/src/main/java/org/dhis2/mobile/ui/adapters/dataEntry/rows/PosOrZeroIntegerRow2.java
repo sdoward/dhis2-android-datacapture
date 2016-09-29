@@ -31,6 +31,9 @@ package org.dhis2.mobile.ui.adapters.dataEntry.rows;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.os.Parcelable;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.text.InputFilter;
 import android.text.Spanned;
@@ -38,12 +41,16 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
 import org.dhis2.mobile.R;
 import org.dhis2.mobile.io.Constants;
 import org.dhis2.mobile.io.models.Field;
+import org.dhis2.mobile.network.Response;
+import org.dhis2.mobile.ui.activities.DataEntryActivity;
+import org.dhis2.mobile.ui.adapters.dataEntry.FieldAdapter;
 import org.dhis2.mobile.utils.IsAdditionalDisease;
 import org.dhis2.mobile.utils.IsCritical;
 import org.dhis2.mobile.utils.IsDisabled;
@@ -51,16 +58,18 @@ import org.dhis2.mobile.utils.IsDisabled;
 import java.util.ArrayList;
 
 public class PosOrZeroIntegerRow2 implements Row {
+    public static final String TAG = PosOrZeroIntegerRow2.class.getSimpleName();
     public static final String PREFIX = " EIDSR-";
     private final LayoutInflater inflater;
     private final Field field,field2, field3, field4;
     private AlertDialog alertDialog;
     private AlertDialog criticalDiseaseAlertDialog;
     private final String defaultValue = "0";
+    private Button deleteButton;
 
 
 
-    public PosOrZeroIntegerRow2(LayoutInflater inflater, Field field, Field field2, Field field3, Field field4 ) {
+    public PosOrZeroIntegerRow2(LayoutInflater inflater, Field field, Field field2, Field field3, Field field4) {
         this.inflater = inflater;
         this.field = field;
         this.field2 = field2;
@@ -117,6 +126,8 @@ public class PosOrZeroIntegerRow2 implements Row {
         setupEditTextHolders(holders, fields, view);
 
         setOnFocusChangeListeners(holders, view.getContext());
+
+        view.setTag(field.getDataElement());
 
         return view;
     }
@@ -267,14 +278,13 @@ public class PosOrZeroIntegerRow2 implements Row {
         for(int i = 0; i < holders.size(); i++){
             String[] label = fields.get(i).getLabel().split(PREFIX);
 
+            setupDeleteButton(view);
             holders.get(i).textLabel.setText(label[0].substring(6));
             holders.get(i).textWatcher.setField(fields.get(i));
             holders.get(i).editText.addTextChangedListener(holders.get(i).textWatcher);
             holders.get(i).editText.setText(fields.get(i).getValue());
             holders.get(i).editText.setSelectAllOnFocus(true);
             holders.get(i).editText.clearFocus();
-
-            IsAdditionalDisease.check(holders.get(i).textLabel, fields.get(i), view.getContext());
 
 
             IsDisabled.setEnabled(holders.get(i).editText, fields.get(i), view.getContext());
@@ -293,5 +303,22 @@ public class PosOrZeroIntegerRow2 implements Row {
                 isCasesField = true;
             }
         return isCasesField;
+    }
+
+    private void setupDeleteButton(View view){
+        deleteButton = (Button) view.findViewById(R.id.delete_button);
+        deleteButton.setVisibility(View.GONE);
+        if(IsAdditionalDisease.check3(field.getDataElement(), view.getContext())){
+            deleteButton.setVisibility(View.VISIBLE);
+        }
+        deleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(DataEntryActivity.TAG);
+                intent.putExtra(TAG, field.getDataElement());
+                LocalBroadcastManager.getInstance(view.getContext()).sendBroadcast(intent);
+            }
+        });
+
     }
 }

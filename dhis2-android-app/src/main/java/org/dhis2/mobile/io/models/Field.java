@@ -118,6 +118,10 @@ public class Field implements Serializable, Parcelable {
         this.dataElement = dataElement;
     }
 
+    public void setCategoryOptionCombo(String combo){
+        this.categoryOptionCombo = combo;
+    }
+
     public boolean hasOptionSet() {
         return optionSet != null;
     }

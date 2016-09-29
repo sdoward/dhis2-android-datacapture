@@ -5,8 +5,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
@@ -40,11 +38,14 @@ import org.dhis2.mobile.network.HTTPClient;
 import org.dhis2.mobile.network.NetworkUtils;
 import org.dhis2.mobile.network.Response;
 import org.dhis2.mobile.ui.adapters.dataEntry.FieldAdapter;
+import org.dhis2.mobile.ui.adapters.dataEntry.rows.PosOrZeroIntegerRow2;
+import org.dhis2.mobile.ui.fragments.AdditionalDiseasesFragment;
 import org.dhis2.mobile.utils.TextFileUtils;
 import org.dhis2.mobile.utils.ToastManager;
 import org.dhis2.mobile.utils.ViewUtils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -63,23 +64,27 @@ public class DataEntryActivity extends BaseActivity implements LoaderManager.Loa
     private static final String STATE_DOWNLOAD_ATTEMPTED = "state:downloadAttempted";
     private static final String STATE_DOWNLOAD_IN_PROGRESS = "state:downloadInProgress";
 
-    // loader ids
+    // loader additionalDiseaseIds
     private static final int LOADER_FORM_ID = 896927645;
 
     // views
     private View uploadButton;
+    private View addDiseaseBtn;
+    private View persistentBtnsFooter;
     private RelativeLayout progressBarLayout;
     private AppCompatSpinner formGroupSpinner;
 
     // data entry view
     private ListView dataEntryListView;
-    private List<FieldAdapter> adapters;
+    public List<FieldAdapter> adapters;
 
     // state
     private boolean downloadAttempted;
 
     //info
     private static DatasetInfoHolder infoHolder;
+
+    private ArrayList<String> additionalDiseaseIds = new ArrayList<>();
 
     public static void navigateTo(Activity activity, DatasetInfoHolder info) {
         if (info != null && activity != null) {
@@ -97,7 +102,7 @@ public class DataEntryActivity extends BaseActivity implements LoaderManager.Loa
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_data_entry);
+        setContentView(R.layout.activity_data_entry_2);
 
 
         setupToolbar();
@@ -105,13 +110,16 @@ public class DataEntryActivity extends BaseActivity implements LoaderManager.Loa
         setupProgressBar(savedInstanceState);
 
         setupListView();
+        persistentBtnsFooter = findViewById(R.id.persistent_buttons_footer);
         setupUploadButton();
+        setupAddDiseaseBtn();
 
         // let's try to get latest values from API
         attemptToDownloadReport(savedInstanceState);
 
         // if we are downloading values, build form
         buildReportDataEntryForm(savedInstanceState);
+
 
 
     }
@@ -235,12 +243,27 @@ public class DataEntryActivity extends BaseActivity implements LoaderManager.Loa
     }
 
     private void setupUploadButton() {
-        uploadButton = findViewById(R.id.upload_button);
+        uploadButton = findViewById(R.id.send_button);
         uploadButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View arg0) {
                 upload();
+            }
+        });
+    }
+
+    private void setupAddDiseaseBtn(){
+        addDiseaseBtn = findViewById(R.id.add_button);
+        addDiseaseBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AdditionalDiseasesFragment additionalDiseasesFragment = new AdditionalDiseasesFragment();
+                Bundle args = new Bundle();
+                args.putStringArrayList("alreadyDisplayed", additionalDiseaseIds);
+                additionalDiseasesFragment.setArguments(args);
+                additionalDiseasesFragment.show(getSupportFragmentManager(), TAG);
+
             }
         });
     }
@@ -284,12 +307,12 @@ public class DataEntryActivity extends BaseActivity implements LoaderManager.Loa
     }
 
     private void showProgressBar() {
-        ViewUtils.hideAndDisableViews(uploadButton, dataEntryListView);
+        ViewUtils.hideAndDisableViews(persistentBtnsFooter, uploadButton, dataEntryListView, addDiseaseBtn);
         ViewUtils.enableViews(progressBarLayout);
     }
 
     private void hideProgressBar() {
-        ViewUtils.enableViews(uploadButton, dataEntryListView);
+        ViewUtils.enableViews(persistentBtnsFooter, uploadButton, dataEntryListView, addDiseaseBtn);
         ViewUtils.hideAndDisableViews(progressBarLayout);
     }
 
@@ -308,8 +331,6 @@ public class DataEntryActivity extends BaseActivity implements LoaderManager.Loa
             } catch (NullPointerException e) {
                 e.printStackTrace();
             }
-
-
 
             setupAdapters(adapters);
         }
@@ -400,20 +421,31 @@ public class DataEntryActivity extends BaseActivity implements LoaderManager.Loa
         public void onReceive(Context cxt, Intent intent) {
             hideProgressBar();
 
-            int code = intent.getExtras().getInt(Response.CODE);
-            if (HTTPClient.isError(code)) {
-                // load form from disk
-                getSupportLoaderManager().restartLoader(LOADER_FORM_ID, null,
-                        DataEntryActivity.this).forceLoad();
-                return;
+            if(intent.getExtras().containsKey(Response.CODE)) {
+                int code = intent.getExtras().getInt(Response.CODE);
+                if (HTTPClient.isError(code)) {
+                    // load form from disk
+                    getSupportLoaderManager().restartLoader(LOADER_FORM_ID, null,
+                            DataEntryActivity.this).forceLoad();
+                    return;
+                }
+
+                if (intent.getExtras().containsKey(Response.BODY)) {
+                    Form form = intent.getExtras().getParcelable(Response.BODY);
+
+                    if (form != null) {
+                        loadGroupsIntoAdapters(form.getGroups());
+                    }
+                }
             }
 
-            if (intent.getExtras().containsKey(Response.BODY)) {
-                Form form = intent.getExtras().getParcelable(Response.BODY);
+            if(intent.getExtras().containsKey(PosOrZeroIntegerRow2.TAG)){
+                String tag = intent.getExtras().getString(PosOrZeroIntegerRow2.TAG);
+                View view = dataEntryListView.findViewWithTag(tag);
+                int pos = dataEntryListView.getPositionForView(view);
+                additionalDiseaseIds.remove(additionalDiseaseIds.indexOf(tag));
+                adapters.get(0).removeItemAtPosition(pos);
 
-                if (form != null) {
-                    loadGroupsIntoAdapters(form.getGroups());
-                }
             }
         }
     };
@@ -556,4 +588,12 @@ public class DataEntryActivity extends BaseActivity implements LoaderManager.Loa
             return null;
         }
     }
+    public void addAdditionalDiseaseIdToList(String id){
+        this.additionalDiseaseIds.add(id);
+    }
+
+    public void scrollToBottomOfListView(){
+        this.dataEntryListView.smoothScrollToPosition(adapters.get(0).getCount());
+    }
+
 }

@@ -6,7 +6,7 @@
     android:clipToPadding="false"
     android:divider="@android:color/transparent"
     android:dividerHeight="0dp"
-    android:paddingBottom="7dp"
+    android:paddingBottom="40dp"
     android:paddingEnd="0dp"
     android:paddingLeft="0dp"
     android:paddingRight="0dp"

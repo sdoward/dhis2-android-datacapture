@@ -35,16 +35,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
+import org.dhis2.mobile.R;
 import org.dhis2.mobile.io.Constants;
 import org.dhis2.mobile.io.json.JsonHandler;
 import org.dhis2.mobile.io.json.ParsingException;
 import org.dhis2.mobile.io.models.Field;
 import org.dhis2.mobile.io.models.Group;
 import org.dhis2.mobile.io.models.OptionSet;
+import org.dhis2.mobile.io.models.eidsr.Disease;
 import org.dhis2.mobile.processors.ReportUploadProcessor;
 import org.dhis2.mobile.ui.adapters.dataEntry.rows.AutoCompleteRow;
 import org.dhis2.mobile.ui.adapters.dataEntry.rows.BooleanRow;
@@ -71,16 +74,19 @@ public class FieldAdapter extends BaseAdapter {
     private ArrayList<Row> rows;
     private final String adapterLabel;
     private final Group group;
+    private LayoutInflater inflater;
+    private ArrayList<Field> groupedFields;
+    private ArrayList<String> ids = new ArrayList<>();
 
     public FieldAdapter(Group group, Context context) {
         ArrayList<Field> fields = group.getFields();
         Collections.sort(fields, Field.COMPARATOR);
-        ArrayList<Field> groupedFields = new ArrayList<Field>();
+        groupedFields = new ArrayList<Field>();
         String previousFieldId = "";
         this.group = group;
         this.rows = new ArrayList<Row>();
         this.adapterLabel = group.getLabel();
-        LayoutInflater inflater = LayoutInflater.from(context);
+        inflater = LayoutInflater.from(context);
         for (int i = 0; i < fields.size(); i++) {
             Field field = fields.get(i);
             if (field.hasOptionSet()) {
@@ -105,6 +111,8 @@ public class FieldAdapter extends BaseAdapter {
                             groupedFields.get(groupedFields.size()-3),
                             groupedFields.get(groupedFields.size()-2),
                             groupedFields.get(groupedFields.size()-1)));
+
+
 
                 }
                 groupedFields.add(field);
@@ -156,7 +164,19 @@ public class FieldAdapter extends BaseAdapter {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, final View convertView, final ViewGroup parent) {
+//        if(convertView!=null) {
+//            Button deleteButton = (Button) convertView.findViewById(R.id.delete_button);
+//            if (deleteButton != null) {
+//                deleteButton.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View view) {
+//                        rows.remove(position);
+//                        notifyDataSetChanged();
+//                    }
+//                });
+//            }
+//        }
         return rows.get(position).getView(convertView);
     }
 
@@ -179,6 +199,41 @@ public class FieldAdapter extends BaseAdapter {
         }
         return null;
     }
+
+    public void addItem(Disease disease) {
+
+        Field field = new Field();
+        field.setDataElement(disease.getId());
+        field.setLabel(disease.getLabel());
+        field.setCategoryOptionCombo(Constants.UNDER_FIVE_CASES);
+
+        Field field2 = new Field();
+        field2.setDataElement(disease.getId());
+        field2.setLabel(disease.getLabel());
+        field2.setCategoryOptionCombo(Constants.UNDER_FIVE_DEATHS);
+
+        Field field3 = new Field();
+        field3.setDataElement(disease.getId());
+        field3.setLabel(disease.getLabel());
+        field3.setCategoryOptionCombo(Constants.OVER_FIVE_CASES);
+
+        Field field4 = new Field();
+        field4.setDataElement(disease.getId());
+        field4.setLabel(disease.getLabel());
+        field4.setCategoryOptionCombo(Constants.OVER_FIVE_DEATHS);
+
+        this.rows.add(new PosOrZeroIntegerRow2(inflater, field, field2, field3, field4));
+        notifyDataSetChanged();
+    }
+
+    public void removeItemAtPosition(int position){
+        this.rows.remove(position);
+        notifyDataSetChanged();
+    }
+
+
+
+
 
 
 }
