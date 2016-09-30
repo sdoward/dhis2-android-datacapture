@@ -32,12 +32,10 @@ package org.dhis2.mobile.ui.adapters.dataEntry.rows;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.Parcelable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.text.InputFilter;
 import android.text.Spanned;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -48,9 +46,7 @@ import android.widget.TextView;
 import org.dhis2.mobile.R;
 import org.dhis2.mobile.io.Constants;
 import org.dhis2.mobile.io.models.Field;
-import org.dhis2.mobile.network.Response;
 import org.dhis2.mobile.ui.activities.DataEntryActivity;
-import org.dhis2.mobile.ui.adapters.dataEntry.FieldAdapter;
 import org.dhis2.mobile.utils.IsAdditionalDisease;
 import org.dhis2.mobile.utils.IsCritical;
 import org.dhis2.mobile.utils.IsDisabled;
@@ -156,15 +152,15 @@ public class PosOrZeroIntegerRow2 implements Row {
     }
 
 
-    private void setOnFocusChangeListeners(final ArrayList<EditTextHolder> holders, final Context context){
-        for( int i = 0; i < holders.size(); i++){
+    private void setOnFocusChangeListeners(final ArrayList<EditTextHolder> editTextHolders, final Context context){
+        for( int i = 0; i < editTextHolders.size(); i++){
             final int finalI = i;
-            holders.get(i).editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            editTextHolders.get(i).editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
                 @Override
                 public void onFocusChange(View view, boolean hasFocus) {
-                    if (!hasFocus && !holders.get(finalI).editText.getText().toString().equals("")) {
-                        setAutoZero(holders);
-                        setupValidations(holders.get(finalI),holders, finalI, context);
+                    if (!hasFocus && !editTextHolders.get(finalI).editText.getText().toString().equals("")) {
+                        setAutoZero(editTextHolders);
+                        setupValidations(editTextHolders.get(finalI),editTextHolders, finalI, context);
                     }
                 }
             });
@@ -180,15 +176,15 @@ public class PosOrZeroIntegerRow2 implements Row {
                 }
             }
     }
-    private void setupValidations(EditTextHolder holder, final ArrayList<EditTextHolder> holders, int currentIndex, Context context){
-        if(!holder.isCasesField  && holder.textWatcher.hasChanged()
+    private void setupValidations(EditTextHolder editTextHolder, final ArrayList<EditTextHolder> editTextHolders, int currentIndex, Context context){
+        if(!editTextHolder.isCasesField  && editTextHolder.textWatcher.hasChanged()
                 && !alertDialog.isShowing()){
-            showDeathsGreaterValidation(getCasesField(holders, currentIndex), holders.get(currentIndex), context);
+            showDeathsGreaterValidation(getCasesField(editTextHolders, currentIndex), editTextHolders.get(currentIndex), context);
         }
-        if(holder.textWatcher.hasChanged()  && Integer.parseInt(holder.editText.getText().toString()) > 0 ){
-            holder.textWatcher.setChanged(false);
+        if(editTextHolder.textWatcher.hasChanged()  && Integer.parseInt(editTextHolder.editText.getText().toString()) > 0 ){
+            editTextHolder.textWatcher.setChanged(false);
             if(IsCritical.check(field, context)){
-                showCriticalValidation(holder, context);
+                showCriticalValidation(editTextHolder, context);
             }
         }
     }
@@ -225,6 +221,7 @@ public class PosOrZeroIntegerRow2 implements Row {
                     dialogInterface.dismiss();
                 }
             });
+            alertDialog.setCanceledOnTouchOutside(false);
             if (!alertDialog.isShowing()) {
                 alertDialog.show();
             }
@@ -250,6 +247,7 @@ public class PosOrZeroIntegerRow2 implements Row {
                     dialogInterface.dismiss();
                 }
             });
+            criticalDiseaseAlertDialog.setCanceledOnTouchOutside(false);
             if (!criticalDiseaseAlertDialog.isShowing()) {
                 criticalDiseaseAlertDialog.show();
             }
@@ -285,7 +283,6 @@ public class PosOrZeroIntegerRow2 implements Row {
             holders.get(i).editText.setText(fields.get(i).getValue());
             holders.get(i).editText.setSelectAllOnFocus(true);
             holders.get(i).editText.clearFocus();
-
 
             IsDisabled.setEnabled(holders.get(i).editText, fields.get(i), view.getContext());
 

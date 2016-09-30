@@ -25,9 +25,9 @@ import java.util.Map;
  * Imports the diseases object in the diseases json file
  */
 public class DiseaseImporter {
-    public static final String ID = "id";
-    public static final String IS_CRITICAL_FIELD = "isCritical";
-    public static final String DISABLED_FIELDS = "disabledFields";
+    private static final String ID = "id";
+    private static final String IS_CRITICAL_FIELD = "isCritical";
+    private static final String DISABLED_FIELDS = "disabledFields";
 
 
     /**

@@ -26,23 +26,24 @@ public class AdditionalDiseasesFragment extends BottomSheetDialogFragment {
     private ArrayAdapter<String> adapter;
     private ArrayList<String> additionalDiseasesIds;
     private Map diseases;
-    private ArrayList<String> alreadyAdded;
+    private String alreadyAdded;
     @Override
     public void setupDialog(final Dialog dialog, int style) {
         super.setupDialog(dialog, style);
         View contentView = View.inflate(getContext(), R.layout.fragment_bottomsheet, null);
         dialog.setContentView(contentView);
 
-        alreadyAdded = (ArrayList<String>) getArguments().get("alreadyDisplayed");
+        alreadyAdded = getArguments().getString(DataEntryActivity.ALREADY_DISPLAYED);
+
 
 
         listview = (ListView) dialog.findViewById(R.id.additional_diseases_listview);
-        populateListview();
+        setupListView();
         setupListViewOnclickListener();
 
 
     }
-    private void populateListview(){
+    private void setupListView(){
         additionalDiseases = new ArrayList<>();
         additionalDiseasesIds = new ArrayList<>();
         diseases = DiseaseImporter.importDiseases(getContext());
@@ -50,7 +51,7 @@ public class AdditionalDiseasesFragment extends BottomSheetDialogFragment {
         assert diseases != null;
         for (Object key : diseases.keySet()) {
             Disease disease = (Disease) diseases.get(key);
-            if(disease.isAdditionalDisease() && !alreadyAdded.toString().contains(disease.getId())){
+            if(disease.isAdditionalDisease() && !alreadyAdded.contains(disease.getId())){
                 additionalDiseases.add(disease.getLabel().split("EIDSR-")[1]);
                 additionalDiseasesIds.add(disease.getId());
             }
@@ -68,7 +69,7 @@ public class AdditionalDiseasesFragment extends BottomSheetDialogFragment {
                 Disease disease = (Disease) diseases.get(additionalDiseasesIds.get(i));
 
                 dataEntryActivity.adapters.get(0).addItem(disease);
-                dataEntryActivity.addAdditionalDiseaseIdToList(disease.getId());
+                dataEntryActivity.addAdditionalDiseaseIdToList(disease.getId(), disease.getLabel());
                 dataEntryActivity.scrollToBottomOfListView();
                 dismiss();
 
