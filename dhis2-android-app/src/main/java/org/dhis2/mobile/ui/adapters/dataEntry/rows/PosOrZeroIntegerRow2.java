@@ -327,7 +327,7 @@ public class PosOrZeroIntegerRow2 implements Row {
     private void setupDeleteButton(View view){
         deleteButton = (Button) view.findViewById(R.id.delete_button);
         deleteButton.setVisibility(View.GONE);
-        if(IsAdditionalDisease.check3(field.getDataElement(), view.getContext())){
+        if(IsAdditionalDisease.check(field.getDataElement(), view.getContext())){
             deleteButton.setVisibility(View.VISIBLE);
         }
         deleteButton.setOnClickListener(new View.OnClickListener() {

@@ -35,12 +35,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.Button;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
-import org.dhis2.mobile.R;
 import org.dhis2.mobile.io.Constants;
 import org.dhis2.mobile.io.json.JsonHandler;
 import org.dhis2.mobile.io.json.ParsingException;
@@ -48,26 +46,17 @@ import org.dhis2.mobile.io.models.Field;
 import org.dhis2.mobile.io.models.Group;
 import org.dhis2.mobile.io.models.OptionSet;
 import org.dhis2.mobile.io.models.eidsr.Disease;
-import org.dhis2.mobile.processors.ReportUploadProcessor;
-import org.dhis2.mobile.ui.adapters.dataEntry.rows.AutoCompleteRow;
-import org.dhis2.mobile.ui.adapters.dataEntry.rows.BooleanRow;
-import org.dhis2.mobile.ui.adapters.dataEntry.rows.CheckBoxRow;
-import org.dhis2.mobile.ui.adapters.dataEntry.rows.DatePickerRow;
 import org.dhis2.mobile.ui.adapters.dataEntry.rows.GenderRow;
-import org.dhis2.mobile.ui.adapters.dataEntry.rows.IntegerRow;
-import org.dhis2.mobile.ui.adapters.dataEntry.rows.LongTextRow;
 import org.dhis2.mobile.ui.adapters.dataEntry.rows.NegativeIntegerRow;
-import org.dhis2.mobile.ui.adapters.dataEntry.rows.NumberRow;
 import org.dhis2.mobile.ui.adapters.dataEntry.rows.PosIntegerRow;
-import org.dhis2.mobile.ui.adapters.dataEntry.rows.PosOrZeroIntegerRow;
 import org.dhis2.mobile.ui.adapters.dataEntry.rows.PosOrZeroIntegerRow2;
 import org.dhis2.mobile.ui.adapters.dataEntry.rows.Row;
 import org.dhis2.mobile.ui.adapters.dataEntry.rows.RowTypes;
-import org.dhis2.mobile.ui.adapters.dataEntry.rows.TextRow;
 import org.dhis2.mobile.utils.IsAdditionalDisease;
 import org.dhis2.mobile.utils.TextFileUtils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 
 public class FieldAdapter extends BaseAdapter {
@@ -103,7 +92,7 @@ public class FieldAdapter extends BaseAdapter {
             } else if (field.getType().equals(RowTypes.INTEGER_ZERO_OR_POSITIVE.name())) {
                 //Changed from the others to support grouping of Diseases
                 //Specific test case for eidsr form
-                if(!field.getDataElement().equals(previousFieldId) && groupedFields.size() > 0 && !IsAdditionalDisease.check3(previousFieldId, context)){
+                if(!field.getDataElement().equals(previousFieldId) && groupedFields.size() > 0 && !IsAdditionalDisease.check(previousFieldId, context)){
                     //each disease has four fields.
                     //we create a row from the last for fields added
                     rows.add(new PosOrZeroIntegerRow2(inflater,
@@ -165,18 +154,6 @@ public class FieldAdapter extends BaseAdapter {
 
     @Override
     public View getView(final int position, final View convertView, final ViewGroup parent) {
-//        if(convertView!=null) {
-//            Button deleteButton = (Button) convertView.findViewById(R.id.delete_button);
-//            if (deleteButton != null) {
-//                deleteButton.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View view) {
-//                        rows.remove(position);
-//                        notifyDataSetChanged();
-//                    }
-//                });
-//            }
-//        }
         return rows.get(position).getView(convertView);
     }
 
@@ -202,27 +179,19 @@ public class FieldAdapter extends BaseAdapter {
 
     public void addItem(Disease disease) {
 
-        Field field = new Field();
-        field.setDataElement(disease.getId());
-        field.setLabel(disease.getLabel());
-        field.setCategoryOptionCombo(Constants.UNDER_FIVE_CASES);
+        ArrayList<Field> fields = this.group.getFields();
+        ArrayList<Field> additionalDiseaseFields = new ArrayList<>();
 
-        Field field2 = new Field();
-        field2.setDataElement(disease.getId());
-        field2.setLabel(disease.getLabel());
-        field2.setCategoryOptionCombo(Constants.UNDER_FIVE_DEATHS);
+        for(Field field: fields){
+            if(field.getDataElement().equals(disease.getId())){
+                additionalDiseaseFields.add(field);
+            }
+        }
 
-        Field field3 = new Field();
-        field3.setDataElement(disease.getId());
-        field3.setLabel(disease.getLabel());
-        field3.setCategoryOptionCombo(Constants.OVER_FIVE_CASES);
-
-        Field field4 = new Field();
-        field4.setDataElement(disease.getId());
-        field4.setLabel(disease.getLabel());
-        field4.setCategoryOptionCombo(Constants.OVER_FIVE_DEATHS);
-
-        this.rows.add(new PosOrZeroIntegerRow2(inflater, field, field2, field3, field4));
+        this.rows.add(new PosOrZeroIntegerRow2(inflater, additionalDiseaseFields.get(0),
+                additionalDiseaseFields.get(1),
+                additionalDiseaseFields.get(2),
+                additionalDiseaseFields.get(3)));
         notifyDataSetChanged();
     }
 

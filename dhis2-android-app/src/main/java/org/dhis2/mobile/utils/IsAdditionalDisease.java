@@ -15,27 +15,7 @@ import java.util.Map;
 
 public class IsAdditionalDisease {
 
-    public static void check(TextView textView, Field field, Context context){
-        Map diseases = DiseaseImporter.importDiseases(context);
-        assert diseases != null;
-        Disease disease = (Disease) diseases.get(field.getDataElement());
-        if(disease != null && disease.isAdditionalDisease()){
-            textView.setText(textView.getText()+" **");
-        }
-
-    }
-    public static Boolean check2( Field field, Context context){
-        Boolean isAdditional = false;
-        Map diseases = DiseaseImporter.importDiseases(context);
-        assert diseases != null;
-        Disease disease = (Disease) diseases.get(field.getDataElement());
-        if(disease != null && disease.isAdditionalDisease()){
-            isAdditional = true;
-        }
-        return isAdditional;
-    }
-
-    public static Boolean check3(String id, Context context){
+    public static Boolean check(String id, Context context){
         Boolean isAdditional = false;
         Map diseases = DiseaseImporter.importDiseases(context);
         assert diseases != null;
