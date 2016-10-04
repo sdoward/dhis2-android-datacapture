@@ -19,16 +19,18 @@ public class IsTimely {
     public IsTimely(){
 
     }
-    public static Boolean check(int period){
+    public static Boolean check(String period){
         Boolean timely = false;
 
+        int periodWeek = Integer.parseInt(period.substring(5));
+        int periodYear = Integer.parseInt(period.substring(0,5));
         int weekNumber = Calendar.getInstance().get(Calendar.WEEK_OF_YEAR);
         int currentDay = Calendar.getInstance().get(Calendar.DAY_OF_WEEK);
         int currentHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
+        int year = Calendar.getInstance().get(Calendar.YEAR);
 
-        if(period == weekNumber-1){
-            timely = true;
-        }else if(period == weekNumber -2 && currentDay == Calendar.MONDAY && currentHour < 12){
+
+        if(!(periodYear < year) &&  periodWeek == weekNumber -2 && currentDay == Calendar.MONDAY && currentHour < 12){
             timely = true;
         }
         return timely;

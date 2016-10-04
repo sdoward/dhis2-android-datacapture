@@ -118,10 +118,10 @@ public class ReportUploadProcessor {
         if(!IsTimely.hasBeenSet(groups)) {
             //Check whether the report was timely or not
             //substring is used so as to only get the week number
-            String period = info.getPeriod().substring(5);
-            Boolean isTimely = IsTimely.check(Integer.parseInt(period));
+            String period = info.getPeriod();
+            Boolean isTimely = IsTimely.check(period);
 
-            //Fill out timely dataElememt
+            //Fill out timely dataElement
             JsonObject jField = new JsonObject();
             jField.addProperty(Field.DATA_ELEMENT, Constants.TIMELY);
             jField.addProperty(Field.VALUE, isTimely);

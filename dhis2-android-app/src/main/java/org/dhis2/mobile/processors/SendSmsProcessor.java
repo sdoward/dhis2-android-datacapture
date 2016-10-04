@@ -40,9 +40,10 @@ public class SendSmsProcessor {
     public static void send (Context context, DatasetInfoHolder info, ArrayList<Group> groups){
         String data = prepareContent(groups);
         //insert destination number
+//        String jasper = "idsr afp1,1,nac2,6";
         sendSMS(context, Constants.SMS_NUMBER, data);
 
-        saveDataset(context, data, info);
+        //saveDataset(context, data, info);
 
 
     }
@@ -66,6 +67,8 @@ public class SendSmsProcessor {
                 }
             }
         }
+
+        message = message.substring(0, message.length() -1);
 
         return message;
     }

@@ -162,6 +162,11 @@ public class PosOrZeroIntegerRow2 implements Row {
                         setAutoZero(editTextHolders);
                         setupValidations(editTextHolders.get(finalI),editTextHolders, finalI, context);
                     }
+                    if(hasFocus && editTextHolders.get(finalI).editText.getText().toString().equals("0")){
+                        if (editTextHolders.get(finalI).editText.isEnabled()) {
+                            editTextHolders.get(finalI).editText.setText("");
+                        }
+                    }
                 }
             });
         }
@@ -176,6 +181,7 @@ public class PosOrZeroIntegerRow2 implements Row {
                 }
             }
     }
+
     private void setupValidations(EditTextHolder editTextHolder, final ArrayList<EditTextHolder> editTextHolders, int currentIndex, Context context){
         if(!editTextHolder.isCasesField  && editTextHolder.textWatcher.hasChanged()
                 && !alertDialog.isShowing()){
@@ -255,6 +261,14 @@ public class PosOrZeroIntegerRow2 implements Row {
 
     }
 
+    /**
+     * Rather than initializing everything line by line, the filters, holders and watchers are put in a list
+     * and iterated over initializing every editText and editTextHolder accordingly.
+     * @param editTexts ArrayList<EditText>
+     * @param fields ArrayList<Field>
+     * @param rowRoot ViewGroup
+     * @param holders ArrayList<EditTextHolder>
+     */
     private void initializeEditTextHolders(ArrayList<EditText> editTexts, ArrayList<Field> fields, ViewGroup rowRoot, final ArrayList<EditTextHolder> holders){
         TextView label = (TextView) rowRoot.findViewById(R.id.text_label);
         ArrayList<Integer> tagsIds = new ArrayList<>();
@@ -272,6 +286,14 @@ public class PosOrZeroIntegerRow2 implements Row {
         }
     }
 
+    /**
+     * Sets up the editTextHolders that have been initialized in an array list.
+     * It then iterates over the list and sets properties and checks accordingly.
+     * This is so we don't have repeating lines of code doing the same thing.
+     * @param holders ArrayList<EditTextHolder>
+     * @param fields ArrayList<Field>
+     * @param view View
+     */
     private void setupEditTextHolders(ArrayList<EditTextHolder> holders, ArrayList<Field> fields, View view){
         for(int i = 0; i < holders.size(); i++){
             String[] label = fields.get(i).getLabel().split(PREFIX);

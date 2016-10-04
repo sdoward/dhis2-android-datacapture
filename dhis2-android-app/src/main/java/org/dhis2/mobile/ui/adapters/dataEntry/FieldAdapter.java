@@ -91,15 +91,15 @@ public class FieldAdapter extends BaseAdapter {
             Field field = fields.get(i);
             if (field.hasOptionSet()) {
                 OptionSet optionSet = getOptionSet(context, field.getOptionSet());
-                rows.add(new AutoCompleteRow(inflater, field, optionSet, context));
+//                rows.add(new AutoCompleteRow(inflater, field, optionSet, context));
             } else if (field.getType().equals(RowTypes.TEXT.name())) {
-                rows.add(new TextRow(inflater, field));
+//                rows.add(new TextRow(inflater, field));
             } else if (field.getType().equals(RowTypes.LONG_TEXT.name())) {
-                rows.add(new LongTextRow(inflater, field));
+//                rows.add(new LongTextRow(inflater, field));
             } else if (field.getType().equals(RowTypes.NUMBER.name())) {
-                rows.add(new NumberRow(inflater, field));
+//                rows.add(new NumberRow(inflater, field));
             } else if (field.getType().equals(RowTypes.INTEGER.name())) {
-                rows.add(new IntegerRow(inflater, field));
+//                rows.add(new IntegerRow(inflater, field));
             } else if (field.getType().equals(RowTypes.INTEGER_ZERO_OR_POSITIVE.name())) {
                 //Changed from the others to support grouping of Diseases
                 //Specific test case for eidsr form
@@ -124,13 +124,13 @@ public class FieldAdapter extends BaseAdapter {
             } else if (field.getType().equals(RowTypes.INTEGER_NEGATIVE.name())) {
                 rows.add(new NegativeIntegerRow(inflater, field));
             } else if (field.getType().equals(RowTypes.BOOLEAN.name())) {
-                if(!field.getDataElement().equals(Constants.TIMELY)){
-                    rows.add(new BooleanRow(inflater, field));
-                }
+//                if(!field.getDataElement().equals(Constants.TIMELY)){
+//                    rows.add(new BooleanRow(inflater, field));
+//                }
             } else if (field.getType().equals(RowTypes.TRUE_ONLY.name())) {
-                rows.add(new CheckBoxRow(inflater, field));
+//                rows.add(new CheckBoxRow(inflater, field));
             } else if (field.getType().equals(RowTypes.DATE.name())) {
-                rows.add(new DatePickerRow(inflater, field, this, context));
+//                rows.add(new DatePickerRow(inflater, field, this, context));
             } else if (field.getType().equals(RowTypes.GENDER.name())) {
                 rows.add(new GenderRow(inflater, field));
             }

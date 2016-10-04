@@ -133,7 +133,7 @@ public class AggregateReportFragment extends Fragment
     @Override
     public void onLoadFinished(Loader<Picker> loader, Picker data) {
         pickerAdapterOne.swapData(data);
-        pickerAdapterOne.setItem(data);
+        pickerAdapterOne.selectFirstItem(data);
 
     }
 
