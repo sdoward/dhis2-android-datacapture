@@ -41,6 +41,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.dhis2.mobile.R;
@@ -271,6 +272,7 @@ public class PosOrZeroIntegerRow2 implements Row {
      */
     private void initializeEditTextHolders(ArrayList<EditText> editTexts, ArrayList<Field> fields, ViewGroup rowRoot, final ArrayList<EditTextHolder> holders){
         TextView label = (TextView) rowRoot.findViewById(R.id.text_label);
+
         ArrayList<Integer> tagsIds = new ArrayList<>();
         tagsIds.add(R.id.TAG_HOLDER1_ID);
         tagsIds.add(R.id.TAG_HOLDER2_ID);
