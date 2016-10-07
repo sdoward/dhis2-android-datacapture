@@ -60,6 +60,7 @@ public class PosOrZeroIntegerRow2 implements Row {
     private final Field field,field2, field3, field4;
     private AlertDialog alertDialog;
     private AlertDialog criticalDiseaseAlertDialog;
+    private IsCritical isCritical;
     private final String defaultValue = "0";
     private Button deleteButton;
 
@@ -106,6 +107,7 @@ public class PosOrZeroIntegerRow2 implements Row {
 
             alertDialog = new AlertDialog.Builder(view.getContext()).create();
             criticalDiseaseAlertDialog = new AlertDialog.Builder(view.getContext()).create();
+            isCritical = new IsCritical(view.getContext());
         } else {
             view = convertView;
 
@@ -116,6 +118,7 @@ public class PosOrZeroIntegerRow2 implements Row {
 
             alertDialog = new AlertDialog.Builder(view.getContext()).create();
             criticalDiseaseAlertDialog = new AlertDialog.Builder(view.getContext()).create();
+            isCritical = new IsCritical(view.getContext());
         }
 
 
@@ -189,7 +192,7 @@ public class PosOrZeroIntegerRow2 implements Row {
         }
         if(editTextHolder.textWatcher.hasChanged()  && Integer.parseInt(editTextHolder.editText.getText().toString()) > 0 ){
             editTextHolder.textWatcher.setChanged(false);
-            if(IsCritical.check(field, context)){
+            if(isCritical.check(field)){
                 showCriticalValidation(editTextHolder, context);
             }
         }
@@ -214,7 +217,7 @@ public class PosOrZeroIntegerRow2 implements Row {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int position) {
                     dialogInterface.dismiss();
-                    if(IsCritical.check(field, context)){
+                    if(isCritical.check(field)){
                         showCriticalValidation(deathsEditTextHolder, context);
                     }
                 }
