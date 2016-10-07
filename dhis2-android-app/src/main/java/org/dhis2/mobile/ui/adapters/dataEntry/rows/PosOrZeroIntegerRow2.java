@@ -32,7 +32,9 @@ package org.dhis2.mobile.ui.adapters.dataEntry.rows;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.graphics.drawable.DrawableWrapper;
 import android.support.v7.app.AlertDialog;
 import android.text.InputFilter;
 import android.text.Spanned;
@@ -58,21 +60,23 @@ public class PosOrZeroIntegerRow2 implements Row {
     public static final String PREFIX = " EIDSR-";
     private final LayoutInflater inflater;
     private final Field field,field2, field3, field4;
+    private final Boolean isCriticalDisease;
     private AlertDialog alertDialog;
     private AlertDialog criticalDiseaseAlertDialog;
-    private IsCritical isCritical;
     private final String defaultValue = "0";
     private Button deleteButton;
 
 
 
-    public PosOrZeroIntegerRow2(LayoutInflater inflater, Field field, Field field2, Field field3, Field field4) {
+    public PosOrZeroIntegerRow2(LayoutInflater inflater, ArrayList<Field> fields , Boolean isCritical) {
         this.inflater = inflater;
-        this.field = field;
-        this.field2 = field2;
-        this.field3 = field3;
-        this.field4 = field4;
+        this.field = fields.get(fields.size()-4);
+        this.field2 = fields.get(fields.size()-3);
+        this.field3 = fields.get(fields.size()-2);
+        this.field4 = fields.get(fields.size()-1);
+        this.isCriticalDisease = isCritical;
     }
+
 
     @Override
     public View getView(View convertView) {
@@ -107,7 +111,6 @@ public class PosOrZeroIntegerRow2 implements Row {
 
             alertDialog = new AlertDialog.Builder(view.getContext()).create();
             criticalDiseaseAlertDialog = new AlertDialog.Builder(view.getContext()).create();
-            isCritical = new IsCritical(view.getContext());
         } else {
             view = convertView;
 
@@ -118,7 +121,6 @@ public class PosOrZeroIntegerRow2 implements Row {
 
             alertDialog = new AlertDialog.Builder(view.getContext()).create();
             criticalDiseaseAlertDialog = new AlertDialog.Builder(view.getContext()).create();
-            isCritical = new IsCritical(view.getContext());
         }
 
 
@@ -192,23 +194,16 @@ public class PosOrZeroIntegerRow2 implements Row {
         }
         if(editTextHolder.textWatcher.hasChanged()  && Integer.parseInt(editTextHolder.editText.getText().toString()) > 0 ){
             editTextHolder.textWatcher.setChanged(false);
-            if(isCritical.check(field)){
+            if(isCriticalDisease){
                 showCriticalValidation(editTextHolder, context);
             }
         }
     }
     private void showDeathsGreaterValidation(EditTextHolder casesEditTextHolder, final EditTextHolder deathsEditTextHolder, final Context context){
         int deaths, cases;
-        if (deathsEditTextHolder.editText.getText().toString().equals("")){
-            deaths = 0;
-        }else{
-            deaths = Integer.parseInt(deathsEditTextHolder.editText.getText().toString());
-        }
-        if(casesEditTextHolder.editText.getText().toString().equals("")) {
-            cases = 0;
-        }else{
-            cases = Integer.parseInt(casesEditTextHolder.editText.getText().toString());
-        }
+        deaths = getValueFromEditText(deathsEditTextHolder.editText);
+        cases = getValueFromEditText(casesEditTextHolder.editText);
+
         if(deaths > cases){
 
             alertDialog.setTitle(context.getString(R.string.validation_alert_dialog_title));
@@ -217,7 +212,7 @@ public class PosOrZeroIntegerRow2 implements Row {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int position) {
                     dialogInterface.dismiss();
-                    if(isCritical.check(field)){
+                    if(isCriticalDisease){
                         showCriticalValidation(deathsEditTextHolder, context);
                     }
                 }
@@ -315,6 +310,8 @@ public class PosOrZeroIntegerRow2 implements Row {
 
             IsDisabled.setEnabled(holders.get(i).editText, fields.get(i), view.getContext());
 
+            setIsCriticalIcon(holders.get(i));
+
         }
     }
 
@@ -347,4 +344,26 @@ public class PosOrZeroIntegerRow2 implements Row {
         });
 
     }
+
+    private int getValueFromEditText(EditText editText){
+        int value;
+
+        if(editText.getText().toString().equals("")) {
+            value = 0;
+        }else{
+            value = Integer.parseInt(editText.getText().toString());
+        }
+
+        return value;
+    }
+
+    private void setIsCriticalIcon(EditTextHolder holder){
+        if(this.isCriticalDisease){
+            holder.textLabel.setCompoundDrawablesWithIntrinsicBounds(0,0,R.drawable.ic_report_teal_24dp, 0);
+        }else{
+            holder.textLabel.setCompoundDrawablesWithIntrinsicBounds(0,0,0, 0);
+        }
+    }
+
+
 }

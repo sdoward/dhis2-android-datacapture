@@ -53,6 +53,7 @@ import org.dhis2.mobile.ui.adapters.dataEntry.rows.PosOrZeroIntegerRow2;
 import org.dhis2.mobile.ui.adapters.dataEntry.rows.Row;
 import org.dhis2.mobile.ui.adapters.dataEntry.rows.RowTypes;
 import org.dhis2.mobile.utils.IsAdditionalDisease;
+import org.dhis2.mobile.utils.IsCritical;
 import org.dhis2.mobile.utils.TextFileUtils;
 
 import java.util.ArrayList;
@@ -65,7 +66,7 @@ public class FieldAdapter extends BaseAdapter {
     private final Group group;
     private LayoutInflater inflater;
     private ArrayList<Field> groupedFields;
-    private ArrayList<String> ids = new ArrayList<>();
+    private IsCritical isCriticalDisease;
 
     public FieldAdapter(Group group, Context context) {
         ArrayList<Field> fields = group.getFields();
@@ -76,6 +77,7 @@ public class FieldAdapter extends BaseAdapter {
         this.rows = new ArrayList<Row>();
         this.adapterLabel = group.getLabel();
         inflater = LayoutInflater.from(context);
+        isCriticalDisease = new IsCritical(context);
         for (int i = 0; i < fields.size(); i++) {
             Field field = fields.get(i);
             if (field.hasOptionSet()) {
@@ -96,12 +98,9 @@ public class FieldAdapter extends BaseAdapter {
                     //each disease has four fields.
                     //we create a row from the last for fields added
                     rows.add(new PosOrZeroIntegerRow2(inflater,
-                            groupedFields.get(groupedFields.size()-4),
-                            groupedFields.get(groupedFields.size()-3),
-                            groupedFields.get(groupedFields.size()-2),
-                            groupedFields.get(groupedFields.size()-1)));
-
-
+                                groupedFields,
+                                isCriticalDisease.check(groupedFields.get(groupedFields.size()-1))
+                                ));
 
                 }
                 groupedFields.add(field);
@@ -188,10 +187,7 @@ public class FieldAdapter extends BaseAdapter {
             }
         }
 
-        this.rows.add(new PosOrZeroIntegerRow2(inflater, additionalDiseaseFields.get(0),
-                additionalDiseaseFields.get(1),
-                additionalDiseaseFields.get(2),
-                additionalDiseaseFields.get(3)));
+        this.rows.add(new PosOrZeroIntegerRow2(inflater, additionalDiseaseFields, false));
         notifyDataSetChanged();
     }
 
