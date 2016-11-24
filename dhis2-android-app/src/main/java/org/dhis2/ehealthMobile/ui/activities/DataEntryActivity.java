@@ -1,6 +1,5 @@
 package org.dhis2.ehealthMobile.ui.activities;
 
-import android.animation.LayoutTransition;
 import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
@@ -10,7 +9,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
@@ -22,7 +20,6 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.AppCompatSpinner;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -37,7 +34,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -58,6 +54,7 @@ import org.dhis2.ehealthMobile.network.HTTPClient;
 import org.dhis2.ehealthMobile.network.NetworkUtils;
 import org.dhis2.ehealthMobile.network.Response;
 import org.dhis2.ehealthMobile.processors.CompulsoryDataProcessor;
+import org.dhis2.ehealthMobile.processors.ReportUploadProcessor;
 import org.dhis2.ehealthMobile.processors.SubmissionDetailsProcessor;
 import org.dhis2.ehealthMobile.ui.adapters.dataEntry.FieldAdapter;
 import org.dhis2.ehealthMobile.ui.adapters.dataEntry.rows.PosOrZeroIntegerRow2;
@@ -244,6 +241,10 @@ public class DataEntryActivity extends BaseActivity implements LoaderManager.Loa
 
     @Override
     public void onLoaderReset(Loader<Form> loader) {
+    }
+
+    private void restartLoader(){
+        getSupportLoaderManager().restartLoader(LOADER_FORM_ID, null, this).forceLoad();
     }
 
     private void setupToolbar() {
@@ -458,7 +459,6 @@ public class DataEntryActivity extends BaseActivity implements LoaderManager.Loa
 
             // we need to check if connection is there first
             if (NetworkUtils.checkConnection(this)) {
-                getLatestValues();
                 getCompulsoryData();
                 getCompletionDate();
             }else{
@@ -488,7 +488,7 @@ public class DataEntryActivity extends BaseActivity implements LoaderManager.Loa
     }
 
     private void showProgressBar() {
-        ViewUtils.hideAndDisableViews(persistentButtonsFooter, uploadButton, dataEntryListView);
+        ViewUtils.hideAndDisableViews(persistentButtonsFooter, uploadButton, dataEntryListView,submissionDetailsLayout);
         ViewUtils.enableViews(progressBarLayout);
     }
 
@@ -587,6 +587,7 @@ public class DataEntryActivity extends BaseActivity implements LoaderManager.Loa
         if(isInvalidForm(groups)){
             showCompulsoryFieldsDialog();
         }else {
+            removeInProgressDataset(getApplicationContext(), info);
             startService(intent);
             finish();
         }
@@ -606,8 +607,6 @@ public class DataEntryActivity extends BaseActivity implements LoaderManager.Loa
     }
 
     private void getLatestValues() {
-        // this should be one operation (instead of two)
-        showProgressBar();
 
         DatasetInfoHolder info = getIntent().getExtras()
                 .getParcelable(DatasetInfoHolder.TAG);
@@ -629,6 +628,7 @@ public class DataEntryActivity extends BaseActivity implements LoaderManager.Loa
     }
 
     private void getCompletionDate(){
+        showProgressBar();
         DatasetInfoHolder info = getIntent().getExtras()
                 .getParcelable(DatasetInfoHolder.TAG);
 
@@ -662,6 +662,13 @@ public class DataEntryActivity extends BaseActivity implements LoaderManager.Loa
                         loadGroupsIntoAdapters(form.getGroups());
                         handleSubmissionDetails(form.getGroups());
                         setupCommentRowAsFooter(form);
+                        DatasetInfoHolder info = getIntent().getExtras()
+                                .getParcelable(DatasetInfoHolder.TAG);
+                        String key = DatasetInfoHolder.buildKey(info);
+                        if(TextFileUtils.doesFileExist(
+                                getApplicationContext(), TextFileUtils.Directory.IN_PROGRESS_DATASETS, key)){
+                            removeInProgressDataset(getApplicationContext(), info);
+                        }
                     }
                 }
 
@@ -672,6 +679,11 @@ public class DataEntryActivity extends BaseActivity implements LoaderManager.Loa
                 if (intent.getExtras().containsKey(SubmissionDetailsProcessor.SUBMISSION_DETAILS)) {
                     if(intent.getExtras().getString(SubmissionDetailsProcessor.SUBMISSION_DETAILS) != null){
                         handleCompletionDate(intent.getExtras().getString(SubmissionDetailsProcessor.SUBMISSION_DETAILS));
+                        //Get form values if it has a completed date.
+                        getLatestValues();
+                    }else{
+                        //Without completion date restart the data loader to load either an empty, in progress or offline form
+                        restartLoader();
                     }
                 }
             }
@@ -779,6 +791,14 @@ public class DataEntryActivity extends BaseActivity implements LoaderManager.Loa
                 return null;
             }
 
+            if(TextFileUtils.doesFileExist(getContext(), TextFileUtils.Directory.IN_PROGRESS_DATASETS, reportKey)){
+                String report = TextFileUtils.readTextFile(getContext(), TextFileUtils.Directory.IN_PROGRESS_DATASETS, reportKey);
+
+                if(!isEmpty(report)){
+                    return report;
+                }
+            }
+
             if (TextFileUtils.doesFileExist(
                     getContext(), TextFileUtils.Directory.OFFLINE_DATASETS, reportKey)) {
                 String report = TextFileUtils.readTextFile(
@@ -841,7 +861,6 @@ public class DataEntryActivity extends BaseActivity implements LoaderManager.Loa
         DateTimeFormatter dateTimeFormatter = DateTimeFormat.mediumDate();
         String text = getResources().getString(R.string.completion_date_prefix) +" "+ dateTime.toString(dateTimeFormatter);
         completionDate.setText(text);
-
     }
 
     private void handleSubmissionDetails(ArrayList<Group> groups){
@@ -930,4 +949,49 @@ public class DataEntryActivity extends BaseActivity implements LoaderManager.Loa
         }
         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+
+        ArrayList<Group> groups = new ArrayList<>();
+        if(adapters != null) {
+            for (FieldAdapter adapter : adapters) {
+                groups.add(adapter.getGroup());
+            }
+            //Add the comment in list view footer to group data.
+            addFooterCommentToGroup(groups.get(0));
+            DatasetInfoHolder info = getIntent().getExtras()
+                    .getParcelable(DatasetInfoHolder.TAG);
+
+            if(!isFormBlank(groups)){
+                String data = ReportUploadProcessor.prepareContent(info, groups);
+                saveInProgressDataset(getApplicationContext(), data, info);
+            }
+        }
+    }
+
+    private void saveInProgressDataset(Context context, String data, DatasetInfoHolder info) {
+        String key = DatasetInfoHolder.buildKey(info);
+        TextFileUtils.writeTextFile(context, TextFileUtils.Directory.IN_PROGRESS_DATASETS, key, data);
+    }
+
+    private void removeInProgressDataset(Context context, DatasetInfoHolder info){
+        String key = DatasetInfoHolder.buildKey(info);
+        TextFileUtils.removeFile(context, TextFileUtils.Directory.IN_PROGRESS_DATASETS, key);
+    }
+
+    private Boolean isFormBlank(ArrayList<Group> groups){
+
+        for(Group group: groups){
+            for(Field field: group.getFields()){
+                if(!field.getValue().equals("")){
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
 }

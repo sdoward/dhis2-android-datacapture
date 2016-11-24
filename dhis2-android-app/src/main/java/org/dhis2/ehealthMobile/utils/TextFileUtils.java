@@ -49,6 +49,7 @@ public final class TextFileUtils {
         ROOT(""),
         DATASETS("datasets"),
         OFFLINE_DATASETS("offlineDatasets"),
+        IN_PROGRESS_DATASETS("inProgressDatasets"),
         OPTION_SETS("optionSets");
 
         private String directory;
@@ -159,6 +160,12 @@ public final class TextFileUtils {
     public static void removeFile(Context context, Directory dir, FileNames fileName) {
         String path = getDirectoryPath(context, dir);
         File file = new File(path, fileName.toString());
+        removeFile(file);
+    }
+
+    public static void removeFile(Context context, Directory dir, String fileName) {
+        String path = getDirectoryPath(context, dir);
+        File file = new File(path, fileName);
         removeFile(file);
     }
 
