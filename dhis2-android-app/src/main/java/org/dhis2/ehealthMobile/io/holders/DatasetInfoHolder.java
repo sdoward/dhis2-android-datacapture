@@ -106,7 +106,7 @@ public class DatasetInfoHolder extends BaseFormInfoHolder {
         return categoryOptions;
     }
 
-    public static String buildKey(DatasetInfoHolder info) {
+    public static String getSubmissionKey(DatasetInfoHolder info) {
         List<String> options = new ArrayList<>();
 
         if (info.getCategoryOptions() != null && !info.getCategoryOptions().isEmpty()) {

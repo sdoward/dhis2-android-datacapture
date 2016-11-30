@@ -662,7 +662,7 @@ public class DataEntryActivity extends BaseActivity implements LoaderManager.Loa
                         setupCommentRowAsFooter(form);
                         DatasetInfoHolder info = getIntent().getExtras()
                                 .getParcelable(DatasetInfoHolder.TAG);
-                        String key = DatasetInfoHolder.buildKey(info);
+                        String key = DatasetInfoHolder.getSubmissionKey(info);
                         if(TextFileUtils.doesFileExist(
                                 getApplicationContext(), TextFileUtils.Directory.IN_PROGRESS_DATASETS, key)){
                             removeInProgressDataset(getApplicationContext(), info);
@@ -742,7 +742,7 @@ public class DataEntryActivity extends BaseActivity implements LoaderManager.Loa
                 return;
             }
 
-            String reportKey = DatasetInfoHolder.buildKey(infoHolder);
+            String reportKey = DatasetInfoHolder.getSubmissionKey(infoHolder);
             if (isEmpty(reportKey)) {
                 return;
             }
@@ -970,12 +970,12 @@ public class DataEntryActivity extends BaseActivity implements LoaderManager.Loa
     }
 
     private void saveInProgressDataset(Context context, String data, DatasetInfoHolder info) {
-        String key = DatasetInfoHolder.buildKey(info);
+        String key = DatasetInfoHolder.getSubmissionKey(info);
         TextFileUtils.writeTextFile(context, TextFileUtils.Directory.IN_PROGRESS_DATASETS, key, data);
     }
 
     private void removeInProgressDataset(Context context, DatasetInfoHolder info){
-        String key = DatasetInfoHolder.buildKey(info);
+        String key = DatasetInfoHolder.getSubmissionKey(info);
         TextFileUtils.removeFile(context, TextFileUtils.Directory.IN_PROGRESS_DATASETS, key);
     }
 
