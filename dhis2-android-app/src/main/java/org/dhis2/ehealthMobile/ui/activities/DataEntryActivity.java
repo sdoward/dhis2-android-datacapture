@@ -561,18 +561,16 @@ public class DataEntryActivity extends BaseActivity implements LoaderManager.Loa
             return;
         }
 
+        ArrayList<Group> groups = new ArrayList<>();
+        for (FieldAdapter adapter : adapters) {
+            groups.add(adapter.getGroup());
+        }
 
+        //Add the comment in list view footer to group data.
+        addFooterCommentToGroup(groups.get(0));
 
-            ArrayList<Group> groups = new ArrayList<>();
-            for (FieldAdapter adapter : adapters) {
-                groups.add(adapter.getGroup());
-            }
-
-            //Add the comment in list view footer to group data.
-            addFooterCommentToGroup(groups.get(0));
-
-            DatasetInfoHolder info = getIntent().getExtras()
-                    .getParcelable(DatasetInfoHolder.TAG);
+        DatasetInfoHolder info = getIntent().getExtras()
+                .getParcelable(DatasetInfoHolder.TAG);
 
         Intent intent = new Intent(this, WorkService.class);
         //Check if network is available. If not send via sms or else just upload via internet
