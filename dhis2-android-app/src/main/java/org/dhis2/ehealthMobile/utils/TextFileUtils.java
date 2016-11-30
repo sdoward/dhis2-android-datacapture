@@ -64,10 +64,6 @@ public final class TextFileUtils {
         }
     }
 
-    public static String readTextFile(Context context, Directory dir, FileNames name) {
-        return readTextFile(context, dir, name.toString());
-    }
-
     /**
      * Reads text file and returns string.
      * <p/>
@@ -110,10 +106,6 @@ public final class TextFileUtils {
             e.printStackTrace();
             throw new RuntimeException(file.getName() + " IOException");
         }
-    }
-
-    public static void writeTextFile(Context context, Directory dir, FileNames name, String data) {
-        writeTextFile(context, dir, name.toString(), data);
     }
 
     /**
@@ -163,19 +155,13 @@ public final class TextFileUtils {
         removeFile(file);
     }
 
-    public static void removeFile(Context context, Directory dir, String fileName) {
-        String path = getDirectoryPath(context, dir);
-        File file = new File(path, fileName);
-        removeFile(file);
-    }
-
     public static void removeFile(File file) {
         if (file.exists()) {
             file.delete();
         }
     }
 
-    public static void removeDirectory(Context context, Directory dir) {
+    private static void removeDirectory(Context context, Directory dir) {
         if (Directory.ROOT == dir) {
             Log.e(TAG, "Can't remove application's diretory");
             return;
@@ -194,7 +180,7 @@ public final class TextFileUtils {
      * Erases all files from FileNames list
      * <p/>
      *
-     * @param context
+     * @param context Context
      */
     public static void eraseData(Context context) {
         for (Directory dir : Directory.values()) {
@@ -205,13 +191,9 @@ public final class TextFileUtils {
         }
     }
 
-    public static boolean doesFileExist(Context context, Directory dir, FileNames name) {
-        return doesFileExist(context, dir, name.toString());
+    public static File findFile(Context context, Directory dir, String name) {
+        String path = getDirectoryPath(context, dir);
+        return new File(path, name);
     }
 
-    public static boolean doesFileExist(Context context, Directory dir, String name) {
-        String path = getDirectoryPath(context, dir);
-        File file = new File(path, name);
-        return file.exists();
-    }
 }

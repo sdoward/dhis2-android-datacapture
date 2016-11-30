@@ -53,7 +53,6 @@ import com.google.gson.JsonParser;
 import org.dhis2.ehealthMobile.R;
 import org.dhis2.ehealthMobile.WorkService;
 import org.dhis2.ehealthMobile.io.handlers.UserAccountHandler;
-import org.dhis2.ehealthMobile.io.holders.DatasetInfoHolder;
 import org.dhis2.ehealthMobile.ui.fragments.AggregateReportFragment;
 import org.dhis2.ehealthMobile.ui.fragments.MyProfileFragment;
 import org.dhis2.ehealthMobile.utils.LetterAvatar;
@@ -180,7 +179,7 @@ public class MenuActivity extends BaseActivity implements OnNavigationItemSelect
         username.setText(PrefUtils.getUserName(getApplicationContext()));
         String userAccountDetails = TextFileUtils.readTextFile(getApplicationContext(),
                 TextFileUtils.Directory.ROOT,
-                TextFileUtils.FileNames.ACCOUNT_INFO);
+                TextFileUtils.FileNames.ACCOUNT_INFO.toString());
         //Initial(s) used if user account details is unavailable
         String initials = getFirstLetterInUpperCase(username.getText().toString());
 

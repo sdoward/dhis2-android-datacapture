@@ -68,6 +68,7 @@ import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -665,8 +666,8 @@ public class DataEntryActivity extends BaseActivity implements LoaderManager.Loa
                         DatasetInfoHolder info = getIntent().getExtras()
                                 .getParcelable(DatasetInfoHolder.TAG);
                         String key = DatasetInfoHolder.buildKey(info);
-                        if(TextFileUtils.doesFileExist(
-                                getApplicationContext(), TextFileUtils.Directory.IN_PROGRESS_DATASETS, key)){
+                        if(TextFileUtils.findFile(
+                                getApplicationContext(), TextFileUtils.Directory.IN_PROGRESS_DATASETS, key).exists()){
                             removeInProgressDataset(getApplicationContext(), info);
                         }
                     }
@@ -711,8 +712,8 @@ public class DataEntryActivity extends BaseActivity implements LoaderManager.Loa
 
         @Override
         public Form loadInBackground() {
-            if (infoHolder.getFormId() != null && TextFileUtils.doesFileExist(
-                    getContext(), TextFileUtils.Directory.DATASETS, infoHolder.getFormId())) {
+            if (infoHolder.getFormId() != null && TextFileUtils.findFile(
+                    getContext(), TextFileUtils.Directory.DATASETS, infoHolder.getFormId()).exists()) {
                 Form form = loadForm();
 
                 // try to fit values
@@ -791,22 +792,16 @@ public class DataEntryActivity extends BaseActivity implements LoaderManager.Loa
                 return null;
             }
 
-            if(TextFileUtils.doesFileExist(getContext(), TextFileUtils.Directory.IN_PROGRESS_DATASETS, reportKey)){
-                String report = TextFileUtils.readTextFile(getContext(), TextFileUtils.Directory.IN_PROGRESS_DATASETS, reportKey);
+            File progressFile = TextFileUtils.findFile(getContext(), TextFileUtils.Directory.IN_PROGRESS_DATASETS, reportKey);
 
-                if(!isEmpty(report)){
-                    return report;
-                }
+            if(progressFile.exists()){
+                return TextFileUtils.readTextFile(progressFile);
             }
 
-            if (TextFileUtils.doesFileExist(
-                    getContext(), TextFileUtils.Directory.OFFLINE_DATASETS, reportKey)) {
-                String report = TextFileUtils.readTextFile(
-                        getContext(), TextFileUtils.Directory.OFFLINE_DATASETS, reportKey);
 
-                if (!isEmpty(report)) {
-                    return report;
-                }
+            File offlineDatasetFile = TextFileUtils.findFile(getContext(), TextFileUtils.Directory.OFFLINE_DATASETS, reportKey);
+            if (offlineDatasetFile.exists()) {
+                return TextFileUtils.readTextFile(offlineDatasetFile);
             }
 
             return null;
@@ -978,7 +973,8 @@ public class DataEntryActivity extends BaseActivity implements LoaderManager.Loa
 
     private void removeInProgressDataset(Context context, DatasetInfoHolder info){
         String key = DatasetInfoHolder.buildKey(info);
-        TextFileUtils.removeFile(context, TextFileUtils.Directory.IN_PROGRESS_DATASETS, key);
+        File file = TextFileUtils.findFile(getApplicationContext(), TextFileUtils.Directory.IN_PROGRESS_DATASETS, key);
+        TextFileUtils.removeFile(file);
     }
 
     private Boolean isFormBlank(ArrayList<Group> groups){

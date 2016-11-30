@@ -68,7 +68,7 @@ public class OfflineDataProcessor {
             String creds = PrefUtils.getCredentials(context);
             String accInfo = TextFileUtils.readTextFile(context,
                     TextFileUtils.Directory.ROOT,
-                    TextFileUtils.FileNames.ACCOUNT_INFO);
+                    TextFileUtils.FileNames.ACCOUNT_INFO.toString());
             Response resp = HTTPClient.post(url, creds, accInfo);
             if (!HTTPClient.isError(resp.getCode())) {
                 PrefUtils.setAccountUpdateFlag(context, false);

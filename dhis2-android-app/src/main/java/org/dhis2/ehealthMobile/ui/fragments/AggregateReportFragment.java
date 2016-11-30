@@ -582,10 +582,10 @@ public class AggregateReportFragment extends Fragment
         @Override
         public Picker loadInBackground() {
             String jSourceUnits;
-            if (TextFileUtils.doesFileExist(getContext(), TextFileUtils.Directory.ROOT,
-                    TextFileUtils.FileNames.ORG_UNITS_WITH_DATASETS)) {
+            if (TextFileUtils.findFile(getContext(), TextFileUtils.Directory.ROOT,
+                    TextFileUtils.FileNames.ORG_UNITS_WITH_DATASETS.toString()).exists()) {
                 jSourceUnits = TextFileUtils.readTextFile(getContext(), TextFileUtils.Directory.ROOT,
-                        TextFileUtils.FileNames.ORG_UNITS_WITH_DATASETS);
+                        TextFileUtils.FileNames.ORG_UNITS_WITH_DATASETS.toString());
             } else {
                 return null;
             }

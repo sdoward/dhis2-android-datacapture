@@ -74,7 +74,7 @@ public class LoginProcessor {
         if (!HTTPClient.isError(resp.getCode())) {
             PrefUtils.initAppData(context, creds, username, url);
             TextFileUtils.writeTextFile(context, TextFileUtils.Directory.ROOT,
-                    TextFileUtils.FileNames.ACCOUNT_INFO, resp.getBody());
+                    TextFileUtils.FileNames.ACCOUNT_INFO.toString(), resp.getBody());
         }
 
         // Sending result back to activity

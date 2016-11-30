@@ -134,7 +134,7 @@ public class MyProfileFragment extends Fragment implements LoaderManager.LoaderC
         public Group loadInBackground() {
             String info = TextFileUtils.readTextFile(getContext(),
                     Directory.ROOT,
-                    FileNames.ACCOUNT_INFO);
+                    FileNames.ACCOUNT_INFO.toString());
 
             ArrayList<Field> fields = UserAccountHandler.toFields(getContext(), info);
 
