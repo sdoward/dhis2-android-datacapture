@@ -1,6 +1,5 @@
 package org.dhis2.ehealthMobile.ui.activities;
 
-import android.animation.LayoutTransition;
 import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
@@ -10,7 +9,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
@@ -22,7 +20,6 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.AppCompatSpinner;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -37,7 +34,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -862,16 +858,14 @@ public class DataEntryActivity extends BaseActivity implements LoaderManager.Loa
             }
         }
 
-        assert isTimely != null;
         //Timely value not stored as boolean for some reason even though the data element is type boolean ¯\_(ツ)_/¯
-        if(isTimely.equals("true")){
+        if(isTimely != null && isTimely.equals("true")){
             isTimelyIcon.setImageDrawable(isTimelyDrawable);
         }else{
             isTimelyIcon.setImageDrawable(notTimelyDrawable);
         }
 
-        assert submissionMethodValue != null;
-        if(!submissionMethodValue.equals("")){
+        if(submissionMethodValue != null && !submissionMethodValue.equals("")){
             submissionMethodText = getString(R.string.submission_method_prefix)+" "+submissionMethodValue;
             submissionMethod.setText(submissionMethodText);
         }else{

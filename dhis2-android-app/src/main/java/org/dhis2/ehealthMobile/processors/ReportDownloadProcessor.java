@@ -46,6 +46,7 @@ import org.dhis2.ehealthMobile.network.HTTPClient;
 import org.dhis2.ehealthMobile.network.Response;
 import org.dhis2.ehealthMobile.network.URLConstants;
 import org.dhis2.ehealthMobile.ui.activities.DataEntryActivity;
+import org.dhis2.ehealthMobile.utils.FormUtils;
 import org.dhis2.ehealthMobile.utils.PrefUtils;
 
 import java.util.ArrayList;
@@ -73,6 +74,7 @@ public class ReportDownloadProcessor {
         Form form = null;
         if (response.getCode() >= 200 && response.getCode() < 300) {
             form = parseForm(response.getBody());
+            form = FormUtils.squashFormGroups(form);
         }
 
         Intent intent = new Intent(DataEntryActivity.TAG);
@@ -130,4 +132,5 @@ public class ReportDownloadProcessor {
 
         return null;
     }
+
 }
