@@ -53,7 +53,6 @@ import org.dhis2.ehealthMobile.io.models.Group;
 import org.dhis2.ehealthMobile.network.HTTPClient;
 import org.dhis2.ehealthMobile.network.NetworkUtils;
 import org.dhis2.ehealthMobile.network.Response;
-import org.dhis2.ehealthMobile.processors.CompulsoryDataProcessor;
 import org.dhis2.ehealthMobile.processors.SubmissionDetailsProcessor;
 import org.dhis2.ehealthMobile.ui.adapters.dataEntry.FieldAdapter;
 import org.dhis2.ehealthMobile.ui.adapters.dataEntry.rows.PosOrZeroIntegerRow2;
@@ -157,7 +156,7 @@ public class DataEntryActivity extends BaseActivity implements LoaderManager.Loa
         setupAddDiseaseBtn();
         setupDeleteDialog();
         setupCompulsoryFieldsDialog();
-        isDisabled = new IsDisabled(getApplicationContext());
+        isDisabled = new IsDisabled(getApplicationContext(), infoHolder);
         setupSubmissionDetailsViews();
 
         // let's try to get latest values from API
@@ -341,6 +340,8 @@ public class DataEntryActivity extends BaseActivity implements LoaderManager.Loa
     }
 
     private void setupAddDiseaseBtn(){
+        final DatasetInfoHolder info = getIntent().getExtras()
+                .getParcelable(DatasetInfoHolder.TAG);
         addDiseaseButton = findViewById(R.id.add_button);
         addDiseaseButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -348,6 +349,7 @@ public class DataEntryActivity extends BaseActivity implements LoaderManager.Loa
                 AdditionalDiseasesFragment additionalDiseasesFragment = new AdditionalDiseasesFragment();
                 Bundle args = new Bundle();
                 args.putString(ALREADY_DISPLAYED, additionalDiseaseIds.keySet().toString());
+                args.putString(Form.TAG, info.getFormId());
                 additionalDiseasesFragment.setArguments(args);
                 additionalDiseasesFragment.show(getSupportFragmentManager(), TAG);
 
@@ -455,11 +457,11 @@ public class DataEntryActivity extends BaseActivity implements LoaderManager.Loa
             // we need to check if connection is there first
             if (NetworkUtils.checkConnection(this)) {
                 getLatestValues();
-                getCompulsoryData();
                 getCompletionDate();
-            }else{
-                compulsoryData = PrefUtils.getCompulsoryData(getApplicationContext(), infoHolder.getFormId());
             }
+
+            compulsoryData = PrefUtils.getCompulsoryDiseases(getApplicationContext(), infoHolder.getFormId());
+
         }
     }
 
@@ -498,12 +500,14 @@ public class DataEntryActivity extends BaseActivity implements LoaderManager.Loa
     }
 
     private void loadGroupsIntoAdapters(List<Group> groups) {
+        DatasetInfoHolder info = getIntent().getExtras()
+                .getParcelable(DatasetInfoHolder.TAG);
         if (groups != null) {
             List<FieldAdapter> adapters = new ArrayList<>();
 
             try {
                 for (Group group : groups) {
-                    adapters.add(new FieldAdapter(group, this));
+                    adapters.add(new FieldAdapter(info, group, this));
                 }
             } catch (NullPointerException e) {
                 e.printStackTrace();
@@ -556,8 +560,6 @@ public class DataEntryActivity extends BaseActivity implements LoaderManager.Loa
                     Toast.LENGTH_SHORT).show();
             return;
         }
-
-
 
             ArrayList<Group> groups = new ArrayList<>();
             for (FieldAdapter adapter : adapters) {
@@ -615,15 +617,6 @@ public class DataEntryActivity extends BaseActivity implements LoaderManager.Loa
         startService(intent);
     }
 
-    private void getCompulsoryData(){
-        DatasetInfoHolder info = getIntent().getExtras()
-                .getParcelable(DatasetInfoHolder.TAG);
-        Intent intent = new Intent(this, WorkService.class);
-        intent.putExtra(WorkService.METHOD, WorkService.METHOD_DOWNLOAD_COMPULSORY_DATA);
-        intent.putExtra(DatasetInfoHolder.TAG, info);
-        startService(intent);
-    }
-
     private void getCompletionDate(){
         DatasetInfoHolder info = getIntent().getExtras()
                 .getParcelable(DatasetInfoHolder.TAG);
@@ -659,10 +652,6 @@ public class DataEntryActivity extends BaseActivity implements LoaderManager.Loa
                         handleSubmissionDetails(form.getGroups());
                         setupCommentRowAsFooter(form);
                     }
-                }
-
-                if(intent.getExtras().containsKey(CompulsoryDataProcessor.COMPULSORY_DATA)){
-                    compulsoryData = intent.getExtras().getString(CompulsoryDataProcessor.COMPULSORY_DATA);
                 }
 
                 if (intent.getExtras().containsKey(SubmissionDetailsProcessor.SUBMISSION_DETAILS)) {
@@ -744,7 +733,7 @@ public class DataEntryActivity extends BaseActivity implements LoaderManager.Loa
                 JsonObject jsonReport = JsonHandler.buildJsonObject(report);
                 JsonArray jsonElements = jsonReport.getAsJsonArray(Constants.DATA_VALUES);
 
-                fieldMap = buildFieldMap(jsonElements);
+                fieldMap = buildFieldsMap(jsonElements);
             } catch (ParsingException e) {
                 e.printStackTrace();
             }
@@ -788,7 +777,7 @@ public class DataEntryActivity extends BaseActivity implements LoaderManager.Loa
             return null;
         }
 
-        private Map<String, String> buildFieldMap(JsonArray jsonFields) {
+        private Map<String, String> buildFieldsMap(JsonArray jsonFields) {
             Map<String, String> fieldMap = new HashMap<>();
             if (jsonFields == null) {
                 return fieldMap;
@@ -796,16 +785,25 @@ public class DataEntryActivity extends BaseActivity implements LoaderManager.Loa
 
             for (JsonElement jsonElement : jsonFields) {
                 if (jsonElement instanceof JsonObject) {
-                    JsonElement jsonDataElement = (jsonElement.getAsJsonObject())
-                            .get(Field.DATA_ELEMENT);
-                    JsonElement jsonCategoryCombination = (jsonElement.getAsJsonObject())
-                            .get(Field.CATEGORY_OPTION_COMBO);
-                    JsonElement jsonValue = (jsonElement.getAsJsonObject())
-                            .get(Field.VALUE);
+                    String dataElement = (jsonElement.getAsJsonObject())
+                            .get(Field.DATA_ELEMENT).getAsString();
+                    String categoryCombination = (jsonElement.getAsJsonObject())
+                            .get(Field.CATEGORY_OPTION_COMBO).getAsString();
+                    /*
+                        TEMPORARY FIX
+                        When the app tries to load the form, if there are any blank category combinations
+                        an error will be thrown causing the app to crash.
+                        At the moment there will be blank category combinations stored in offline data because the user authorities
+                        needed to post with a default category combo is unknown to us. ¯\_(ツ)_/¯
+                     */
+                    if(categoryCombination.equals("")){
+                        categoryCombination = Constants.DEFAULT_CATEGORY_COMBO;
+                    }
 
-                    String fieldKey = buildFieldKey(jsonDataElement.getAsString(),
-                            jsonCategoryCombination.getAsString());
+                    JsonElement jsonValue = (jsonElement.getAsJsonObject()).get(Field.VALUE);
                     String value = jsonValue != null ? jsonValue.getAsString() : "";
+
+                    String fieldKey = buildFieldKey(dataElement, categoryCombination);
 
                     fieldMap.put(fieldKey, value);
                 }
@@ -834,7 +832,7 @@ public class DataEntryActivity extends BaseActivity implements LoaderManager.Loa
     private void handleCompletionDate(String details){
         DateTime dateTime = new DateTime(details);
         ViewUtils.enableViews(submissionDetailsLayout);
-        DateTimeFormatter dateTimeFormatter = DateTimeFormat.mediumDate();
+        DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern(Constants.DATE_COMPLETED_FORMAT);
         String text = getResources().getString(R.string.completion_date_prefix) +" "+ dateTime.toString(dateTimeFormatter);
         completionDate.setText(text);
 
