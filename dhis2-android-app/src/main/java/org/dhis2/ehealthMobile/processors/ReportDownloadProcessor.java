@@ -74,7 +74,9 @@ public class ReportDownloadProcessor {
         Form form = null;
         if (response.getCode() >= 200 && response.getCode() < 300) {
             form = parseForm(response.getBody());
-            form = FormUtils.squashFormGroups(form);
+            if(FormUtils.shouldBeSquashed(context, form.getId())){
+                form = FormUtils.squashFormGroups(form);
+            }
         }
 
         Intent intent = new Intent(DataEntryActivity.TAG);

@@ -143,7 +143,7 @@ public class FormsDownloadProcessor {
         JsonObject jDatasets = getJsonObject(jSource, FORMS);
 
         OrganizationUnit[] units = handleUnitsWithDatasets(jUnits, jDatasets);
-        HashMap<String, Form> forms = handleForms(jDatasets);
+        HashMap<String, Form> forms = handleForms(context, jDatasets);
 
         HashSet<String> optionSetIds = getOptionSetIds(forms);
         updateOptionSets(context, optionSetIds);
@@ -204,13 +204,15 @@ public class FormsDownloadProcessor {
         return orgUnits;
     }
 
-    private static HashMap<String, Form> handleForms(JsonObject jForms) throws ParsingException {
+    private static HashMap<String, Form> handleForms(Context context, JsonObject jForms) throws ParsingException {
         try {
             HashMap<String, Form> forms = new HashMap<String, Form>();
             Gson gson = new Gson();
             for (Map.Entry<String, JsonElement> entry : jForms.entrySet()) {
                 Form form = gson.fromJson(entry.getValue(), Form.class);
-                forms.put(entry.getKey(), FormUtils.squashFormGroups(form));
+                if(FormUtils.shouldBeSquashed(context, form.getId())){
+                    forms.put(entry.getKey(), FormUtils.squashFormGroups(form));
+                }
             }
             return forms;
         } catch (JsonSyntaxException e) {

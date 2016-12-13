@@ -1,19 +1,16 @@
 package org.dhis2.ehealthMobile.utils;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import org.dhis2.ehealthMobile.R;
 import org.dhis2.ehealthMobile.io.Constants;
 import org.dhis2.ehealthMobile.io.json.JsonHandler;
 import org.dhis2.ehealthMobile.io.json.ParsingException;
 import org.dhis2.ehealthMobile.io.models.eidsr.Disease;
+import org.dhis2.ehealthMobile.processors.ConfigFileProcessor;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -40,18 +37,20 @@ public class DiseaseImporter {
      * @return Map A map of diseases.
      */
     public static Map importDiseases(Context context, String formId) {
-        String json;
-        json = PrefUtils.getDiseaseConfigs(context, formId);
+        Map<String, Disease> mapOfDiseases = new HashMap<>();
+        String data;
+        data = PrefUtils.getConfigString(context, formId, ConfigFileProcessor.DISEASE_CONFIGS);
 
-        JsonObject obj;
-        try {
-            obj = JsonHandler.buildJsonObject(json);
-        } catch (ParsingException ex) {
-            ex.printStackTrace();
-            return null;
+        JsonObject obj = new JsonObject();
+        if(!data.isEmpty()){
+            try {
+                obj = JsonHandler.buildJsonObject(data);
+            } catch (ParsingException ex) {
+                ex.printStackTrace();
+                return mapOfDiseases;
+            }
         }
 
-        Map mapOfDiseases = new HashMap();
 
         //Loop through disease object and create a map of diseases using the disease id as the key.
         for (Map.Entry<String, JsonElement> entry : obj.entrySet()) {

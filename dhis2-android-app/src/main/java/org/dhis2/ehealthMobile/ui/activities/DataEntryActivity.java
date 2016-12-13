@@ -53,6 +53,7 @@ import org.dhis2.ehealthMobile.io.models.Group;
 import org.dhis2.ehealthMobile.network.HTTPClient;
 import org.dhis2.ehealthMobile.network.NetworkUtils;
 import org.dhis2.ehealthMobile.network.Response;
+import org.dhis2.ehealthMobile.processors.ConfigFileProcessor;
 import org.dhis2.ehealthMobile.processors.SubmissionDetailsProcessor;
 import org.dhis2.ehealthMobile.ui.adapters.dataEntry.FieldAdapter;
 import org.dhis2.ehealthMobile.ui.adapters.dataEntry.rows.PosOrZeroIntegerRow2;
@@ -460,7 +461,7 @@ public class DataEntryActivity extends BaseActivity implements LoaderManager.Loa
                 getCompletionDate();
             }
 
-            compulsoryData = PrefUtils.getCompulsoryDiseases(getApplicationContext(), infoHolder.getFormId());
+            compulsoryData = PrefUtils.getConfigString(getApplicationContext(), infoHolder.getFormId(), ConfigFileProcessor.COMPULSORY_DISEASES);
 
         }
     }

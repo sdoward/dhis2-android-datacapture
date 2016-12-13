@@ -1,12 +1,12 @@
 package org.dhis2.ehealthMobile.utils;
 
+import android.content.Context;
 import android.os.Parcel;
-import android.os.Parcelable;
-import android.util.Log;
 
 import org.dhis2.ehealthMobile.io.models.Field;
 import org.dhis2.ehealthMobile.io.models.Form;
 import org.dhis2.ehealthMobile.io.models.Group;
+import org.dhis2.ehealthMobile.processors.ConfigFileProcessor;
 
 import java.util.ArrayList;
 
@@ -39,5 +39,9 @@ public class FormUtils {
         squashedForm.setGroups(groups);
 
         return  squashedForm;
+    }
+
+    public static boolean shouldBeSquashed(Context context, String formId){
+        return PrefUtils.getConfigBoolean(context, formId, ConfigFileProcessor.SHOULD_BE_SQUASHED);
     }
 }
