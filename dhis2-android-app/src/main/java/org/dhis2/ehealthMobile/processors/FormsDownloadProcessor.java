@@ -52,7 +52,6 @@ import org.dhis2.ehealthMobile.network.NetworkException;
 import org.dhis2.ehealthMobile.network.Response;
 import org.dhis2.ehealthMobile.network.URLConstants;
 import org.dhis2.ehealthMobile.ui.fragments.AggregateReportFragment;
-import org.dhis2.ehealthMobile.utils.FormUtils;
 import org.dhis2.ehealthMobile.utils.PrefUtils;
 import org.dhis2.ehealthMobile.utils.TextFileUtils;
 
@@ -210,9 +209,7 @@ public class FormsDownloadProcessor {
             Gson gson = new Gson();
             for (Map.Entry<String, JsonElement> entry : jForms.entrySet()) {
                 Form form = gson.fromJson(entry.getValue(), Form.class);
-                if(FormUtils.shouldBeSquashed(context, form.getId())){
-                    forms.put(entry.getKey(), FormUtils.squashFormGroups(form));
-                }
+                    forms.put(entry.getKey(), form);
             }
             return forms;
         } catch (JsonSyntaxException e) {

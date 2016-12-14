@@ -74,7 +74,7 @@ public class ReportDownloadProcessor {
         Form form = null;
         if (response.getCode() >= 200 && response.getCode() < 300) {
             form = parseForm(response.getBody());
-            if(FormUtils.shouldBeSquashed(context, form.getId())){
+            if(FormUtils.shouldBeSquashed(context, info.getFormId())){
                 form = FormUtils.squashFormGroups(form);
             }
         }

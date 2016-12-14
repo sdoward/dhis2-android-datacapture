@@ -58,6 +58,7 @@ import org.dhis2.ehealthMobile.processors.SubmissionDetailsProcessor;
 import org.dhis2.ehealthMobile.ui.adapters.dataEntry.FieldAdapter;
 import org.dhis2.ehealthMobile.ui.adapters.dataEntry.rows.PosOrZeroIntegerRow2;
 import org.dhis2.ehealthMobile.ui.fragments.AdditionalDiseasesFragment;
+import org.dhis2.ehealthMobile.utils.FormUtils;
 import org.dhis2.ehealthMobile.utils.IsDisabled;
 import org.dhis2.ehealthMobile.utils.PrefUtils;
 import org.dhis2.ehealthMobile.utils.TextFileUtils;
@@ -692,6 +693,10 @@ public class DataEntryActivity extends BaseActivity implements LoaderManager.Loa
                 // try to fit values
                 // from storage into form
                 loadValuesIntoForm(form);
+
+                if(FormUtils.shouldBeSquashed(getContext(), infoHolder.getFormId())){
+                    form = FormUtils.squashFormGroups(form);
+                }
 
                 return form;
             }
