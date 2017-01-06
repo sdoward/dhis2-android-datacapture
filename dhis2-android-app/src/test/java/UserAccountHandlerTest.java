@@ -22,10 +22,8 @@ import static org.hamcrest.core.Is.is;
 public class UserAccountHandlerTest {
     private ArrayList<Field> fields;
 
-
     @Mock
     Context mMockContext;
-
 
     @Before
     public void setup(){
@@ -52,6 +50,5 @@ public class UserAccountHandlerTest {
     public void checkProfileFields(){
         assertThat(UserAccountHandler.fromFields(fields), is(DummyTestData.PROCESSED_PROFILE_DATA));
     }
-
 
 }

@@ -9,6 +9,8 @@ import java.util.ArrayList;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by george on 10/4/16.
@@ -22,13 +24,8 @@ public class IsTimelyTest {
         field.setLabel("Timely");
         field.setDataElement(Constants.TIMELY);
         field.setValue("false");
-        ArrayList<Field> fields = new ArrayList<>();
-        fields.add(field);
-        ArrayList<Group> data = new ArrayList<>();
-        Group group = new Group("Test group", fields);
-        data.add(group);
 
-        assertThat(IsTimely.hasBeenSet(data), is(true));
+        assertTrue(IsTimely.hasBeenSet(field));
     }
 
     @Test
@@ -42,7 +39,7 @@ public class IsTimelyTest {
         Group group = new Group("Test group", fields);
         data.add(group);
 
-        assertThat(IsTimely.hasBeenSet(data), is(false));
+       assertFalse(IsTimely.hasBeenSet(field));
     }
 
     @Test

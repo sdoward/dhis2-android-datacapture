@@ -76,7 +76,10 @@ dependencies {
     // Espresso-intents for validation and stubbing of Intents
     androidTestCompile 'com.android.support.test.espresso:espresso-intents:2.2.2'
     //Mock Web Server
-    androidTestCompile 'com.squareup.okhttp:mockwebserver:2.7.5'
+    testCompile 'com.squareup.okhttp:mockwebserver:2.7.5'
+
+    //Robolectric
+    testCompile "org.robolectric:robolectric:3.1.4"
 
     compile 'com.android.support.constraint:constraint-layout:1.0.0-beta2'
 
