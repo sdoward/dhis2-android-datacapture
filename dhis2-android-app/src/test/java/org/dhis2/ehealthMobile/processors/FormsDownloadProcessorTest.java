@@ -4,8 +4,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
-import android.net.ConnectivityManager;
 import android.support.v4.content.LocalBroadcastManager;
 
 import com.squareup.okhttp.HttpUrl;
@@ -21,15 +19,16 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
-import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
+import org.robolectric.shadows.ShadowApplication;
 
 import java.net.HttpURLConnection;
 
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by george on 1/5/17.
@@ -46,7 +45,7 @@ public class FormsDownloadProcessorTest {
 
     @Test
     public void shouldUpdateDatasets() throws InterruptedException {
-        Context context = RuntimeEnvironment.application.getApplicationContext();
+        final Context applicationContext = ShadowApplication.getInstance().getApplicationContext();
         MockResponse serverResponse = new MockResponse();
         serverResponse.setResponseCode(HttpURLConnection.HTTP_OK);
         serverResponse.setBody(DummyData.ASSIGNED_DATA_SETS_RESPONSE);
@@ -55,7 +54,7 @@ public class FormsDownloadProcessorTest {
         server.enqueue(serverResponse);
         HttpUrl url = server.url("/");
 
-        PrefUtils.initAppData(context, "", "", url.toString());
+        PrefUtils.initAppData(applicationContext, "", "", url.toString());
         final boolean[] isReceiverCalled = new boolean[1];
 
         BroadcastReceiver onFormsUpdateListener;
@@ -72,14 +71,14 @@ public class FormsDownloadProcessorTest {
                 }
                 assertThat(intent.getExtras().getInt(Response.CODE), is(200));
                 assertThat(intent.getExtras().getInt(JsonHandler.PARSING_STATUS_CODE), is(JsonHandler.PARSING_OK_CODE));
-                assertThat(PrefUtils.getResourceState(context, PrefUtils.Resources.DATASETS), is(PrefUtils.State.UP_TO_DATE));
+                assertThat(PrefUtils.getResourceState(applicationContext, PrefUtils.Resources.DATASETS), is(PrefUtils.State.UP_TO_DATE));
                 isReceiverCalled[0] = true;
             }
         };
-        LocalBroadcastManager.getInstance(context)
+        LocalBroadcastManager.getInstance(applicationContext)
                 .registerReceiver(onFormsUpdateListener, new IntentFilter(AggregateReportFragment.TAG));
 
-        FormsDownloadProcessor.updateDatasets(context);
+        FormsDownloadProcessor.updateDatasets(applicationContext);
         assertTrue(isReceiverCalled[0]);
     }
 
