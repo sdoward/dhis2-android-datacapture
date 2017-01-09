@@ -79,7 +79,7 @@ dependencies {
     testCompile 'com.squareup.okhttp:mockwebserver:2.7.5'
 
     //Robolectric
-    testCompile "org.robolectric:robolectric:3.1.4"
+    testCompile "org.robolectric:robolectric:3.2.1"
 
     compile 'com.android.support.constraint:constraint-layout:1.0.0-beta2'
 
