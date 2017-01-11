@@ -3,6 +3,9 @@ package org.dhis2.ehealthMobile.processors;
 import android.content.Context;
 import android.util.Log;
 
+import com.google.gson.Gson;
+
+import org.dhis2.ehealthMobile.io.models.configfile.ConfigFile;
 import org.dhis2.ehealthMobile.network.HTTPClient;
 import org.dhis2.ehealthMobile.network.Response;
 import org.dhis2.ehealthMobile.network.URLConstants;
@@ -29,8 +32,12 @@ public class ConfigFileProcessor {
 
         if (response.isSuccessful()) {
             String compulsoryDiseases, diseaseConfigs;
+            String body = response.getBody();
+
             try {
-                JSONObject obj = new JSONObject(response.getBody());
+                ConfigFile configFile = new Gson().fromJson(body, ConfigFile.class);
+
+                JSONObject obj = new JSONObject(body);
                 Iterator<String> keys = obj.keys();
                 while(keys.hasNext()){
                     String key = keys.next();
