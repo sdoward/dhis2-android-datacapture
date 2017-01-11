@@ -874,16 +874,14 @@ public class DataEntryActivity extends BaseActivity implements LoaderManager.Loa
             }
         }
 
-        assert isTimely != null;
         //Timely value not stored as boolean for some reason even though the data element is type boolean ¯\_(ツ)_/¯
-        if(isTimely.equals("true")){
+        if("true".equals(isTimely)){
             isTimelyIcon.setImageDrawable(isTimelyDrawable);
         }else{
             isTimelyIcon.setImageDrawable(notTimelyDrawable);
         }
 
-        assert submissionMethodValue != null;
-        if(!submissionMethodValue.equals("")){
+        if(!"".equals(submissionMethodValue)){
             submissionMethodText = getString(R.string.submission_method_prefix)+" "+submissionMethodValue;
             submissionMethod.setText(submissionMethodText);
         }else{
