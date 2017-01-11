@@ -81,6 +81,6 @@ public class NumberRow implements Row {
 
     @Override
     public int getViewType() {
-        return RowTypes.NUMBER.ordinal();
+        return FieldType.NUMBER.ordinal();
     }    
 }

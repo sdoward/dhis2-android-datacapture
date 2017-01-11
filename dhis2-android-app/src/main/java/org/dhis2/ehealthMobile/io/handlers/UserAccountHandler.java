@@ -33,7 +33,7 @@ import java.util.ArrayList;
 
 import org.dhis2.ehealthMobile.R;
 
-import org.dhis2.ehealthMobile.ui.adapters.dataEntry.rows.RowTypes;
+import org.dhis2.ehealthMobile.ui.adapters.dataEntry.rows.FieldType;
 import org.dhis2.ehealthMobile.io.models.Field;
 
 import android.content.Context;
@@ -70,43 +70,43 @@ public class UserAccountHandler {
         }
 
 		String firstName = getString(info.getAsJsonPrimitive(FIRST_NAME));
-		Field mFirstName = toField(context, R.string.first_name, RowTypes.TEXT, FIRST_NAME, firstName);
+		Field mFirstName = toField(context, R.string.first_name, FieldType.TEXT, FIRST_NAME, firstName);
 		
 		String surname = getString(info.getAsJsonPrimitive(SURNAME));
-		Field mSurname = toField(context, R.string.surname, RowTypes.TEXT, SURNAME, surname);
+		Field mSurname = toField(context, R.string.surname, FieldType.TEXT, SURNAME, surname);
 		
 		String email = getString(info.getAsJsonPrimitive(EMAIL));
-		Field mEmail = toField(context, R.string.email, RowTypes.TEXT, EMAIL, email);
+		Field mEmail = toField(context, R.string.email, FieldType.TEXT, EMAIL, email);
 		
 		String phoneNumber = getString(info.getAsJsonPrimitive(PHONE_NUMBER));
-		Field mPhoneNumber = toField(context, R.string.mobile_phone_number, RowTypes.NUMBER, PHONE_NUMBER, phoneNumber);
+		Field mPhoneNumber = toField(context, R.string.mobile_phone_number, FieldType.NUMBER, PHONE_NUMBER, phoneNumber);
 		
 		String introduction = getString(info.getAsJsonPrimitive(INTRODUCTION));
-		Field mIntroduction = toField(context, R.string.introduction, RowTypes.TEXT, INTRODUCTION, introduction);
+		Field mIntroduction = toField(context, R.string.introduction, FieldType.TEXT, INTRODUCTION, introduction);
 		
 		String jobTitle = getString(info.getAsJsonPrimitive(JOB_TITLE));
-		Field mJobTitle = toField(context, R.string.job_title, RowTypes.TEXT, JOB_TITLE, jobTitle);
+		Field mJobTitle = toField(context, R.string.job_title, FieldType.TEXT, JOB_TITLE, jobTitle);
 		
 		String gender = getString(info.getAsJsonPrimitive(GENDER));
-		Field mGender = toField(context, R.string.gender, RowTypes.GENDER, GENDER, gender);
+		Field mGender = toField(context, R.string.gender, FieldType.GENDER, GENDER, gender);
 		
 		String birthday = getString(info.getAsJsonPrimitive(BIRTHDAY));
-		Field mBirthday = toField(context, R.string.birthday, RowTypes.DATE, BIRTHDAY, birthday);
+		Field mBirthday = toField(context, R.string.birthday, FieldType.DATE, BIRTHDAY, birthday);
 		
 		String nationality = getString(info.getAsJsonPrimitive(NATIONALITY));
-		Field mNationality = toField(context, R.string.nationality, RowTypes.TEXT, NATIONALITY, nationality);
+		Field mNationality = toField(context, R.string.nationality, FieldType.TEXT, NATIONALITY, nationality);
 		
 		String employer = getString(info.getAsJsonPrimitive(EMPLOYER));
-		Field mEmployer = toField(context, R.string.employer, RowTypes.TEXT, EMPLOYER, employer);
+		Field mEmployer = toField(context, R.string.employer, FieldType.TEXT, EMPLOYER, employer);
 		
 		String education = getString(info.getAsJsonPrimitive(EDUCATION));
-		Field mEducation = toField(context, R.string.education, RowTypes.TEXT, EDUCATION, education);
+		Field mEducation = toField(context, R.string.education, FieldType.TEXT, EDUCATION, education);
 		
 		String interests = getString(info.getAsJsonPrimitive(INTERESTS));
-		Field mInterests = toField(context, R.string.interests, RowTypes.TEXT, INTERESTS, interests);
+		Field mInterests = toField(context, R.string.interests, FieldType.TEXT, INTERESTS, interests);
 		
 		String languages = getString(info.getAsJsonPrimitive(LANGUAGES));
-		Field mLanguages = toField(context, R.string.languages, RowTypes.TEXT, LANGUAGES, languages);
+		Field mLanguages = toField(context, R.string.languages, FieldType.TEXT, LANGUAGES, languages);
 		
 		ArrayList<Field> fields = addAll(mFirstName, mSurname, mEmail, mPhoneNumber,
 					  	mIntroduction, mJobTitle, mGender, mBirthday,
@@ -126,13 +126,13 @@ public class UserAccountHandler {
 		return jInfo.toString();
 	}
 	
-	private static Field toField(Context context, int labelId, 
-			RowTypes type, String dataElement, String value) {
+	private static Field toField(Context context, int labelId,
+	                             FieldType type, String dataElement, String value) {
 		
 		Field field = new Field();
 		field.setLabel(context.getString(labelId));
 		field.setDataElement(dataElement);
-		field.setType(type.name());
+		field.setType(type);
 		field.setValue(value);
 		return field;
 	}

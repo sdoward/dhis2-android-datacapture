@@ -32,6 +32,8 @@ package org.dhis2.ehealthMobile.io.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import org.dhis2.ehealthMobile.ui.adapters.dataEntry.rows.FieldType;
+
 import java.io.Serializable;
 import java.util.Comparator;
 
@@ -50,7 +52,7 @@ public class Field implements Serializable, Parcelable {
 
     private String label;
     private String optionSet;
-    private String type;
+    private FieldType type;
 
     public Field() {
     }
@@ -69,7 +71,7 @@ public class Field implements Serializable, Parcelable {
         this.dataElement = in.readString();
         this.categoryOptionCombo = in.readString();
         this.optionSet = in.readString();
-        this.type = in.readString();
+        this.type = FieldType.valueOf(in.readString());
         this.value = in.readString();
     }
 
@@ -90,7 +92,7 @@ public class Field implements Serializable, Parcelable {
         field.writeString(dataElement);
         field.writeString(categoryOptionCombo);
         field.writeString(optionSet);
-        field.writeString(type);
+        field.writeString(type.name());
         field.writeString(value);
     }
 
@@ -109,7 +111,7 @@ public class Field implements Serializable, Parcelable {
         this.label = label;
     }
 
-    public void setType(String type) {
+    public void setType(FieldType type) {
         this.type = type;
     }
 
@@ -135,7 +137,7 @@ public class Field implements Serializable, Parcelable {
         return categoryOptionCombo;
     }
 
-    public String getType() {
+    public FieldType getType() {
         return type;
     }
 

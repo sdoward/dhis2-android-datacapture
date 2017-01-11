@@ -108,7 +108,7 @@ public class DatePickerRow implements Row {
 
     @Override
     public int getViewType() {
-        return RowTypes.DATE.ordinal();
+        return FieldType.DATE.ordinal();
     }
     
 

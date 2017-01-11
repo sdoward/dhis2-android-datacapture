@@ -88,7 +88,7 @@ public class TextRow implements Row {
 
     @Override
     public int getViewType() {
-        return RowTypes.TEXT.ordinal();
+        return FieldType.TEXT.ordinal();
     }    
 }
 

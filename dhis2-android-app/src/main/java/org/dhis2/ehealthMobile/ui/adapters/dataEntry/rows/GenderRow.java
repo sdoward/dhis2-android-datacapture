@@ -106,7 +106,7 @@ public class GenderRow implements Row {
 
 	@Override
 	public int getViewType() {
-		return RowTypes.GENDER.ordinal();
+		return FieldType.GENDER.ordinal();
 	}
 
 	private class BooleanRowHolder {

@@ -53,7 +53,7 @@ public class LabelRow implements Row {
 
     @Override
     public int getViewType(){
-        return RowTypes.LABEL.ordinal();
+        return FieldType.LABEL.ordinal();
     }
 
 }

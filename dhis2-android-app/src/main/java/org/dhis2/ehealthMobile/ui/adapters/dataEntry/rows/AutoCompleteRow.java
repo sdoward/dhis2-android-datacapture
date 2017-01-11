@@ -122,7 +122,7 @@ public class AutoCompleteRow implements Row {
 
     @Override
     public int getViewType() {
-        return RowTypes.AUTO_COMPLETE.ordinal();
+        return FieldType.AUTO_COMPLETE.ordinal();
     }
 
     private class AutoCompleteRowHolder {

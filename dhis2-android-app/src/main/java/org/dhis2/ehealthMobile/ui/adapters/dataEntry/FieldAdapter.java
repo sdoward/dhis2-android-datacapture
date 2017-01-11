@@ -60,7 +60,7 @@ import org.dhis2.ehealthMobile.ui.adapters.dataEntry.rows.NumberRow;
 import org.dhis2.ehealthMobile.ui.adapters.dataEntry.rows.PosIntegerRow;
 import org.dhis2.ehealthMobile.ui.adapters.dataEntry.rows.PosOrZeroIntegerRow2;
 import org.dhis2.ehealthMobile.ui.adapters.dataEntry.rows.Row;
-import org.dhis2.ehealthMobile.ui.adapters.dataEntry.rows.RowTypes;
+import org.dhis2.ehealthMobile.ui.adapters.dataEntry.rows.FieldType;
 import org.dhis2.ehealthMobile.ui.adapters.dataEntry.rows.TextRow;
 import org.dhis2.ehealthMobile.utils.DiseaseGroupLabels;
 import org.dhis2.ehealthMobile.utils.IsAdditionalDisease;
@@ -72,239 +72,255 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class FieldAdapter extends BaseAdapter {
-    private ArrayList<Row> rows;
-    private final String adapterLabel;
-    private final Group group;
-    private LayoutInflater inflater;
-    private IsCritical isCritical;
-    private IsAdditionalDisease isAdditionalDisease;
-    private Map<String, Map<String, PosOrZeroIntegerRow2>> additionalDiseasesRows = new HashMap<>();
-    private LabelRow diseaseLabel;
-    private DiseaseGroupLabels diseaseGroupLabels;
-    private ArrayList<String> labelsAdded = new ArrayList<>();
-    private final DatasetInfoHolder info;
+	private ArrayList<Row> rows;
+	private final String adapterLabel;
+	private final Group group;
+	private LayoutInflater inflater;
+	private IsCritical isCritical;
+	private IsAdditionalDisease isAdditionalDisease;
+	private Map<String, Map<String, PosOrZeroIntegerRow2>> additionalDiseasesRows = new HashMap<>();
+	private LabelRow diseaseLabel;
+	private DiseaseGroupLabels diseaseGroupLabels;
+	private ArrayList<String> labelsAdded = new ArrayList<>();
+	private final DatasetInfoHolder info;
 
 
-    public FieldAdapter(DatasetInfoHolder info, Group group, Context context) {
-        ArrayList<Field> fields = group.getFields();
-        ArrayList<Field> groupedFields = new ArrayList<Field>();
-        String previousFieldId = "";
-        this.info = info;
-        this.group = group;
-        this.rows = new ArrayList<Row>();
-        this.adapterLabel = group.getLabel();
-        inflater = LayoutInflater.from(context);
-        isCritical = new IsCritical(context, info);
-        isAdditionalDisease = new IsAdditionalDisease(context, info);
-        diseaseGroupLabels = new DiseaseGroupLabels(context, info);
+	public FieldAdapter(DatasetInfoHolder info, Group group, Context context) {
+		ArrayList<Field> fields = group.getFields();
+		ArrayList<Field> groupedFields = new ArrayList<>();
+		String previousFieldId = "";
+		this.info = info;
+		this.group = group;
+		this.rows = new ArrayList<>();
+		this.adapterLabel = group.getLabel();
+		inflater = LayoutInflater.from(context);
+		isCritical = new IsCritical(context, info);
+		isAdditionalDisease = new IsAdditionalDisease(context, info);
+		diseaseGroupLabels = new DiseaseGroupLabels(context, info);
 
-        for (int i = 0; i < fields.size(); i++) {
-            Field field = fields.get(i);
-            if (field.hasOptionSet()) {
-                OptionSet optionSet = getOptionSet(context, field.getOptionSet());
-                if(!field.getDataElement().equals(Constants.RECEIPT_OF_FORM))
-                rows.add(new AutoCompleteRow(inflater, field, optionSet, context));
-            } else if (field.getType().equals(RowTypes.TEXT.name())) {
-                rows.add(new TextRow(inflater, field));
-            } else if (field.getType().equals(RowTypes.LONG_TEXT.name())) {
-                if(!field.getDataElement().equals(Constants.COMMENT_FIELD)){
-                    rows.add(new LongTextRow(inflater, field));
-                }
-            } else if (field.getType().equals(RowTypes.NUMBER.name())) {
-                rows.add(new NumberRow(inflater, field));
-            } else if (field.getType().equals(RowTypes.INTEGER.name())) {
-                rows.add(new IntegerRow(inflater, field));
-            } else if (field.getType().equals(RowTypes.INTEGER_ZERO_OR_POSITIVE.name())) {
-                //Changed from the others to support grouping of Diseases
-                //Specific test case for eidsr form
+		for (int i = 0; i < fields.size(); i++) {
+			Field field = fields.get(i);
+			if (field.hasOptionSet()) {
+				OptionSet optionSet = getOptionSet(context, field.getOptionSet());
+				if (!field.getDataElement().equals(Constants.RECEIPT_OF_FORM))
+					rows.add(new AutoCompleteRow(inflater, field, optionSet, context));
+				continue;
+			}
+			
+			FieldType fieldType = field.getType();
 
-                handleIntegerOrZeroRow2(info, field, groupedFields, previousFieldId);
+			switch (fieldType) {
+				case TEXT:
+					rows.add(new TextRow(inflater, field));
+					break;
+				case LONG_TEXT:
+					if (!field.getDataElement().equals(Constants.COMMENT_FIELD))
+						rows.add(new LongTextRow(inflater, field));
+					break;
+				case NUMBER:
+					rows.add(new NumberRow(inflater, field));
+					break;
+				case INTEGER:
+					rows.add(new IntegerRow(inflater, field));
+					break;
+				case INTEGER_ZERO_OR_POSITIVE:
+					//Changed from the others to support grouping of Diseases
+					//Specific test case for eidsr form
+					handleIntegerOrZeroRow2(info, field, groupedFields, previousFieldId);
 
-                groupedFields.add(field);
-                previousFieldId = field.getDataElement();
-            } else if (field.getType().equals(RowTypes.INTEGER_POSITIVE.name())) {
-                rows.add(new PosIntegerRow(inflater, field));
-            } else if (field.getType().equals(RowTypes.INTEGER_NEGATIVE.name())) {
-                rows.add(new NegativeIntegerRow(inflater, field));
-            } else if (field.getType().equals(RowTypes.BOOLEAN.name())) {
-                if(!field.getDataElement().equals(Constants.TIMELY)){
-                    rows.add(new BooleanRow(inflater, field));
-                }
-            } else if (field.getType().equals(RowTypes.TRUE_ONLY.name())) {
-                rows.add(new CheckBoxRow(inflater, field));
-            } else if (field.getType().equals(RowTypes.DATE.name())) {
-                if(!field.getDataElement().equals(Constants.DATE_RECEIVED))
-                rows.add(new DatePickerRow(inflater, field, this, context));
-            } else if (field.getType().equals(RowTypes.GENDER.name())) {
-                rows.add(new GenderRow(inflater, field));
-            }
-        }
-        for(Map.Entry<String, Map<String, PosOrZeroIntegerRow2>> disease : additionalDiseasesRows.entrySet()){
-            for(Map.Entry<String, PosOrZeroIntegerRow2> rows: additionalDiseasesRows.get(disease.getKey()).entrySet()){
-                this.rows.add(rows.getValue());
-                //we then need to tell the dataEntryActivity that this additional disease has already been displayed.
-                if(context instanceof DataEntryActivity){
-                    ((DataEntryActivity)context).addToDiseasesShown(disease.getKey(), rows.getKey());
-                }
-            }
-        }
+					groupedFields.add(field);
+					previousFieldId = field.getDataElement();
+					break;
+				case INTEGER_POSITIVE:
+					rows.add(new PosIntegerRow(inflater, field));
+					break;
+				case INTEGER_NEGATIVE:
+					rows.add(new NegativeIntegerRow(inflater, field));
+					break;
+				case BOOLEAN:
+					if (!field.getDataElement().equals(Constants.TIMELY)) {
+						rows.add(new BooleanRow(inflater, field));
+					}
+					break;
+				case TRUE_ONLY:
+					rows.add(new CheckBoxRow(inflater, field));
+					break;
+				case DATE:
+					if (!field.getDataElement().equals(Constants.DATE_RECEIVED))
+						rows.add(new DatePickerRow(inflater, field, this, context));
+					break;
+				case GENDER:
+					rows.add(new GenderRow(inflater, field));
+					break;
+			}
+		}
+		for (Map.Entry<String, Map<String, PosOrZeroIntegerRow2>> disease : additionalDiseasesRows.entrySet()) {
+			for (Map.Entry<String, PosOrZeroIntegerRow2> rows : additionalDiseasesRows.get(disease.getKey()).entrySet()) {
+				this.rows.add(rows.getValue());
+				//we then need to tell the dataEntryActivity that this additional disease has already been displayed.
+				if (context instanceof DataEntryActivity) {
+					((DataEntryActivity) context).addToDiseasesShown(disease.getKey(), rows.getKey());
+				}
+			}
+		}
 
-    }
+	}
 
-    @Override
-    public int getCount() {
-        return rows.size();
-    }
+	@Override
+	public int getCount() {
+		return rows.size();
+	}
 
-    @Override
-    public int getViewTypeCount() {
-        return RowTypes.values().length;
-    }
+	@Override
+	public int getViewTypeCount() {
+		return FieldType.values().length;
+	}
 
-    @Override
-    public int getItemViewType(int position) {
-        return rows.get(position).getViewType();
-    }
+	@Override
+	public int getItemViewType(int position) {
+		return rows.get(position).getViewType();
+	}
 
-    @Override
-    public Object getItem(int position) {
-        return position;
-    }
+	@Override
+	public Object getItem(int position) {
+		return position;
+	}
 
-    @Override
-    public long getItemId(int position) {
-        return position;
-    }
+	@Override
+	public long getItemId(int position) {
+		return position;
+	}
 
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        return rows.get(position).getView(getAdjustedPosition(position), convertView);
-    }
+	@Override
+	public View getView(int position, View convertView, ViewGroup parent) {
+		return rows.get(position).getView(getAdjustedPosition(position), convertView);
+	}
 
-    public String getLabel() {
-        return adapterLabel;
-    }
+	public String getLabel() {
+		return adapterLabel;
+	}
 
-    public Group getGroup() {
-        return group;
-    }
+	public Group getGroup() {
+		return group;
+	}
 
-    private static OptionSet getOptionSet(Context context, String id) {
-        String source = TextFileUtils.readTextFile(context, TextFileUtils.Directory.OPTION_SETS, id);
-        try {
-            JsonObject jOptionSet = JsonHandler.buildJsonObject(source);
-            Gson gson = new Gson();
-            return gson.fromJson(jOptionSet, OptionSet.class);
-        } catch (ParsingException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
+	private static OptionSet getOptionSet(Context context, String id) {
+		String source = TextFileUtils.readTextFile(context, TextFileUtils.Directory.OPTION_SETS, id);
+		try {
+			JsonObject jOptionSet = JsonHandler.buildJsonObject(source);
+			Gson gson = new Gson();
+			return gson.fromJson(jOptionSet, OptionSet.class);
+		} catch (ParsingException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
 
-    public void addItem(Disease disease) {
-        ArrayList<Field> fields = this.group.getFields();
-        ArrayList<Field> additionalDiseaseFields = new ArrayList<>();
+	public void addItem(Disease disease) {
+		ArrayList<Field> fields = this.group.getFields();
+		ArrayList<Field> additionalDiseaseFields = new ArrayList<>();
 
-        for(Field field: fields){
-            if(field.getDataElement().equals(disease.getId())){
-                additionalDiseaseFields.add(field);
-            }
-        }
+		for (Field field : fields) {
+			if (field.getDataElement().equals(disease.getId())) {
+				additionalDiseaseFields.add(field);
+			}
+		}
 
-        this.rows.add(new PosOrZeroIntegerRow2(inflater, info, additionalDiseaseFields,false, true));
-        notifyDataSetChanged();
-    }
+		this.rows.add(new PosOrZeroIntegerRow2(inflater, info, additionalDiseaseFields, false, true));
+		notifyDataSetChanged();
+	}
 
-    public void removeItemAtPosition(int position){
-        PosOrZeroIntegerRow2 row = (PosOrZeroIntegerRow2) this.rows.get(position);
-        clearPosOrZeroIntegerRow2Fields(row);
-        this.rows.remove(position);
-        notifyDataSetChanged();
-    }
+	public void removeItemAtPosition(int position) {
+		PosOrZeroIntegerRow2 row = (PosOrZeroIntegerRow2) this.rows.get(position);
+		clearPosOrZeroIntegerRow2Fields(row);
+		this.rows.remove(position);
+		notifyDataSetChanged();
+	}
 
-    private Boolean groupedFieldsHasValue(ArrayList<Field> groupedFields){
-        int size = groupedFields.size();
+	private Boolean groupedFieldsHasValue(ArrayList<Field> groupedFields) {
+		int size = groupedFields.size();
 
-        for(int i = 1; i < 5; i ++){
-            if(!isFieldValueEmpty(groupedFields.get(size - i))){
-               return true;
-            }
-        }
-
-
-        return false;
-    }
-
-    private void clearPosOrZeroIntegerRow2Fields(PosOrZeroIntegerRow2 row){
-        row.field.setValue("");
-        row.field2.setValue("");
-        row.field3.setValue("");
-        row.field4.setValue("");
-    }
-    private Boolean isFieldValueEmpty(Field field){
-        Boolean isEmpty = false;
-        if(field.getValue().equals("")){
-            isEmpty = true;
-        }
-        return isEmpty;
-    }
-
-    private void handleIntegerOrZeroRow2(DatasetInfoHolder info,  Field field, ArrayList<Field> groupedFields, String previousFieldId){
-        if(!field.getDataElement().equals(previousFieldId) && groupedFields.size() > 0
-                && !isAdditionalDisease.check(previousFieldId)){
-            //each disease has four fields.
-            Boolean isCriticalDisease = isCritical.check(previousFieldId);
-            Boolean isAnAdditionalDisease = isAdditionalDisease.check(previousFieldId);
-            rows.add(new PosOrZeroIntegerRow2(inflater, info,  groupedFields,isCriticalDisease, isAnAdditionalDisease));
-
-            //handle diseases that belong to groups.
-            if(diseaseGroupLabels.hasGroup(field.getDataElement())){
-                String label = diseaseGroupLabels.getLabel(field.getDataElement());
-                diseaseLabel = new LabelRow(inflater, label, true);
-                if(!labelsAdded.contains(label)){
-                    rows.add(diseaseLabel);
-                    labelsAdded.add(label);
-                }
-            }
-
-        }
-        //check if its an additional disease and has values.
-        if(!field.getDataElement().equals(previousFieldId) && groupedFields.size() > 0 && isAdditionalDisease.check(previousFieldId)
-                && groupedFieldsHasValue(groupedFields))
-        {
-            //if it is an additional disease and does have value then we add it to a map of additional diseases rows
-            //we later iterate over the map and add these additional diseases to the bottom of the listView
-            Boolean isAnAdditionalDisease = isAdditionalDisease.check(previousFieldId);
-            additionalDiseasesRows.put(previousFieldId, new HashMap<String, PosOrZeroIntegerRow2>());
-            additionalDiseasesRows.get(previousFieldId).put(groupedFields.get(groupedFields.size()-1).getLabel(),
-                    new PosOrZeroIntegerRow2(inflater, info,  groupedFields,false, isAnAdditionalDisease));
-
-        }
-    }
+		for (int i = 1; i < 5; i++) {
+			if (!isFieldValueEmpty(groupedFields.get(size - i))) {
+				return true;
+			}
+		}
 
 
-    /**
-     * Checks whether a labelRow has been added at a position prior to the current on provided
-     * If so it then checks the size of that group and returns it.
-     * @param position int
-     * @return int The size of a group with a specific label.
-     */
-    private int getPositionDifference(int position){
-        int size = 0;
-        int i = 0;
-            for(Row row: this.rows) {
-                if (row instanceof LabelRow && position > i) {
-                    LabelRow rowAdded = (LabelRow) this.rows.get(i);
-                    size += diseaseGroupLabels.getGroupSize(rowAdded.label);
-                }
-                i++;
-            }
-        return size;
-    }
+		return false;
+	}
 
-    //Returns position of a view after adjusting for groups. **Grouped views are treated as one.**
-    private int getAdjustedPosition(int position){
-        return position - getPositionDifference(position);
-    }
+	private void clearPosOrZeroIntegerRow2Fields(PosOrZeroIntegerRow2 row) {
+		row.field.setValue("");
+		row.field2.setValue("");
+		row.field3.setValue("");
+		row.field4.setValue("");
+	}
+
+	private Boolean isFieldValueEmpty(Field field) {
+		Boolean isEmpty = false;
+		if (field.getValue().equals("")) {
+			isEmpty = true;
+		}
+		return isEmpty;
+	}
+
+	private void handleIntegerOrZeroRow2(DatasetInfoHolder info, Field field, ArrayList<Field> groupedFields, String previousFieldId) {
+		if (!field.getDataElement().equals(previousFieldId) && groupedFields.size() > 0
+				&& !isAdditionalDisease.check(previousFieldId)) {
+			//each disease has four fields.
+			Boolean isCriticalDisease = isCritical.check(previousFieldId);
+			Boolean isAnAdditionalDisease = isAdditionalDisease.check(previousFieldId);
+			rows.add(new PosOrZeroIntegerRow2(inflater, info, groupedFields, isCriticalDisease, isAnAdditionalDisease));
+
+			//handle diseases that belong to groups.
+			if (diseaseGroupLabels.hasGroup(field.getDataElement())) {
+				String label = diseaseGroupLabels.getLabel(field.getDataElement());
+				diseaseLabel = new LabelRow(inflater, label, true);
+				if (!labelsAdded.contains(label)) {
+					rows.add(diseaseLabel);
+					labelsAdded.add(label);
+				}
+			}
+
+		}
+		//check if its an additional disease and has values.
+		if (!field.getDataElement().equals(previousFieldId) && groupedFields.size() > 0 && isAdditionalDisease.check(previousFieldId)
+				&& groupedFieldsHasValue(groupedFields)) {
+			//if it is an additional disease and does have value then we add it to a map of additional diseases rows
+			//we later iterate over the map and add these additional diseases to the bottom of the listView
+			Boolean isAnAdditionalDisease = isAdditionalDisease.check(previousFieldId);
+			additionalDiseasesRows.put(previousFieldId, new HashMap<String, PosOrZeroIntegerRow2>());
+			additionalDiseasesRows.get(previousFieldId).put(groupedFields.get(groupedFields.size() - 1).getLabel(),
+					new PosOrZeroIntegerRow2(inflater, info, groupedFields, false, isAnAdditionalDisease));
+
+		}
+	}
+
+
+	/**
+	 * Checks whether a labelRow has been added at a position prior to the current on provided
+	 * If so it then checks the size of that group and returns it.
+	 *
+	 * @param position int
+	 * @return int The size of a group with a specific label.
+	 */
+	private int getPositionDifference(int position) {
+		int size = 0;
+		int i = 0;
+		for (Row row : this.rows) {
+			if (row instanceof LabelRow && position > i) {
+				LabelRow rowAdded = (LabelRow) this.rows.get(i);
+				size += diseaseGroupLabels.getGroupSize(rowAdded.label);
+			}
+			i++;
+		}
+		return size;
+	}
+
+	//Returns position of a view after adjusting for groups. **Grouped views are treated as one.**
+	private int getAdjustedPosition(int position) {
+		return position - getPositionDifference(position);
+	}
 
 }

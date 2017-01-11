@@ -99,7 +99,7 @@ public class BooleanRow implements Row {
 
     @Override
     public int getViewType() {
-        return RowTypes.BOOLEAN.ordinal();
+        return FieldType.BOOLEAN.ordinal();
     }
     
     private class BooleanRowHolder {

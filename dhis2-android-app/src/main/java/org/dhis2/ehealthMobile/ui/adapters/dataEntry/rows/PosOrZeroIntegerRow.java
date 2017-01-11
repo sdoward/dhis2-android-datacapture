@@ -87,7 +87,7 @@ public class PosOrZeroIntegerRow implements Row {
 
     @Override
     public int getViewType() {
-        return RowTypes.INTEGER_ZERO_OR_POSITIVE.ordinal();
+        return FieldType.INTEGER_ZERO_OR_POSITIVE.ordinal();
     }
     
     private class InpFilter implements InputFilter {

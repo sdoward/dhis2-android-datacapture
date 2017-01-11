@@ -84,7 +84,7 @@ public class NegativeIntegerRow implements Row {
 
     @Override
     public int getViewType() {
-        return RowTypes.INTEGER_NEGATIVE.ordinal();
+        return FieldType.INTEGER_NEGATIVE.ordinal();
     }    
     
     private class InpFilter implements InputFilter {

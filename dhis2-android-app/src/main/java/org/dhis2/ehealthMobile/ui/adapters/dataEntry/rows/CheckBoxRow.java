@@ -82,7 +82,7 @@ public class CheckBoxRow implements Row {
 
     @Override
     public int getViewType() {
-        return RowTypes.TRUE_ONLY.ordinal();
+        return FieldType.TRUE_ONLY.ordinal();
     }
     
     private class CheckBoxListener implements OnCheckedChangeListener {

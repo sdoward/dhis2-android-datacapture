@@ -81,6 +81,6 @@ public class LongTextRow implements Row {
 
     @Override
     public int getViewType() {
-        return RowTypes.LONG_TEXT.ordinal();
+        return FieldType.LONG_TEXT.ordinal();
     }    
 }

@@ -29,7 +29,7 @@
 
 package org.dhis2.ehealthMobile.ui.adapters.dataEntry.rows;
 
-public enum RowTypes {
+public enum FieldType{
     TEXT,
     LONG_TEXT,
     NUMBER,
