@@ -515,13 +515,13 @@ public class DataEntryActivity extends BaseActivity implements LoaderManager.Loa
         if (groups != null) {
             List<FieldAdapter> adapters = new ArrayList<>();
 
-            try {
+//            try {
                 for (Group group : groups) {
                     adapters.add(new FieldAdapter(info, group, this));
                 }
-            } catch (NullPointerException e) {
-                e.printStackTrace();
-            }
+//            } catch (NullPointerException e) {
+//                e.printStackTrace();
+//            }
 
 
 
