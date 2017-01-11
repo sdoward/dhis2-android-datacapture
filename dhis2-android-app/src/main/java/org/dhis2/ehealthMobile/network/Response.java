@@ -32,7 +32,6 @@ package org.dhis2.ehealthMobile.network;
 public class Response {
 	public static final String CODE = "networkResponseCode";
 	public static final String BODY = "body";
-	public static final String EMPTY_RESPONSE = "";
 	
 	private final int code;
 	private final String body;
@@ -49,4 +48,9 @@ public class Response {
 	public String getBody() {
 		return body;
 	}
+
+	public boolean isSuccessful(){
+		return code >= 200 && code < 300;
+	}
+
 }

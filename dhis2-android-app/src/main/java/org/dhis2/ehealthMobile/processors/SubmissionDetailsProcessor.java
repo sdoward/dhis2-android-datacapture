@@ -28,7 +28,7 @@ public class SubmissionDetailsProcessor {
         Response response = HTTPClient.get(url, credentials);
         String completionDate = null;
 
-        if (response.getCode() >= 200 && response.getCode() < 300) {
+        if (response.isSuccessful()) {
             completionDate = getCompletionDate(response.getBody());
             Intent intent  = new Intent(DataEntryActivity.TAG);
             intent.putExtra(Response.CODE, response.getCode());

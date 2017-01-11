@@ -71,7 +71,7 @@ public class ReportDownloadProcessor {
         Response response = HTTPClient.get(url, creds);
 
         Form form = null;
-        if (response.getCode() >= 200 && response.getCode() < 300) {
+        if (response.isSuccessful()) {
             form = parseForm(response.getBody());
         }
 

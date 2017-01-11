@@ -27,7 +27,7 @@ public class ConfigFileProcessor {
         String credentials = PrefUtils.getCredentials(context);
         Response response = HTTPClient.get(url, credentials);
 
-        if (response.getCode() >= 200 && response.getCode() < 300) {
+        if (response.isSuccessful()) {
             String compulsoryDiseases, diseaseConfigs;
             try {
                 JSONObject obj = new JSONObject(response.getBody());
