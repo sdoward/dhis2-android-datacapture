@@ -101,7 +101,6 @@ public class DataEntryActivity extends BaseActivity implements LoaderManager.Loa
     private TextView completionDate;
     private TextView submissionMethod;
     private ImageView isTimelyIcon;
-    private View listViewHeader;
     //expands the submission details view on click
     private Button expandButton;
 
@@ -423,10 +422,6 @@ public class DataEntryActivity extends BaseActivity implements LoaderManager.Loa
         isTimelyIcon = (ImageView) findViewById(R.id.isTimelyIcon);
         expandButton = (Button) findViewById(R.id.expandButton);
 
-        listViewHeader = findViewById(R.id.listViewHeader);
-
-        final ObjectAnimator headerAnimator = ObjectAnimator.ofFloat(listViewHeader, "y", 1);
-        headerAnimator.setDuration(200);
 
         final ObjectAnimator listViewAnimator = ObjectAnimator.ofFloat(dataEntryListView, "y", 1);
         listViewAnimator.setDuration(200);
@@ -441,11 +436,11 @@ public class DataEntryActivity extends BaseActivity implements LoaderManager.Loa
                 if(submissionDetailsExpandableLayout.isEnabled()){
                     //hide views and adjust layout
                     ViewUtils.perfomOutAnimation(getApplicationContext(), R.anim.fade_out,true, submissionDetailsExpandableLayout);
-                    reverseAnimators(buttonAnimator, headerAnimator, listViewAnimator);
+                    reverseAnimators(buttonAnimator, listViewAnimator);
                 }else {
                     //show views and adjust layout
                     ViewUtils.perfomInAnimation(getApplicationContext(), R.anim.fade_in, submissionDetailsExpandableLayout);
-                    startAnimators(buttonAnimator, headerAnimator, listViewAnimator);
+                    startAnimators(buttonAnimator, listViewAnimator);
                 }
             }
         });
