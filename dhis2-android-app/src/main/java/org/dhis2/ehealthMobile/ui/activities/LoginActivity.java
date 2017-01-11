@@ -55,6 +55,7 @@ import org.dhis2.ehealthMobile.network.HTTPClient;
 import org.dhis2.ehealthMobile.network.NetworkUtils;
 import org.dhis2.ehealthMobile.network.Response;
 import org.dhis2.ehealthMobile.utils.AppPermissions;
+import org.dhis2.ehealthMobile.utils.ResourcesUtils;
 import org.dhis2.ehealthMobile.utils.ToastManager;
 import org.dhis2.ehealthMobile.utils.ViewUtils;
 
@@ -133,6 +134,10 @@ public class LoginActivity extends AppCompatActivity {
         mServerUrl.addTextChangedListener(textWatcher);
         mUsername.addTextChangedListener(textWatcher);
         mPassword.addTextChangedListener(textWatcher);
+
+        mServerUrl.setText(ResourcesUtils.getStringFromStringId(this, "loginServerUrl"));
+        mUsername.setText(ResourcesUtils.getStringFromStringId(this, "loginUsername"));
+        mPassword.setText(ResourcesUtils.getStringFromStringId(this, "loginPassword"));
 
         // Call method in order to check the fields
         // and change state of login button
