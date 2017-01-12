@@ -30,6 +30,7 @@
 package org.dhis2.ehealthMobile.ui.adapters.dataEntry;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -55,6 +56,7 @@ import org.dhis2.ehealthMobile.ui.adapters.dataEntry.rows.BooleanRow;
 import org.dhis2.ehealthMobile.ui.adapters.dataEntry.rows.CheckBoxRow;
 import org.dhis2.ehealthMobile.ui.adapters.dataEntry.rows.DatePickerRow;
 import org.dhis2.ehealthMobile.ui.adapters.dataEntry.rows.GenderRow;
+import org.dhis2.ehealthMobile.ui.adapters.dataEntry.rows.HeaderRow;
 import org.dhis2.ehealthMobile.ui.adapters.dataEntry.rows.IntegerRow;
 import org.dhis2.ehealthMobile.ui.adapters.dataEntry.rows.LabelRow;
 import org.dhis2.ehealthMobile.ui.adapters.dataEntry.rows.LongTextRow;
@@ -114,8 +116,29 @@ public class FieldAdapter extends BaseAdapter {
 		}
 	};
 
-	public void addHeadersRow(List<Row> rows){
+	public static void addHeadersRow(LayoutInflater inflater, List<FieldGroup> fieldGroups, List<Row> rows){
 
+		for(FieldGroup fieldGroup : fieldGroups){
+			int fieldGroupId = fieldGroup.getId();
+			int insertIndex = -1;
+
+			for(int i=0;i<rows.size();i++){
+				Row row = rows.get(i);
+				FieldGroup rowGroup = row.getFieldGroup();
+				if(rowGroup != null && row.getFieldGroup().getId() == fieldGroupId){
+					insertIndex = i;
+					break;
+				}
+			}
+
+			if(insertIndex < 0){
+				Log.w(FieldAdapter.class.getSimpleName(), "addHeadersRow() no row found for FieldGroup "+fieldGroup);
+				continue;
+			}
+
+			HeaderRow headerRow = new HeaderRow(fieldGroup.getLabel(), inflater);
+			rows.add(insertIndex, headerRow);
+		}
 	}
 
 	private ArrayList<Row> rows;
@@ -221,6 +244,9 @@ public class FieldAdapter extends BaseAdapter {
 
 		List<FieldGroup> fieldGroups = wdr.getFieldGroups();
 		if(fieldGroups == null || fieldGroups.size() == 0) return;
+		for (int i = 0; i < fieldGroups.size(); i++) {
+			fieldGroups.get(i).setId(i);
+		}
 
 		addFieldGroupToRows(fieldGroups, rows);
 
@@ -228,7 +254,9 @@ public class FieldAdapter extends BaseAdapter {
 		Collections.sort(rows, ROW_COMPARATOR);
 
 		// add the headers row
-		addHeadersRow(rows);
+		addHeadersRow(inflater, fieldGroups, rows);
+
+		int breakme = 1;
 	}
 
 	@Override

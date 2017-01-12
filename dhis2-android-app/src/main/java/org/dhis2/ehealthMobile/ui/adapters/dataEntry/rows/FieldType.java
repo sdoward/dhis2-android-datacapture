@@ -42,7 +42,8 @@ public enum FieldType{
     DATE,
     AUTO_COMPLETE,
     GENDER,
-    LABEL
+    LABEL,
+    HEADER
 }
 
 

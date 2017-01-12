@@ -5,10 +5,13 @@ import android.view.View;
 import org.dhis2.ehealthMobile.io.models.Field;
 import org.dhis2.ehealthMobile.io.models.configfile.FieldGroup;
 import org.dhis2.ehealthMobile.ui.adapters.dataEntry.FieldAdapter;
+import org.dhis2.ehealthMobile.ui.adapters.dataEntry.rows.HeaderRow;
 import org.dhis2.ehealthMobile.ui.adapters.dataEntry.rows.Row;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -114,6 +117,37 @@ public class FieldAdapterTest {
 		assertThat(rows[6].getFieldId()).isNull();
 		assertThat(rows[7].getFieldId()).isEqualTo("nope");
 
+	}
 
+	@Test
+	public void testAddHeaderRow(){
+
+		FieldGroup[] fieldGroups = new FieldGroup[]{
+				new DummyFieldGroup(0, "1", "2", "3"),
+				new DummyFieldGroup(1, "4", "5"),
+		};
+
+		Row[] rows = new Row[]{
+				new DummyRow(new DummyField(null, "f")),
+				new DummyRow(new DummyField("1", "a")),
+				new DummyRow(new DummyField("2", "b")),
+				new DummyRow(new DummyField("3", "c")),
+				new DummyRow(new DummyField("4", "d")),
+				new DummyRow(new DummyField("5", "e")),
+				new DummyRow(new DummyField("nope", "h")),
+				new DummyRow(new DummyField(null, "g")),
+		};
+
+		FieldAdapter.addFieldGroupToRows(Arrays.asList(fieldGroups), Arrays.asList(rows));
+
+		List<Row> rowList = new ArrayList<>(Arrays.asList(rows));
+		FieldAdapter.addHeadersRow(null, Arrays.asList(fieldGroups), rowList);
+
+		assertThat(rowList).hasSize(rows.length + fieldGroups.length);
+		assertThat(rowList.get(0)).isEqualTo(rows[0]);
+		assertThat(rowList.get(1)).isInstanceOf(HeaderRow.class);
+		assertThat(rowList.get(2)).isEqualTo(rows[1]);
+		assertThat(rowList.get(5)).isInstanceOf(HeaderRow.class);
+		assertThat(rowList.get(6)).isEqualTo(rows[4]);
 	}
 }

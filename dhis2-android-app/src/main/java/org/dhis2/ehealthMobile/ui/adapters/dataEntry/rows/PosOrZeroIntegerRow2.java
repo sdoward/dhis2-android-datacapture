@@ -158,6 +158,12 @@ public class PosOrZeroIntegerRow2 extends Row {
     }
 
     @Override
+    public String getFieldId() {
+        // TODO: we can assume that all the fields have the same data element..?
+        return field.getDataElement();
+    }
+
+    @Override
     public int getViewType() {
         return FieldType.INTEGER_ZERO_OR_POSITIVE.ordinal();
     }

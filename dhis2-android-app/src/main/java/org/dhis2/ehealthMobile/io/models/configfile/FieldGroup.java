@@ -25,6 +25,10 @@ public class FieldGroup {
 		return id;
 	}
 
+	public String getLabel(){
+		return label;
+	}
+
 	public boolean hasFieldId(String fieldId){
 		if(fieldId == null || fieldsId == null)
 			return false;

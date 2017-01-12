@@ -38,6 +38,17 @@ import org.dhis2.ehealthMobile.io.models.configfile.FieldGroup;
 
 public abstract class Row {
 
+	public static class EmptyField extends Field {
+		private EmptyField(){}
+
+		@Override
+		public String getLabel() {
+			return "";
+		}
+	}
+
+	public static final Field EMPTY_FIELD = new EmptyField();
+
 	private final Field field;
 	private final LayoutInflater inflater;
 	private FieldGroup fieldGroup;
@@ -48,7 +59,7 @@ public abstract class Row {
 	}
 
 	public Field getField() {
-		return field;
+		return field != null ? field : EMPTY_FIELD;
 	}
 
 	public LayoutInflater getInflater() {
