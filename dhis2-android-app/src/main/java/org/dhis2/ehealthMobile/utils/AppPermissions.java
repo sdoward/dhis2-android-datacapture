@@ -71,7 +71,7 @@ public class AppPermissions {
                 for(String permission: permissions){
                     if(permission.equals(Manifest.permission.SEND_SMS)){
                         if (grantResults.length > 0
-                                && grantResults[index] == PackageManager.PERMISSION_GRANTED) {
+                                && grantResults[index] == PackageManager.PERMISSION_GRANTED && isDataEntryActivity(activity)) {
                             //Permission granted ヽ(´▽`)/
                             DataEntryActivity dataEntryActivity = (DataEntryActivity) activity;
                             dataEntryActivity.upload();
@@ -86,7 +86,7 @@ public class AppPermissions {
                                 dialogText.put(MESSAGE, context.getString(R.string.sms_permission_dialog_message));
                                 dialogText.put(CONFIRMATION_TEXT, context.getString(R.string.sms_permission_dialog_confirmation));
                                 AppPermissions.showPermissionRationaleDialog(activity, dialogText);
-                            }else {
+                            }else if(isDataEntryActivity(activity)) {
                                 DataEntryActivity dataEntryActivity = (DataEntryActivity) activity;
                                 dataEntryActivity.upload();
                             }
@@ -100,5 +100,9 @@ public class AppPermissions {
 
     public static boolean canShowRationale(Activity activity, String permission){
         return ActivityCompat.shouldShowRequestPermissionRationale(activity, permission);
+    }
+
+    private static boolean isDataEntryActivity(Activity activity){
+        return activity instanceof DataEntryActivity;
     }
 }
