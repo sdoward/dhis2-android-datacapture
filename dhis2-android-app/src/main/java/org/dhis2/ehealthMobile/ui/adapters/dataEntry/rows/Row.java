@@ -33,12 +33,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 
 import org.dhis2.ehealthMobile.io.models.Field;
+import org.dhis2.ehealthMobile.io.models.configfile.FieldGroup;
 
 
 public abstract class Row {
 
 	private final Field field;
 	private final LayoutInflater inflater;
+	private FieldGroup fieldGroup;
 
 	public Row(Field field, LayoutInflater inflater){
 		this.field = field;
@@ -51,6 +53,21 @@ public abstract class Row {
 
 	public LayoutInflater getInflater() {
 		return inflater;
+	}
+
+	public FieldGroup getFieldGroup(){
+		return fieldGroup;
+	}
+
+	public void setFieldGroup(FieldGroup fieldGroup){
+		this.fieldGroup = fieldGroup;
+	}
+
+	public String getFieldId(){
+		if(field != null)
+			return field.getDataElement();
+
+		return null;
 	}
 
 	public abstract View getView(int position, View convertView);

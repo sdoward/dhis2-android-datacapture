@@ -6,6 +6,8 @@ import java.util.List;
 
 public class FieldGroup {
 
+	protected int id;
+
 	@SerializedName("columns")
 	private List<FieldGroupColumn> columns;
 
@@ -13,6 +15,24 @@ public class FieldGroup {
 	private String label;
 
 	@SerializedName("fields")
-	private List<String> fieldsId;
+	protected List<String> fieldsId;
 
+	public void setId(int id){
+		this.id = id;
+	}
+
+	public int getId(){
+		return id;
+	}
+
+	public boolean hasFieldId(String fieldId){
+		if(fieldId == null || fieldsId == null)
+			return false;
+
+		for(String id : fieldsId)
+			if(fieldId.equals(id))
+				return true;
+
+		return false;
+	}
 }

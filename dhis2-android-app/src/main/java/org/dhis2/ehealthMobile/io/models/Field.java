@@ -46,11 +46,11 @@ public class Field implements Serializable, Parcelable {
     public static final String FALSE = "false";
     public static final String EMPTY_FIELD = "";
 
-    private String dataElement;
+    protected String dataElement;
     private String categoryOptionCombo;
     private String value = EMPTY_FIELD;
 
-    private String label;
+    protected String label;
     private String optionSet;
     private FieldType type;
 

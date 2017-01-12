@@ -30,8 +30,14 @@
 package org.dhis2.ehealthMobile.utils;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.preference.PreferenceManager;
+import android.support.v4.content.SharedPreferencesCompat;
 
+import com.google.gson.Gson;
+
+import org.dhis2.ehealthMobile.io.models.configfile.ConfigFile;
 import org.dhis2.ehealthMobile.processors.ConfigFileProcessor;
 import org.dhis2.ehealthMobile.processors.SMSNumberProcessor;
 
@@ -49,16 +55,17 @@ public class PrefUtils {
 	private static final String USER_NAME = "userName";
     private static final String SMS= "sms";
     private static final String COMPLETION_DATE = "completionDate";
+	private static final String CONFIG_FILE = "configFile";
 
 	private PrefUtils() { }
 
-    public static enum Resources {
+    public enum Resources {
         DATASETS,
         SINGLE_EVENTS_WITHOUT_REGISTRATION,
         PROFILE_DETAILS
     }
 
-    public static enum State {
+    public enum State {
         OUT_OF_DATE,
         UP_TO_DATE,
         REFRESHING,
@@ -161,6 +168,29 @@ public class PrefUtils {
                 .getString(key, null);
         return data;
     }
+
+
+	private static SharedPreferences sharedPrefs(Context context){
+		return PreferenceManager.getDefaultSharedPreferences(context);
+	}
+
+	public static void saveConfigFile(Context context, ConfigFile configFile){
+		sharedPrefs(context).edit().putString(CONFIG_FILE, new Gson().toJson(configFile)).commit();
+	}
+
+	public static ConfigFile getConfigFile(Context context){
+		String jsonString = sharedPrefs(context).getString(CONFIG_FILE, null);
+		if(jsonString == null)
+			return null;
+
+		try {
+			return new Gson().fromJson(jsonString, ConfigFile.class);
+		}catch (Exception e){
+			e.printStackTrace();
+			return null;
+		}
+	}
+
 
     @Deprecated
     public static boolean areFormsAvailable(Context context) {

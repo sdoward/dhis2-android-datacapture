@@ -5,5 +5,5 @@ import com.google.gson.annotations.SerializedName;
 public class ConfigFile {
 
 	@SerializedName("IDSR Weekly Diseaase Report(WDR)")
-	IDSRWeeklyDiseaseReport weeklyDiseaseReport;
+	public IDSRWeeklyDiseaseReport weeklyDiseaseReport;
 }

@@ -45,6 +45,9 @@ import org.dhis2.ehealthMobile.io.json.ParsingException;
 import org.dhis2.ehealthMobile.io.models.Field;
 import org.dhis2.ehealthMobile.io.models.Group;
 import org.dhis2.ehealthMobile.io.models.OptionSet;
+import org.dhis2.ehealthMobile.io.models.configfile.ConfigFile;
+import org.dhis2.ehealthMobile.io.models.configfile.FieldGroup;
+import org.dhis2.ehealthMobile.io.models.configfile.IDSRWeeklyDiseaseReport;
 import org.dhis2.ehealthMobile.io.models.eidsr.Disease;
 import org.dhis2.ehealthMobile.ui.activities.DataEntryActivity;
 import org.dhis2.ehealthMobile.ui.adapters.dataEntry.rows.AutoCompleteRow;
@@ -65,13 +68,56 @@ import org.dhis2.ehealthMobile.ui.adapters.dataEntry.rows.TextRow;
 import org.dhis2.ehealthMobile.utils.DiseaseGroupLabels;
 import org.dhis2.ehealthMobile.utils.IsAdditionalDisease;
 import org.dhis2.ehealthMobile.utils.IsCritical;
+import org.dhis2.ehealthMobile.utils.PrefUtils;
 import org.dhis2.ehealthMobile.utils.TextFileUtils;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class FieldAdapter extends BaseAdapter {
+
+	public static void addFieldGroupToRows(List<FieldGroup> fieldGroups, List<Row> rows){
+		for(Row row : rows){
+			String fieldId = row.getFieldId();
+			if(fieldId == null) continue;
+
+			for(FieldGroup fieldGroup : fieldGroups){
+				if(fieldGroup.hasFieldId(fieldId)) {
+					row.setFieldGroup(fieldGroup);
+					break;
+				}
+			}
+		}
+	}
+
+	public static Comparator<Row> ROW_COMPARATOR = new Comparator<Row>() {
+		@Override
+		public int compare(Row lhs, Row rhs) {
+			FieldGroup fieldGroup1 = lhs.getFieldGroup();
+			FieldGroup fieldGroup2 = rhs.getFieldGroup();
+
+			if(fieldGroup1 == null && fieldGroup2 != null)
+				return 1;
+
+			if(fieldGroup2 == null && fieldGroup1 != null)
+				return -1;
+
+			if(fieldGroup1 == fieldGroup2)
+				return Field.COMPARATOR.compare(lhs.getField(), rhs.getField());
+
+			return fieldGroup1.getId() - fieldGroup2.getId();
+
+		}
+	};
+
+	public void addHeadersRow(List<Row> rows){
+
+	}
+
 	private ArrayList<Row> rows;
 	private final String adapterLabel;
 	private final Group group;
@@ -164,6 +210,25 @@ public class FieldAdapter extends BaseAdapter {
 			}
 		}
 
+
+		// since the headers of the form are not included in the dataset
+		// we need to get them from the config file
+		ConfigFile configFile = PrefUtils.getConfigFile(context);
+		if(configFile == null) return;
+
+		IDSRWeeklyDiseaseReport wdr = configFile.weeklyDiseaseReport;
+		if(wdr == null) return;
+
+		List<FieldGroup> fieldGroups = wdr.getFieldGroups();
+		if(fieldGroups == null || fieldGroups.size() == 0) return;
+
+		addFieldGroupToRows(fieldGroups, rows);
+
+		// sort the rows based on fieldgroup first and then alphabetically
+		Collections.sort(rows, ROW_COMPARATOR);
+
+		// add the headers row
+		addHeadersRow(rows);
 	}
 
 	@Override

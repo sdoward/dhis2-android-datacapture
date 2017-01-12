@@ -36,6 +36,14 @@ public class ConfigFileProcessor {
 
             try {
                 ConfigFile configFile = new Gson().fromJson(body, ConfigFile.class);
+                if(configFile != null){
+                    PrefUtils.saveConfigFile(context, configFile);
+                }
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+
+            try {
 
                 JSONObject obj = new JSONObject(body);
                 Iterator<String> keys = obj.keys();

@@ -15,4 +15,7 @@ public class IDSRWeeklyDiseaseReport {
 	@SerializedName("fieldGroups")
 	private List<FieldGroup> fieldGroups;
 
+	public List<FieldGroup> getFieldGroups() {
+		return fieldGroups;
+	}
 }
