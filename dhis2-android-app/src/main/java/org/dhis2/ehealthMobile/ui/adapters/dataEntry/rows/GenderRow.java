@@ -40,17 +40,14 @@ import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.TextView;
 
-public class GenderRow implements Row {
+public class GenderRow extends Row {
     public static final String FEMALE = "gender_female";
     public static final String MALE = "gender_male";
     public static final String OTHER = "gender_other";
-    
-	private final LayoutInflater inflater;
-	private final Field field;
+
 
 	public GenderRow(LayoutInflater inflater, Field field) {
-		this.inflater = inflater;
-		this.field = field;
+		super(field, inflater);
 	}
 
 	@Override

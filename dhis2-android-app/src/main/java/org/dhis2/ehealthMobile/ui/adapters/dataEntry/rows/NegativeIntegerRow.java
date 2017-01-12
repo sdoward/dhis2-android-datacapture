@@ -41,13 +41,10 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
 
-public class NegativeIntegerRow implements Row {
-    private final LayoutInflater inflater;
-    private final Field field;
+public class NegativeIntegerRow extends Row {
     
     public NegativeIntegerRow(LayoutInflater inflater, Field field) {
-        this.inflater = inflater;
-        this.field = field;
+        super(field, inflater);
     }
 
     @Override

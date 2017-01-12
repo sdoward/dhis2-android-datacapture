@@ -29,9 +29,30 @@
 
 package org.dhis2.ehealthMobile.ui.adapters.dataEntry.rows;
 
+import android.view.LayoutInflater;
 import android.view.View;
 
-public interface Row {
-    public View getView(int position, View convertView);
-    public int getViewType();
+import org.dhis2.ehealthMobile.io.models.Field;
+
+
+public abstract class Row {
+
+	protected final Field field;
+	protected final LayoutInflater inflater;
+
+	public Row(Field field, LayoutInflater inflater){
+		this.field = field;
+		this.inflater = inflater;
+	}
+
+	public Field getField() {
+		return field;
+	}
+
+	public LayoutInflater getInflater() {
+		return inflater;
+	}
+
+	public abstract View getView(int position, View convertView);
+	public abstract int getViewType();
 }

@@ -39,13 +39,10 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
 
-public class IntegerRow implements Row {
-    private final LayoutInflater inflater;
-    private final Field field;
+public class IntegerRow extends Row {
     
     public IntegerRow(LayoutInflater inflater, Field field) {
-        this.inflater = inflater;
-        this.field = field;
+        super(field, inflater);
     }
 
     @Override

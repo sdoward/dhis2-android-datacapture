@@ -41,13 +41,10 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
 
-public class PosIntegerRow implements Row {
-    private final LayoutInflater inflater;
-    private final Field field;
-    
+public class PosIntegerRow extends Row {
+
     public PosIntegerRow(LayoutInflater inflater, Field field) {
-        this.inflater = inflater;
-        this.field = field;
+        super(field, inflater);
     }
 
     @Override

@@ -40,13 +40,10 @@ import android.widget.CompoundButton;
 import android.widget.TextView;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 
-public class BooleanRow implements Row {
-    private final LayoutInflater inflater;
-    private final Field field;
+public class BooleanRow extends Row {
     
     public BooleanRow(LayoutInflater inflater, Field field) {
-        this.inflater = inflater;
-        this.field = field;
+        super(field, inflater);
     }
 
     @Override

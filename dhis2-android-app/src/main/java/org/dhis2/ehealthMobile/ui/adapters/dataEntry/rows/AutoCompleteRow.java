@@ -48,15 +48,14 @@ import org.dhis2.ehealthMobile.ui.adapters.dataEntry.AutoCompleteAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AutoCompleteRow implements Row {
+public class AutoCompleteRow extends Row {
+
     private AutoCompleteAdapter adapter;
-    private LayoutInflater inflater;
-    private Field field;
     private OptionSet optionset;
 
     public AutoCompleteRow(LayoutInflater inflater, Field field, OptionSet optionset, Context context) {
-        this.inflater = inflater;
-        this.field = field;
+        super(field, inflater);
+
         this.optionset = optionset;
 
         ArrayList<String> options = new ArrayList<String>();

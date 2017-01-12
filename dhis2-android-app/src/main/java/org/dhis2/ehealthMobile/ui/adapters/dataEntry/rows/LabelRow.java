@@ -12,14 +12,15 @@ import org.dhis2.ehealthMobile.R;
  * Created by george on 10/24/16.
  */
 
-public class LabelRow implements Row {
-    private final LayoutInflater inflater;
+public class LabelRow extends Row {
+
     public final String label;
     private final Boolean showListPosition;
 
     public LabelRow(LayoutInflater inflater, String label, Boolean showListPosition){
-        this.inflater = inflater;
+        super(null, inflater);
         this.label = label;
+
         this.showListPosition = showListPosition;
     }
     @Override

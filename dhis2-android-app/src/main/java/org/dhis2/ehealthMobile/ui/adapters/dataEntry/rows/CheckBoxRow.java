@@ -41,13 +41,10 @@ import android.widget.CompoundButton;
 import android.widget.TextView;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 
-public class CheckBoxRow implements Row {
-    private LayoutInflater inflater;
-    private Field field;
+public class CheckBoxRow extends Row {
     
     public CheckBoxRow(LayoutInflater inflater, Field field) {
-        this.inflater = inflater;
-        this.field = field;
+        super(field, inflater);
     }
 
     @Override

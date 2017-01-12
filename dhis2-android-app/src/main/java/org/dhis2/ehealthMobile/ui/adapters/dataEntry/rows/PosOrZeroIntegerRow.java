@@ -42,13 +42,10 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
 
-public class PosOrZeroIntegerRow implements Row {
-    private final LayoutInflater inflater;
-    private final Field field;
+public class PosOrZeroIntegerRow extends Row {
     
     public PosOrZeroIntegerRow(LayoutInflater inflater, Field field) {
-        this.inflater = inflater;
-        this.field = field;
+        super(field, inflater);
     }
 
     @Override

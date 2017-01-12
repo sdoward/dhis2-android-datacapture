@@ -47,16 +47,15 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class DatePickerRow implements Row {
-    private LayoutInflater inflater;
-    private Field field;
+public class DatePickerRow extends Row {
+
     private FieldAdapter adapter;
     private Context context;
     private LocalDate currentDate;
     
     public DatePickerRow(LayoutInflater inflater, Field field, FieldAdapter adapter, Context context) {
-        this.inflater= inflater;
-        this.field = field;
+        super(field, inflater);
+
         this.adapter = adapter;
         this.context = context;
         

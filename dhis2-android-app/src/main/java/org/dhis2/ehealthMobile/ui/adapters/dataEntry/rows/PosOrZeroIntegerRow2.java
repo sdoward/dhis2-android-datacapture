@@ -57,9 +57,11 @@ import org.dhis2.ehealthMobile.utils.ViewUtils;
 
 import java.util.ArrayList;
 
-public class PosOrZeroIntegerRow2 implements Row {
+public class PosOrZeroIntegerRow2 extends Row {
+
     public static final String TAG = PosOrZeroIntegerRow2.class.getSimpleName();
     public static final String PREFIX = " EIDSR-";
+
     private final LayoutInflater inflater;
     public final Field field,field2, field3, field4;
     private AlertDialog alertDialog;
@@ -76,6 +78,8 @@ public class PosOrZeroIntegerRow2 implements Row {
 
 
     public PosOrZeroIntegerRow2(LayoutInflater inflater, DatasetInfoHolder info, ArrayList<Field> fields, Boolean isCriticalDisease, Boolean isAdditionalDisease) {
+        super(null, inflater);
+
         this.inflater = inflater;
         this.field = fields.get(fields.size()-4);
         this.field2 = fields.get(fields.size()-3);
