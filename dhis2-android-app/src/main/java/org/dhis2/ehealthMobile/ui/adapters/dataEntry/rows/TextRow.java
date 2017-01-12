@@ -55,14 +55,14 @@ public class TextRow extends Row {
 
         
         if (convertView == null) {
-            ViewGroup rowRoot = (ViewGroup) inflater.inflate(R.layout.listview_row_text, null);
+            ViewGroup rowRoot = (ViewGroup) getInflater().inflate(R.layout.listview_row_text, null);
             TextView label = (TextView) rowRoot.findViewById(R.id.text_label);
             EditText editText = (EditText) rowRoot.findViewById(R.id.edit_text_row);
             TextInputLayout inputLayout = (TextInputLayout) rowRoot.findViewById(R.id.edit_text_row_layout);
 
 
            
-            EditTextWatcher watcher = new EditTextWatcher(field);
+            EditTextWatcher watcher = new EditTextWatcher(getField());
             editText.addTextChangedListener(watcher);
             
             holder = new EditTextHolder(label, editText, watcher);
@@ -73,11 +73,11 @@ public class TextRow extends Row {
             holder = (EditTextHolder) view.getTag();
         }
         
-        holder.textLabel.setText(field.getLabel());
+        holder.textLabel.setText(getField().getLabel());
         
-        holder.textWatcher.setField(field);
+        holder.textWatcher.setField(getField());
         holder.editText.addTextChangedListener(holder.textWatcher);
-        holder.editText.setText(field.getValue());
+        holder.editText.setText(getField().getValue());
         holder.editText.clearFocus();
 
         return view;

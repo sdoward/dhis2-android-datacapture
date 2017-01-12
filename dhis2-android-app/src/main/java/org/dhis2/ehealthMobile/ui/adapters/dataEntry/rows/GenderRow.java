@@ -56,12 +56,12 @@ public class GenderRow extends Row {
 		BooleanRowHolder holder;
 
 		if (convertView == null) {
-			ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.listview_row_gender, null);
+			ViewGroup rootView = (ViewGroup) getInflater().inflate(R.layout.listview_row_gender, null);
 			TextView label = (TextView) rootView.findViewById(R.id.text_label);
 
-			MaleButtonListener mListener = new MaleButtonListener(field);
-			FemaleButtonListener fListener = new FemaleButtonListener(field);
-			OtherButtonListener oListener = new OtherButtonListener(field);
+			MaleButtonListener mListener = new MaleButtonListener(getField());
+			FemaleButtonListener fListener = new FemaleButtonListener(getField());
+			OtherButtonListener oListener = new OtherButtonListener(getField());
 
 			CompoundButton mButton = (CompoundButton) rootView.findViewById(R.id.option_male);
 			CompoundButton fButton = (CompoundButton) rootView.findViewById(R.id.option_female);
@@ -81,21 +81,21 @@ public class GenderRow extends Row {
 			holder = (BooleanRowHolder) convertView.getTag();
 		}
 
-		holder.textLabel.setText(field.getLabel());
+		holder.textLabel.setText(getField().getLabel());
 
-		holder.optionMaleListener.setField(field);
-		holder.optionFemaleListener.setField(field);
-		holder.optionOtherListener.setField(field);
+		holder.optionMaleListener.setField(getField());
+		holder.optionFemaleListener.setField(getField());
+		holder.optionOtherListener.setField(getField());
 
 		holder.optionMale.setOnCheckedChangeListener(holder.optionMaleListener);
 		holder.optionFemale.setOnCheckedChangeListener(holder.optionFemaleListener);
 		holder.optionOther.setOnCheckedChangeListener(holder.optionOtherListener);
 
-		if (field.getValue().equals(MALE))
+		if (getField().getValue().equals(MALE))
 			holder.optionMale.setChecked(true);
-		else if (field.getValue().equals(FEMALE))
+		else if (getField().getValue().equals(FEMALE))
 			holder.optionFemale.setChecked(true);
-		else if (field.getValue().equals(OTHER))
+		else if (getField().getValue().equals(OTHER))
 			holder.optionOther.setChecked(true);
 
 		return view;

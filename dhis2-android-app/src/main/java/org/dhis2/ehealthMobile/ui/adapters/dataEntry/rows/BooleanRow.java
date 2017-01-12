@@ -52,12 +52,12 @@ public class BooleanRow extends Row {
         BooleanRowHolder holder;
         
         if (convertView == null) {
-            ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.listview_row_boolean, null);
+            ViewGroup rootView = (ViewGroup) getInflater().inflate(R.layout.listview_row_boolean, null);
             TextView label = (TextView) rootView.findViewById(R.id.text_label);
             
-            TrueButtonListener tListener = new TrueButtonListener(field);
-            FalseButtonListener fListener = new FalseButtonListener(field);
-            NoneButtonListener nListener = new NoneButtonListener(field);
+            TrueButtonListener tListener = new TrueButtonListener(getField());
+            FalseButtonListener fListener = new FalseButtonListener(getField());
+            NoneButtonListener nListener = new NoneButtonListener(getField());
             
             CompoundButton tButton = (CompoundButton) rootView.findViewById(R.id.true_button);
             CompoundButton fButton = (CompoundButton) rootView.findViewById(R.id.false_button);
@@ -77,19 +77,19 @@ public class BooleanRow extends Row {
             holder = (BooleanRowHolder) convertView.getTag();
         }
         
-        holder.textLabel.setText(field.getLabel());
+        holder.textLabel.setText(getField().getLabel());
         
-        holder.trueButtonListener.setField(field);
-        holder.falseButtonListener.setField(field);
-        holder.noneButtonListener.setField(field);
+        holder.trueButtonListener.setField(getField());
+        holder.falseButtonListener.setField(getField());
+        holder.noneButtonListener.setField(getField());
         
         holder.trueButton.setOnCheckedChangeListener(holder.trueButtonListener);
         holder.falseButton.setOnCheckedChangeListener(holder.falseButtonListener);
         holder.noneButton.setOnCheckedChangeListener(holder.noneButtonListener);
         
-        if (field.getValue().equals(Field.FALSE)) holder.falseButton.setChecked(true);
-        else if (field.getValue().equals(Field.TRUE)) holder.trueButton.setChecked(true);
-        else if (field.getValue().equals(Field.EMPTY_FIELD)) holder.noneButton.setChecked(true);
+        if (getField().getValue().equals(Field.FALSE)) holder.falseButton.setChecked(true);
+        else if (getField().getValue().equals(Field.TRUE)) holder.trueButton.setChecked(true);
+        else if (getField().getValue().equals(Field.EMPTY_FIELD)) holder.noneButton.setChecked(true);
         
         return view;
     }

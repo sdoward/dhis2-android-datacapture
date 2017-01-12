@@ -37,8 +37,8 @@ import org.dhis2.ehealthMobile.io.models.Field;
 
 public abstract class Row {
 
-	protected final Field field;
-	protected final LayoutInflater inflater;
+	private final Field field;
+	private final LayoutInflater inflater;
 
 	public Row(Field field, LayoutInflater inflater){
 		this.field = field;

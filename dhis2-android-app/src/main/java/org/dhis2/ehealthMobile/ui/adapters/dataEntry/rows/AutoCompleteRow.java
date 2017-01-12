@@ -76,7 +76,7 @@ public class AutoCompleteRow extends Row {
         // List<String> options = optionset.getOptions();
 
         if (convertView == null) {
-            ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.listview_row_autocomplete, null);
+            ViewGroup rootView = (ViewGroup) getInflater().inflate(R.layout.listview_row_autocomplete, null);
 
             TextView textLabel = (TextView)
                     rootView.findViewById(R.id.text_label);
@@ -84,7 +84,7 @@ public class AutoCompleteRow extends Row {
                     rootView.findViewById(R.id.chooseOption);
             OnFocusListener onFocusChangeListener = new OnFocusListener(autoComplete,
                     adapter.getData());
-            EditTextWatcher textWatcher = new EditTextWatcher(field);
+            EditTextWatcher textWatcher = new EditTextWatcher(getField());
 
             autoComplete.setOnFocusChangeListener(onFocusChangeListener);
             autoComplete.addTextChangedListener(textWatcher);
@@ -103,14 +103,14 @@ public class AutoCompleteRow extends Row {
             holder = (AutoCompleteRowHolder) view.getTag();
         }
 
-        holder.textLabel.setText(field.getLabel());
+        holder.textLabel.setText(getField().getLabel());
 
         holder.autoComplete.setAdapter(adapter);
         holder.onFocusListener.setValues(holder.autoComplete, adapter.getData());
         holder.autoComplete.setOnFocusChangeListener(holder.onFocusListener);
-        holder.textWatcher.setField(field);
+        holder.textWatcher.setField(getField());
         holder.autoComplete.addTextChangedListener(holder.textWatcher);
-        holder.autoComplete.setText(field.getValue());
+        holder.autoComplete.setText(getField().getValue());
 
         holder.listener.setAutoComplete(holder.autoComplete);
         holder.button.setOnClickListener(holder.listener);

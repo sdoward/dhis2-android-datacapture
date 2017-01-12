@@ -53,11 +53,11 @@ public class PosIntegerRow extends Row {
         EditTextHolder holder;
         
         if (convertView == null) {
-            ViewGroup rowRoot = (ViewGroup) inflater.inflate(R.layout.listview_row_integer_positive, null);
+            ViewGroup rowRoot = (ViewGroup) getInflater().inflate(R.layout.listview_row_integer_positive, null);
             TextView label = (TextView) rowRoot.findViewById(R.id.text_label);
             EditText editText = (EditText) rowRoot.findViewById(R.id.edit_integer_pos_row);
            
-            EditTextWatcher watcher = new EditTextWatcher(field);
+            EditTextWatcher watcher = new EditTextWatcher(getField());
             editText.addTextChangedListener(watcher);
             editText.setFilters(new InputFilter[]{new NegInpFilter()});
             
@@ -69,11 +69,11 @@ public class PosIntegerRow extends Row {
             holder = (EditTextHolder) view.getTag();
         }
         
-        holder.textLabel.setText(field.getLabel());
+        holder.textLabel.setText(getField().getLabel());
         
-        holder.textWatcher.setField(field);
+        holder.textWatcher.setField(getField());
         holder.editText.addTextChangedListener(holder.textWatcher);
-        holder.editText.setText(field.getValue());
+        holder.editText.setText(getField().getValue());
         holder.editText.clearFocus();
         
         return view;

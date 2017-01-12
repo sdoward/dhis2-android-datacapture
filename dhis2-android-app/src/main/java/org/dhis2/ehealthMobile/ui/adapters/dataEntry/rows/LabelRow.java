@@ -30,7 +30,7 @@ public class LabelRow extends Row {
         TextView labelPositionView;
 
         if (convertView == null) {
-            ViewGroup rowRoot = (ViewGroup) inflater.inflate(R.layout.listview_row_label_row, null);
+            ViewGroup rowRoot = (ViewGroup) getInflater().inflate(R.layout.listview_row_label_row, null);
             labelView = (TextView) rowRoot.findViewById(R.id.text_label);
             labelPositionView = (TextView) rowRoot.findViewById(R.id.text_label_number);
 

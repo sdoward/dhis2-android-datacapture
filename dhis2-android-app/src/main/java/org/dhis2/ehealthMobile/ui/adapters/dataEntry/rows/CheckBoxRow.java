@@ -53,10 +53,10 @@ public class CheckBoxRow extends Row {
         CheckBoxHolder holder;
         
         if (convertView == null) {
-            ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.listview_row_checkbox, null);
+            ViewGroup rootView = (ViewGroup) getInflater().inflate(R.layout.listview_row_checkbox, null);
             TextView textLabel = (TextView) rootView.findViewById(R.id.text_label);
             CheckBox checkBox = (CheckBox) rootView.findViewById(R.id.checkbox);
-            CheckBoxListener listener = new CheckBoxListener(field);
+            CheckBoxListener listener = new CheckBoxListener(getField());
             
             checkBox.setOnCheckedChangeListener(listener);
             holder = new CheckBoxHolder(textLabel, checkBox, listener);
@@ -68,11 +68,11 @@ public class CheckBoxRow extends Row {
             holder = (CheckBoxHolder) view.getTag();
         }
         
-        holder.textLabel.setText(field.getLabel());
-        holder.listener.setField(field);
+        holder.textLabel.setText(getField().getLabel());
+        holder.listener.setField(getField());
         
-        if (field.getValue().equals(Field.TRUE)) holder.checkBox.setChecked(true);
-        else if (field.getValue().equals(Field.EMPTY_FIELD)) holder.checkBox.setChecked(false);
+        if (getField().getValue().equals(Field.TRUE)) holder.checkBox.setChecked(true);
+        else if (getField().getValue().equals(Field.EMPTY_FIELD)) holder.checkBox.setChecked(false);
         
         return view;
     }

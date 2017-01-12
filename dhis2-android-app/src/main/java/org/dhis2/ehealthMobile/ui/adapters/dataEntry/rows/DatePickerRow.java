@@ -68,15 +68,15 @@ public class DatePickerRow extends Row {
         DatePickerRowHolder holder;
         
         if (convertView == null) {
-            ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.listview_row_datepicker, null);
+            ViewGroup rootView = (ViewGroup) getInflater().inflate(R.layout.listview_row_datepicker, null);
             
             TextView textLabel = (TextView) rootView.findViewById(R.id.text_label);
             ImageView clearButton = (ImageView) rootView.findViewById(R.id.clearEditText);
             EditText pickerInvoker = (EditText) rootView.findViewById(R.id.date_picker_dialog_invoker);
           
-            DateSetListener dateSetListener = new DateSetListener(field, adapter);
-            OnEditTextClickListener invokerListener = new OnEditTextClickListener(field, currentDate, dateSetListener, context);
-            ClearButtonListener clButtonListener = new ClearButtonListener(pickerInvoker, field);
+            DateSetListener dateSetListener = new DateSetListener(getField(), adapter);
+            OnEditTextClickListener invokerListener = new OnEditTextClickListener(getField(), currentDate, dateSetListener, context);
+            ClearButtonListener clButtonListener = new ClearButtonListener(pickerInvoker, getField());
             
             pickerInvoker.setOnClickListener(invokerListener);
             clearButton.setOnClickListener(clButtonListener);
@@ -92,14 +92,14 @@ public class DatePickerRow extends Row {
             holder = (DatePickerRowHolder) view.getTag();  
         }
         
-        holder.textLabel.setText(field.getLabel());
+        holder.textLabel.setText(getField().getLabel());
         
-        holder.dateSetListener.setField(field);
-        holder.invokerListener.setFieldAndListener(field, holder.dateSetListener);
-        holder.pickerInvoker.setText(field.getValue());
+        holder.dateSetListener.setField(getField());
+        holder.invokerListener.setFieldAndListener(getField(), holder.dateSetListener);
+        holder.pickerInvoker.setText(getField().getValue());
         holder.pickerInvoker.setOnClickListener(holder.invokerListener);
         
-        holder.cbListener.setEditText(holder.pickerInvoker, field);
+        holder.cbListener.setEditText(holder.pickerInvoker, getField());
         holder.clearButton.setOnClickListener(holder.cbListener);
 
         return view;
