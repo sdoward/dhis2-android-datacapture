@@ -2,6 +2,7 @@ package org.dhis2.ehealthMobile.io.models.configfile;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.util.Collections;
 import java.util.List;
 
 public class FieldGroup {
@@ -27,6 +28,13 @@ public class FieldGroup {
 
 	public String getLabel(){
 		return label;
+	}
+
+	public List<FieldGroupColumn> getColumns(){
+		if(columns == null)
+			return Collections.EMPTY_LIST;
+
+		return columns;
 	}
 
 	public boolean hasFieldId(String fieldId){

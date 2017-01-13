@@ -2,6 +2,7 @@ package org.dhis2.ehealthMobile.io.models.configfile;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.util.Collections;
 import java.util.List;
 
 public class FieldGroupColumn {
@@ -11,4 +12,12 @@ public class FieldGroupColumn {
 
 	@SerializedName("columns")
 	private List<FieldGroupColumn> columns;
+
+	public List<FieldGroupColumn> getChildren(){
+
+		if(columns == null)
+			return Collections.EMPTY_LIST;
+
+		return columns;
+	}
 }

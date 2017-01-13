@@ -78,17 +78,17 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.Map;;
 
 public class FieldAdapter extends BaseAdapter {
 
-	public static void addFieldGroupToRows(List<FieldGroup> fieldGroups, List<Row> rows){
-		for(Row row : rows){
+	public static void addFieldGroupToRows(List<FieldGroup> fieldGroups, List<Row> rows) {
+		for (Row row : rows) {
 			String fieldId = row.getFieldId();
-			if(fieldId == null) continue;
+			if (fieldId == null) continue;
 
-			for(FieldGroup fieldGroup : fieldGroups){
-				if(fieldGroup.hasFieldId(fieldId)) {
+			for (FieldGroup fieldGroup : fieldGroups) {
+				if (fieldGroup.hasFieldId(fieldId)) {
 					row.setFieldGroup(fieldGroup);
 					break;
 				}
@@ -102,13 +102,13 @@ public class FieldAdapter extends BaseAdapter {
 			FieldGroup fieldGroup1 = lhs.getFieldGroup();
 			FieldGroup fieldGroup2 = rhs.getFieldGroup();
 
-			if(fieldGroup1 == null && fieldGroup2 != null)
+			if (fieldGroup1 == null && fieldGroup2 != null)
 				return 1;
 
-			if(fieldGroup2 == null && fieldGroup1 != null)
+			if (fieldGroup2 == null && fieldGroup1 != null)
 				return -1;
 
-			if(fieldGroup1 == fieldGroup2)
+			if (fieldGroup1 == fieldGroup2)
 				return Field.COMPARATOR.compare(lhs.getField(), rhs.getField());
 
 			return fieldGroup1.getId() - fieldGroup2.getId();
@@ -116,27 +116,27 @@ public class FieldAdapter extends BaseAdapter {
 		}
 	};
 
-	public static void addHeadersRow(LayoutInflater inflater, List<FieldGroup> fieldGroups, List<Row> rows){
+	public static void addHeadersRow(LayoutInflater inflater, List<FieldGroup> fieldGroups, List<Row> rows) {
 
-		for(FieldGroup fieldGroup : fieldGroups){
+		for (FieldGroup fieldGroup : fieldGroups) {
 			int fieldGroupId = fieldGroup.getId();
 			int insertIndex = -1;
 
-			for(int i=0;i<rows.size();i++){
+			for (int i = 0; i < rows.size(); i++) {
 				Row row = rows.get(i);
 				FieldGroup rowGroup = row.getFieldGroup();
-				if(rowGroup != null && row.getFieldGroup().getId() == fieldGroupId){
+				if (rowGroup != null && row.getFieldGroup().getId() == fieldGroupId) {
 					insertIndex = i;
 					break;
 				}
 			}
 
-			if(insertIndex < 0){
-				Log.w(FieldAdapter.class.getSimpleName(), "addHeadersRow() no row found for FieldGroup "+fieldGroup);
+			if (insertIndex < 0) {
+				Log.w(FieldAdapter.class.getSimpleName(), "addHeadersRow() no row found for FieldGroup " + fieldGroup);
 				continue;
 			}
 
-			HeaderRow headerRow = new HeaderRow(fieldGroup.getLabel(), inflater);
+			HeaderRow headerRow = new HeaderRow(fieldGroup, inflater);
 			rows.add(insertIndex, headerRow);
 		}
 	}
@@ -152,6 +152,9 @@ public class FieldAdapter extends BaseAdapter {
 	private DiseaseGroupLabels diseaseGroupLabels;
 	private ArrayList<String> labelsAdded = new ArrayList<>();
 	private final DatasetInfoHolder info;
+
+	private List<Integer> rowTypesSet;
+	private Map<Integer, Integer> positionToRowTypeMap;
 
 
 	public FieldAdapter(DatasetInfoHolder info, Group group, Context context) {
@@ -175,7 +178,7 @@ public class FieldAdapter extends BaseAdapter {
 					rows.add(new AutoCompleteRow(inflater, field, optionSet, context));
 				continue;
 			}
-			
+
 			FieldType fieldType = field.getType();
 
 			switch (fieldType) {
@@ -237,26 +240,46 @@ public class FieldAdapter extends BaseAdapter {
 		// since the headers of the form are not included in the dataset
 		// we need to get them from the config file
 		ConfigFile configFile = PrefUtils.getConfigFile(context);
-		if(configFile == null) return;
+		if (configFile != null) {
 
-		IDSRWeeklyDiseaseReport wdr = configFile.weeklyDiseaseReport;
-		if(wdr == null) return;
+			IDSRWeeklyDiseaseReport wdr = configFile.weeklyDiseaseReport;
+			if (wdr != null) {
 
-		List<FieldGroup> fieldGroups = wdr.getFieldGroups();
-		if(fieldGroups == null || fieldGroups.size() == 0) return;
-		for (int i = 0; i < fieldGroups.size(); i++) {
-			fieldGroups.get(i).setId(i);
+				List<FieldGroup> fieldGroups = wdr.getFieldGroups();
+				if (fieldGroups != null && fieldGroups.size() > 0) {
+					for (int i = 0; i < fieldGroups.size(); i++) {
+						fieldGroups.get(i).setId(i);
+					}
+
+					addFieldGroupToRows(fieldGroups, rows);
+
+					// sort the rows based on fieldgroup first and then alphabetically
+					Collections.sort(rows, ROW_COMPARATOR);
+
+					// add the headers row
+					addHeadersRow(inflater, fieldGroups, rows);
+				}
+			}
 		}
 
-		addFieldGroupToRows(fieldGroups, rows);
+		updateViewTypes();
+	}
 
-		// sort the rows based on fieldgroup first and then alphabetically
-		Collections.sort(rows, ROW_COMPARATOR);
+	private void updateViewTypes(){
+		rowTypesSet = new ArrayList<>();
+		positionToRowTypeMap = new HashMap<>();
 
-		// add the headers row
-		addHeadersRow(inflater, fieldGroups, rows);
+		for(int i=0;i<rows.size();i++){
+			int rowPosition = i;
+			int rowType = rows.get(i).getViewType();
 
-		int breakme = 1;
+			int indexOfRowType = rowTypesSet.indexOf(rowType);
+			if(indexOfRowType < 0){
+				indexOfRowType = rowTypesSet.size();
+				rowTypesSet.add(rowType);
+			}
+			positionToRowTypeMap.put(rowPosition, indexOfRowType);
+		}
 	}
 
 	@Override
@@ -266,12 +289,12 @@ public class FieldAdapter extends BaseAdapter {
 
 	@Override
 	public int getViewTypeCount() {
-		return FieldType.values().length;
+		return rowTypesSet.size();
 	}
 
 	@Override
 	public int getItemViewType(int position) {
-		return rows.get(position).getViewType();
+		return positionToRowTypeMap.get(position);
 	}
 
 	@Override
@@ -321,6 +344,7 @@ public class FieldAdapter extends BaseAdapter {
 
 		this.rows.add(new PosOrZeroIntegerRow2(inflater, info, additionalDiseaseFields, false, true));
 		notifyDataSetChanged();
+		updateViewTypes();
 	}
 
 	public void removeItemAtPosition(int position) {
@@ -328,6 +352,7 @@ public class FieldAdapter extends BaseAdapter {
 		clearPosOrZeroIntegerRow2Fields(row);
 		this.rows.remove(position);
 		notifyDataSetChanged();
+		updateViewTypes();
 	}
 
 	private Boolean groupedFieldsHasValue(ArrayList<Field> groupedFields) {

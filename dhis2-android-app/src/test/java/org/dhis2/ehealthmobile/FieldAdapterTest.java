@@ -150,4 +150,5 @@ public class FieldAdapterTest {
 		assertThat(rowList.get(5)).isInstanceOf(HeaderRow.class);
 		assertThat(rowList.get(6)).isEqualTo(rows[4]);
 	}
+
 }
