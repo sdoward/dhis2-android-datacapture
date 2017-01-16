@@ -55,10 +55,12 @@ import org.dhis2.ehealthMobile.io.models.Group;
 import org.dhis2.ehealthMobile.network.HTTPClient;
 import org.dhis2.ehealthMobile.network.NetworkUtils;
 import org.dhis2.ehealthMobile.network.Response;
+import org.dhis2.ehealthMobile.processors.ConfigFileProcessor;
 import org.dhis2.ehealthMobile.processors.SubmissionDetailsProcessor;
 import org.dhis2.ehealthMobile.ui.adapters.dataEntry.FieldAdapter;
 import org.dhis2.ehealthMobile.ui.adapters.dataEntry.rows.PosOrZeroIntegerRow2;
 import org.dhis2.ehealthMobile.ui.fragments.AdditionalDiseasesFragment;
+import org.dhis2.ehealthMobile.utils.FormUtils;
 import org.dhis2.ehealthMobile.utils.AppPermissions;
 import org.dhis2.ehealthMobile.utils.IsDisabled;
 import org.dhis2.ehealthMobile.utils.PrefUtils;
@@ -465,7 +467,7 @@ public class DataEntryActivity extends BaseActivity implements LoaderManager.Loa
                 getCompletionDate();
             }
 
-            compulsoryData = PrefUtils.getCompulsoryDiseases(getApplicationContext(), infoHolder.getFormId());
+            compulsoryData = PrefUtils.getConfigString(getApplicationContext(), infoHolder.getFormId(), ConfigFileProcessor.COMPULSORY_DISEASES);
 
         }
     }
@@ -704,6 +706,10 @@ public class DataEntryActivity extends BaseActivity implements LoaderManager.Loa
                 // try to fit values
                 // from storage into form
                 loadValuesIntoForm(form);
+
+                if(FormUtils.shouldBeSquashed(getContext(), infoHolder.getFormId())){
+                    form = FormUtils.squashFormGroups(form);
+                }
 
                 return form;
             }

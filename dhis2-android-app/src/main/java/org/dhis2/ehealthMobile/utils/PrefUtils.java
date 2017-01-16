@@ -128,18 +128,6 @@ public class PrefUtils {
         context.getSharedPreferences(RESOURCE_STATE, Context.MODE_PRIVATE).edit().clear().commit();
     }
 
-    public static void saveCompulsoryDiseases(Context context, String key, String data){
-        Editor editor = context.getSharedPreferences(ConfigFileProcessor.COMPULSORY_DISEASES, Context.MODE_PRIVATE).edit();
-        editor.putString(key, data);
-        editor.apply();
-    }
-
-    public static String getCompulsoryDiseases(Context context, String key){
-        String data = context.getSharedPreferences(ConfigFileProcessor.COMPULSORY_DISEASES, Context.MODE_PRIVATE)
-                .getString(key, null);
-        return data;
-    }
-
     public static void saveSmsNumber(Context context, String data){
         Editor editor = context.getSharedPreferences(SMSNumberProcessor.SMS_NUMBER, Context.MODE_PRIVATE).edit();
         editor.putString(SMSNumberProcessor.SMS_NUMBER, data);
@@ -153,20 +141,30 @@ public class PrefUtils {
     }
 
     public static void saveSMSStatus(Context context, String id, String status){
-        Editor editor = context.getSharedPreferences(SMS, context.MODE_PRIVATE).edit();
+        Editor editor = context.getSharedPreferences(SMS, Context.MODE_PRIVATE).edit();
         editor.putString(id, status).commit();
     }
 
-    public static void saveDiseaseConfigs(Context context, String key, String data){
-        Editor editor = context.getSharedPreferences(ConfigFileProcessor.DISEASE_CONFIGS, Context.MODE_PRIVATE).edit();
-        editor.putString(key, data);
-        editor.apply();
+    public static void saveConfigString(Context context, String formId, String data, String key){
+        Editor editor = context.getSharedPreferences(key, Context.MODE_PRIVATE).edit();
+        editor.putString(formId, data);
+        editor.commit();
     }
 
-    public static String getDiseaseConfigs(Context context, String key){
-        String data = context.getSharedPreferences(ConfigFileProcessor.DISEASE_CONFIGS, Context.MODE_PRIVATE)
-                .getString(key, null);
-        return data;
+    public static void saveConfigBoolean(Context context, String formId, boolean bool, String key){
+        Editor editor = context.getSharedPreferences(key, Context.MODE_PRIVATE).edit();
+        editor.putBoolean(formId, bool);
+        editor.commit();
+    }
+
+    public static boolean getConfigBoolean(Context context, String formId, String key){
+        return context.getSharedPreferences(key, Context.MODE_PRIVATE)
+                .getBoolean(formId, false);
+    }
+
+    public static String getConfigString(Context context, String formId, String key){
+        return context.getSharedPreferences(key, Context.MODE_PRIVATE)
+                .getString(formId, "");
     }
 
 

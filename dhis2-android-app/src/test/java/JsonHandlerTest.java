@@ -30,7 +30,6 @@ public class JsonHandlerTest {
         JsonHandler.buildJsonObject("");
     }
 
-
     @Test
     public void shouldBuildJsonObject() throws ParsingException {
         assertThat(JsonHandler.buildJsonObject(responseObject.getBody()), instanceOf(JsonElement.class));
@@ -40,6 +39,7 @@ public class JsonHandlerTest {
     public void shouldBuildJsonArray() throws ParsingException {
         assertThat(JsonHandler.buildJsonArray(DummyTestData.GOOD_GET_METHOD_FORM_RESPONSE_ARRAY).get(0).toString(), is(DummyTestData.GOOD_GET_METHOD_FORM_RESPONSE));
     }
+
     @Test(expected = ParsingException.class)
     public void shouldNotBuildJsonArray() throws ParsingException {
         //responseObject body is not an array. Should throw an error.
@@ -82,12 +82,8 @@ public class JsonHandlerTest {
     @Test(expected = ParsingException.class)
     public void shouldNotCreateSerializableFromArray() throws ParsingException{
         JsonArray jsonArray = JsonHandler.buildJsonArray(DummyTestData.ORG_UNITS);
-        //should throw exeption because an object of OrganizationUnit.class is being passed in instead of an array
-        assertThat(JsonHandler.fromJson(jsonArray, OrganizationUnit.class), instanceOf(OrganizationUnit.class));
+        //should throw exception because an object of OrganizationUnit.class is being passed in instead of an array
+        JsonHandler.fromJson(jsonArray, OrganizationUnit.class);
     }
-
-
-
-
 
 }
