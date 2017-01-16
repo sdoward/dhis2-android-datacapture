@@ -24,7 +24,7 @@ public class CategoryComboTest {
     public void setUp() throws Exception {
         String id = ModelsDummyData.ID;
         Parcel parcel = Parcel.obtain();
-        ModelUtils.setParcelId(parcel, id);
+        parcel.writeString(id);
         ModelUtils.setParcelCategories(parcel);
         parcel.setDataPosition(0);
         categoryCombo = CategoryCombo.CREATOR.createFromParcel(parcel);

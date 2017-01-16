@@ -10,16 +10,7 @@ import java.util.List;
  * Created by george on 1/4/17.
  */
 
-public class ModelUtils {
-    static  Parcel setParcelId(Parcel parcel, String id){
-        parcel.writeString(id);
-        return parcel;
-    }
-
-    static Parcel setParcelLabel(Parcel parcel, String label){
-        parcel.writeString(label);
-        return parcel;
-    }
+class ModelUtils {
 
     static Parcel setParcelCategoryOptions(Parcel parcel){
         List<CategoryOption> categoryOptions = new ArrayList<>();
@@ -52,7 +43,4 @@ public class ModelUtils {
         return parcel;
     }
 
-    static Parcelable getFirstElement(List list){
-        return (Parcelable)list.get(0);
-    }
 }

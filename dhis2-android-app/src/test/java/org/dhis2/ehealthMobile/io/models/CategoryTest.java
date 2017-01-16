@@ -29,8 +29,8 @@ public class CategoryTest {
         String id = ModelsDummyData.ID;
         String label = ModelsDummyData.LABEL;
         Parcel parcel = Parcel.obtain();
-        ModelUtils.setParcelId(parcel, id);
-        ModelUtils.setParcelLabel(parcel, label);
+        parcel.writeString(id);
+        parcel.writeString(label);
         ModelUtils.setParcelCategoryOptions(parcel);
         parcel.setDataPosition(0);
         category = Category.CREATOR.createFromParcel(parcel);
