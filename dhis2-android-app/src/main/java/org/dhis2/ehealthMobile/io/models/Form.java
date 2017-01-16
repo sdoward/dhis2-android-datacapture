@@ -106,4 +106,9 @@ public class Form implements Serializable, Parcelable {
     public CategoryCombo getCategoryCombo() {
         return categoryCombo;
     }
+
+    public void setGroups(ArrayList<Group> groups){
+        this.groups = groups;
+    }
+
 }

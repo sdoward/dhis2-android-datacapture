@@ -306,7 +306,7 @@ public class AggregateReportFragment extends Fragment
             boolean isConnectionAvailable = NetworkUtils.checkConnection(getActivity());
 
             if (needsUpdate && isConnectionAvailable) {
-                startUpdate();
+                downloadConfigFile();
             }
         } else {
             showProgressBar();
@@ -544,8 +544,6 @@ public class AggregateReportFragment extends Fragment
             intent.putExtra(WorkService.METHOD, WorkService.METHOD_UPDATE_DATASETS);
             getActivity().startService(intent);
 
-            //download config file for all org units and their forms
-            downloadConfigFile();
         } else {
             String message = getString(R.string.check_connection);
             ToastManager.makeToast(context, message, Toast.LENGTH_LONG).show();
@@ -560,20 +558,24 @@ public class AggregateReportFragment extends Fragment
         public void onReceive(Context context, Intent intent) {
             hideProgressBar();
 
-            int networkStatusCode = intent.getExtras().getInt(Response.CODE);
-            int parsingStatusCode = intent.getExtras().getInt(JsonHandler.PARSING_STATUS_CODE);
+            if(intent.hasExtra(JsonHandler.PARSING_STATUS_CODE)){
+                int networkStatusCode = intent.getExtras().getInt(Response.CODE);
+                int parsingStatusCode = intent.getExtras().getInt(JsonHandler.PARSING_STATUS_CODE);
 
-            if (HTTPClient.isError(networkStatusCode)) {
-                String message = HTTPClient.getErrorMessage(getActivity(), networkStatusCode);
-                ToastManager.makeToast(getActivity(), message, Toast.LENGTH_LONG).show();
+                if (HTTPClient.isError(networkStatusCode)) {
+                    String message = HTTPClient.getErrorMessage(getActivity(), networkStatusCode);
+                    ToastManager.makeToast(getActivity(), message, Toast.LENGTH_LONG).show();
+                }
+
+                if (parsingStatusCode != JsonHandler.PARSING_OK_CODE) {
+                    String message = getString(R.string.bad_response);
+                    ToastManager.makeToast(getActivity(), message, Toast.LENGTH_LONG).show();
+                }
+
+                loadData();
+            }else{
+                startUpdate();
             }
-
-            if (parsingStatusCode != JsonHandler.PARSING_OK_CODE) {
-                String message = getString(R.string.bad_response);
-                ToastManager.makeToast(getActivity(), message, Toast.LENGTH_LONG).show();
-            }
-
-            loadData();
 
         }
     };
@@ -689,8 +691,21 @@ public class AggregateReportFragment extends Fragment
 
 
     private void downloadConfigFile(){
-        Intent intent = new Intent(getContext(), WorkService.class);
-        intent.putExtra(WorkService.METHOD, WorkService.METHOD_DOWNLOAD_CONFIG_FILE);
-        getContext().startService(intent);
+        Context context = getActivity();
+        if (context == null) {
+            return;
+        }
+
+        boolean isConnectionAvailable = NetworkUtils.checkConnection(context);
+        if (isConnectionAvailable) {
+            showProgressBar();
+            Intent intent = new Intent(getContext(), WorkService.class);
+            intent.putExtra(WorkService.METHOD, WorkService.METHOD_DOWNLOAD_CONFIG_FILE);
+            getContext().startService(intent);
+        }else {
+            String message = getString(R.string.check_connection);
+            ToastManager.makeToast(context, message, Toast.LENGTH_LONG).show();
+            hideProgressBar();
+        }
     }
 }
