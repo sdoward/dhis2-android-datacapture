@@ -49,7 +49,7 @@ public class HeaderRow extends Row{
 			holder = (HeaderRowHolder) view.getTag();
 		}
 
-		holder.textView.setText(fieldGroup.getLabel());
+//		holder.textView.setText(fieldGroup.getLabel());
 		holder.columnsContainer.setLabels(fieldGroup);
 
 

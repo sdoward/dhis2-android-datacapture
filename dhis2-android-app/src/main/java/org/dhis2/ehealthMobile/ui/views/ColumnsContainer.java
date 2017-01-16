@@ -29,20 +29,15 @@ public class ColumnsContainer extends LinearLayout {
 	public void makeColumns(FieldGroup fieldGroup){
 		removeAllViews();
 
-		List<Integer> columnLevels = new ArrayList<>();
+		Integer[] columnLevels = fieldGroup.getColumnLevels();
+		String[][] columnLabels = fieldGroup.getColumnLabels();
 
-		List<FieldGroupColumn> columns = fieldGroup.getColumns();
-		while(columns.size() > 0){
-			columnLevels.add(columns.size());
-			columns = columns.get(0).getChildren();
-		}
-
-		int[] columnSpan = new int[columnLevels.size()];
+		int[] columnSpan = new int[columnLevels.length];
 
 		for(int i=0;i<columnSpan.length;i++){
 			columnSpan[i] = 1;
 			for(int j=i+1;j<columnSpan.length;j++){
-				columnSpan[i] *= columnLevels.get(j);
+				columnSpan[i] *= columnLevels[j];
 			}
 		}
 
@@ -52,18 +47,15 @@ public class ColumnsContainer extends LinearLayout {
 
 		Random random = new Random();
 
-		for(int i=0;i<columnLevels.size();i++){
+		for(int i=0;i<columnLevels.length;i++){
 			LinearLayout row = new LinearLayout(getContext());
 			row.setLayoutParams(new LayoutParams(rowWidth, ViewGroup.LayoutParams.WRAP_CONTENT));
 			row.setOrientation(HORIZONTAL);
 
-			int nLabelsAtLevel = columnLevels.get(i);
-			for(int j=i-1;j>=0;j--)
-				nLabelsAtLevel *= columnLevels.get(j);
-
 			int labelWidth = columnSpan[i] * columnSize;
+			String[] labelRow = columnLabels[i];
 
-			for(int j=0;j<nLabelsAtLevel;j++){
+			for(int j=0;j<labelRow.length;j++){
 				TextView label = new TextView(getContext());
 				label.setLayoutParams(new LayoutParams(labelWidth, ViewGroup.LayoutParams.WRAP_CONTENT));
 				label.setText("X");
@@ -78,5 +70,17 @@ public class ColumnsContainer extends LinearLayout {
 
 	public void setLabels(FieldGroup fieldGroup){
 
+		String[][] labels = fieldGroup.getColumnLabels();
+
+		for(int i=0;i<labels.length;i++){
+			ViewGroup row = (ViewGroup) getChildAt(i);
+			String[] labelRow = labels[i];
+
+			for (int j = 0; j < labelRow.length; j++) {
+				TextView textView = (TextView) row.getChildAt(j);
+				textView.setText(labelRow[j]);
+				//((TextView) row.getChildAt(j)).setText(label);
+			}
+		}
 	}
 }

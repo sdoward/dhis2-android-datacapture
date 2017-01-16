@@ -82,7 +82,7 @@ import java.util.Map;;
 
 public class FieldAdapter extends BaseAdapter {
 
-	public static void addFieldGroupToRows(List<FieldGroup> fieldGroups, List<Row> rows) {
+	public static void assignFieldGroupToRows(List<FieldGroup> fieldGroups, List<Row> rows) {
 		for (Row row : rows) {
 			String fieldId = row.getFieldId();
 			if (fieldId == null) continue;
@@ -251,7 +251,7 @@ public class FieldAdapter extends BaseAdapter {
 						fieldGroups.get(i).setId(i);
 					}
 
-					addFieldGroupToRows(fieldGroups, rows);
+					assignFieldGroupToRows(fieldGroups, rows);
 
 					// sort the rows based on fieldgroup first and then alphabetically
 					Collections.sort(rows, ROW_COMPARATOR);

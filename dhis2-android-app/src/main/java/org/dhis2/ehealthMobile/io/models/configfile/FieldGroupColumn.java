@@ -13,6 +13,10 @@ public class FieldGroupColumn {
 	@SerializedName("columns")
 	private List<FieldGroupColumn> columns;
 
+	public String getLabel(){
+		return label;
+	}
+
 	public List<FieldGroupColumn> getChildren(){
 
 		if(columns == null)

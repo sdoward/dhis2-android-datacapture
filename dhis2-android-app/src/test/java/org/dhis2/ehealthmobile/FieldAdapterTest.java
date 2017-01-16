@@ -73,7 +73,7 @@ public class FieldAdapterTest {
 			new DummyRow(new DummyField(null, "")),
 		};
 
-		FieldAdapter.addFieldGroupToRows(Arrays.asList(fieldGroups), Arrays.asList(rows));
+		FieldAdapter.assignFieldGroupToRows(Arrays.asList(fieldGroups), Arrays.asList(rows));
 
 		assertThat(rows[0].getFieldGroup()).isEqualTo(fieldGroups[1]);
 		assertThat(rows[1].getFieldGroup()).isEqualTo(fieldGroups[1]);
@@ -104,7 +104,7 @@ public class FieldAdapterTest {
 				new DummyRow(new DummyField(null, "g")),
 		};
 
-		FieldAdapter.addFieldGroupToRows(Arrays.asList(fieldGroups), Arrays.asList(rows));
+		FieldAdapter.assignFieldGroupToRows(Arrays.asList(fieldGroups), Arrays.asList(rows));
 
 		Arrays.sort(rows, FieldAdapter.ROW_COMPARATOR);
 
@@ -138,7 +138,7 @@ public class FieldAdapterTest {
 				new DummyRow(new DummyField(null, "g")),
 		};
 
-		FieldAdapter.addFieldGroupToRows(Arrays.asList(fieldGroups), Arrays.asList(rows));
+		FieldAdapter.assignFieldGroupToRows(Arrays.asList(fieldGroups), Arrays.asList(rows));
 
 		List<Row> rowList = new ArrayList<>(Arrays.asList(rows));
 		FieldAdapter.addHeadersRow(null, Arrays.asList(fieldGroups), rowList);
