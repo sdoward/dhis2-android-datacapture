@@ -1,0 +1,18 @@
+{
+  "columns" : [
+    {
+      "label": "label0",
+      "columns": [
+        {"label": "label00"},
+        {"label": "label01"}
+      ]
+    },
+    {
+      "label": "label1",
+      "columns": [
+        {"label": "label10"},
+        {"label": "label11"}
+      ]
+    }
+  ]
+}
