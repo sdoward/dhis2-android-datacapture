@@ -11,7 +11,7 @@ import java.util.List;
 public class FieldGroup {
 
 	public interface ColumnInterator{
-		void visitColumn(FieldGroupColumn column, int depth, int index, int parentIndex);
+		void visitColumn(FieldGroupColumn column, int depth, int fullIndex);
 	}
 
 	protected int id;
@@ -96,12 +96,8 @@ public class FieldGroup {
 
 			visitColumns(new ColumnInterator() {
 				@Override
-				public void visitColumn(FieldGroupColumn column, int depth, int index, int parentIndex) {
-					Log.d("FieldGroupRecursion", String.format("visit column depth %s index %s parentIndex %s", depth, index, parentIndex));
-
-					int fullIndex = index;
-					if(parentIndex >0)
-						fullIndex += parentIndex * levels[depth];
+				public void visitColumn(FieldGroupColumn column, int depth, int fullIndex) {
+					Log.d("FieldGroupRecursion", String.format("visit column depth %s fullIndex %s", depth, fullIndex));
 
 					columnLabels[depth][fullIndex] = column.getLabel();
 				}
@@ -112,23 +108,26 @@ public class FieldGroup {
 	}
 
 	private void visitColumns(ColumnInterator iterator){
+
 		for (int i = 0; i < columns.size(); i++)
-			visitColumn(columns.get(i), 0, i, -1, iterator);
+			visitColumn(columns.get(i), 0, i, iterator);
 
 	}
 
-	private void visitColumn(FieldGroupColumn column, int depth, int index, int parentIndex, ColumnInterator iterator){
+	private void visitColumn(FieldGroupColumn column, int depth, int fullIndex, ColumnInterator iterator){
 
-		iterator.visitColumn(column, depth, index, parentIndex);
+		iterator.visitColumn(column, depth, fullIndex);
 
 		List<FieldGroupColumn> children = column.getChildren();
 		if(children == null) return;
-
 		depth++;
+
+		int baseFullIndex = fullIndex * children.size();
 
 		for (int i = 0; i < children.size(); i++) {
 			FieldGroupColumn child = children.get(i);
-			visitColumn(child, depth, i, index, iterator);
+			int childFullIndex = baseFullIndex + i;
+			visitColumn(child, depth, childFullIndex, iterator);
 		}
 	}
 }
