@@ -7,8 +7,7 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.Is.is;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Created by george on 10/4/16.
@@ -22,13 +21,8 @@ public class IsTimelyTest {
         field.setLabel("Timely");
         field.setDataElement(Constants.TIMELY);
         field.setValue("false");
-        ArrayList<Field> fields = new ArrayList<>();
-        fields.add(field);
-        ArrayList<Group> data = new ArrayList<>();
-        Group group = new Group("Test group", fields);
-        data.add(group);
 
-        assertThat(IsTimely.hasBeenSet(data), is(true));
+        assertThat(IsTimely.hasBeenSet(field)).isTrue();
     }
 
     @Test
@@ -42,7 +36,7 @@ public class IsTimelyTest {
         Group group = new Group("Test group", fields);
         data.add(group);
 
-        assertThat(IsTimely.hasBeenSet(data), is(false));
+       assertThat(IsTimely.hasBeenSet(field)).isFalse();
     }
 
     @Test
@@ -51,7 +45,7 @@ public class IsTimelyTest {
         DateTime dt = new DateTime(2016,10,3,11, 0, 0, 0);
         Boolean isTimely = IsTimely.check(dt, period);
 
-        assertThat(isTimely, is(true));
+        assertThat(isTimely).isTrue();
     }
 
     @Test
@@ -60,7 +54,7 @@ public class IsTimelyTest {
         DateTime dt = new DateTime(2016,10,3,13, 0, 0, 0);
         Boolean isTimely = IsTimely.check(dt, period);
 
-        assertThat(isTimely, is(false));
+        assertThat(isTimely).isFalse();
     }
 
     @Test
@@ -69,7 +63,7 @@ public class IsTimelyTest {
         DateTime dt = new DateTime(2016,10,4,11, 0, 0, 0);
         Boolean isTimely = IsTimely.check(dt, period);
 
-        assertThat(isTimely, is(false));
+        assertThat(isTimely).isFalse();
     }
 
     @Test
@@ -79,7 +73,7 @@ public class IsTimelyTest {
         DateTime dt = new DateTime(2016,10,3,11, 0, 0, 0);
         Boolean isTimely = IsTimely.check(dt, period);
 
-        assertThat(isTimely, is(false));
+        assertThat(isTimely).isFalse();
     }
 
     @Test
@@ -89,7 +83,7 @@ public class IsTimelyTest {
         DateTime dt = new DateTime(2016,10,3,11, 0, 0, 0);
         Boolean isTimely = IsTimely.check(dt, period);
 
-        assertThat(isTimely, is(false));
+        assertThat(isTimely).isFalse();
     }
 
     @Test
@@ -99,7 +93,7 @@ public class IsTimelyTest {
         DateTime dt = new DateTime(2016,10,3,11, 0, 0, 0);
         Boolean isTimely = IsTimely.check(dt, period);
 
-        assertThat(isTimely, is(false));
+        assertThat(isTimely).isFalse();
     }
 
 }
