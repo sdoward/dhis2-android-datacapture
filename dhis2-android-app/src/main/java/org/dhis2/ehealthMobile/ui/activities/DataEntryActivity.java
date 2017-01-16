@@ -249,8 +249,10 @@ public class DataEntryActivity extends BaseActivity implements LoaderManager.Loa
     public void onLoaderReset(Loader<Form> loader) {
     }
 
-    private void restartLoader(){
+    private void restartLoader() {
         getSupportLoaderManager().restartLoader(LOADER_FORM_ID, null, this).forceLoad();
+    }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         AppPermissions.handleRequestResults(requestCode, permissions, grantResults, this);
@@ -474,10 +476,9 @@ public class DataEntryActivity extends BaseActivity implements LoaderManager.Loa
             if (NetworkUtils.checkConnection(this)) {
                 getCompletionDate();
             }else{
-                compulsoryData = PrefUtils.getCompulsoryDiseases(getApplicationContext(), infoHolder.getFormId());
+                compulsoryData = PrefUtils.getConfigString(getApplicationContext(), infoHolder.getFormId(), ConfigFileProcessor.COMPULSORY_DISEASES);
             }
 
-            compulsoryData = PrefUtils.getConfigString(getApplicationContext(), infoHolder.getFormId(), ConfigFileProcessor.COMPULSORY_DISEASES);
         }
     }
 
