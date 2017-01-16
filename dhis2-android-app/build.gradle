@@ -5,6 +5,9 @@ repositories {
     maven { url 'https://maven.fabric.io/public' }
 }
 
+def supportLibraryVersion = "25.1.0"
+def espressoVersion = "2.2.2"
+
 android {
     compileSdkVersion 25
     buildToolsVersion "25.0.2"
@@ -31,12 +34,10 @@ android {
         }
     }
     configurations.all {
-        resolutionStrategy.force 'com.android.support:support-annotations:24.2.0'
+        resolutionStrategy.force "com.android.support:support-annotations:$supportLibraryVersion"
     }
 
 }
-
-def supportLibraryVersion = "25.1.0"
 
 dependencies {
     compile "com.android.support:recyclerview-v7:$supportLibraryVersion"
@@ -46,10 +47,10 @@ dependencies {
     compile "com.android.support:support-v4:$supportLibraryVersion"
     compile "com.android.support:support-annotations:$supportLibraryVersion"
 
-    compile 'com.google.code.gson:gson:2.4'
-    compile 'joda-time:joda-time:2.6'
-    compile 'commons-net:commons-net:3.3'
-    compile 'com.android.support.constraint:constraint-layout:1.0.0-beta2'
+    compile 'com.google.code.gson:gson:2.8.0'
+    compile 'joda-time:joda-time:2.9.7'
+    compile 'commons-net:commons-net:3.5'
+    compile 'com.android.support.constraint:constraint-layout:1.0.0-beta4'
     compile('com.crashlytics.sdk.android:crashlytics:2.6.5@aar') {
         transitive = true;
     }
@@ -58,28 +59,20 @@ dependencies {
 
 
     testCompile 'junit:junit:4.12'
-    testCompile 'org.mockito:mockito-core:1.10.19'
+    testCompile 'org.mockito:mockito-core:2.6.3'
     testCompile 'com.squareup.okhttp:mockwebserver:2.7.5'
-    testCompile "org.robolectric:robolectric:3.2.1"
+    testCompile "org.robolectric:robolectric:3.2.2"
     testCompile 'com.squareup.assertj:assertj-android:1.1.1'
 
     androidTestCompile 'junit:junit:4.12'
     androidTestCompile 'com.android.support.test:runner:0.5'
     androidTestCompile 'com.android.support.test:rules:0.5'
-    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2') {
-        exclude group: 'javax.inject'
-    }
-    androidTestCompile('com.android.support.test.espresso:espresso-contrib:2.2.2') {
-        exclude group: 'javax.inject'
+    androidTestCompile("com.android.support.test.espresso:espresso-core:$espressoVersion")
+    androidTestCompile("com.android.support.test.espresso:espresso-contrib:$espressoVersion") {
         exclude group: 'com.android.support'
     }
-    androidTestCompile 'com.android.support.test.espresso:espresso-idling-resource:2.2.2'
-    androidTestCompile 'com.android.support.test.espresso:espresso-intents:2.2.2'
-
-
-
-
-
+    androidTestCompile "com.android.support.test.espresso:espresso-idling-resource:$espressoVersion"
+    androidTestCompile "com.android.support.test.espresso:espresso-intents:$espressoVersion"
 
 }
 
