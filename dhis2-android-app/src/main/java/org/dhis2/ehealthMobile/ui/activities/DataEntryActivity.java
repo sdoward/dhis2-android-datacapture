@@ -950,15 +950,17 @@ public class DataEntryActivity extends BaseActivity implements LoaderManager.Loa
         super.onBackPressed();
 
         ArrayList<Group> groups = new ArrayList<>();
+        DatasetInfoHolder info  = new DatasetInfoHolder();
         if(adapters != null) {
             for (FieldAdapter adapter : adapters) {
                 groups.add(adapter.getGroup());
             }
-            //Add the comment in list view footer to group data.
-            addFooterCommentToGroup(groups.get(0));
-            DatasetInfoHolder info = getIntent().getExtras()
-                    .getParcelable(DatasetInfoHolder.TAG);
-
+            if(groups.size() > 0){
+                //Add the comment in list view footer to group data.
+                addFooterCommentToGroup(groups.get(0));
+                info = getIntent().getExtras()
+                        .getParcelable(DatasetInfoHolder.TAG);
+            }
             if(!isFormBlank(groups)){
                 String data = ReportUploadProcessor.prepareContent(info, groups);
                 saveInProgressDataset(getApplicationContext(), data, info);
