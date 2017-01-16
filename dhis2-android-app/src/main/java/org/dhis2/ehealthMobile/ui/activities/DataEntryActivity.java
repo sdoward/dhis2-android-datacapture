@@ -1,5 +1,6 @@
 package org.dhis2.ehealthMobile.ui.activities;
 
+import android.Manifest;
 import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
@@ -10,6 +11,7 @@ import android.content.IntentFilter;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.ContextCompat;
@@ -54,10 +56,13 @@ import org.dhis2.ehealthMobile.network.HTTPClient;
 import org.dhis2.ehealthMobile.network.NetworkUtils;
 import org.dhis2.ehealthMobile.network.Response;
 import org.dhis2.ehealthMobile.processors.ReportUploadProcessor;
+import org.dhis2.ehealthMobile.processors.ConfigFileProcessor;
 import org.dhis2.ehealthMobile.processors.SubmissionDetailsProcessor;
 import org.dhis2.ehealthMobile.ui.adapters.dataEntry.FieldAdapter;
 import org.dhis2.ehealthMobile.ui.adapters.dataEntry.rows.PosOrZeroIntegerRow2;
 import org.dhis2.ehealthMobile.ui.fragments.AdditionalDiseasesFragment;
+import org.dhis2.ehealthMobile.utils.FormUtils;
+import org.dhis2.ehealthMobile.utils.AppPermissions;
 import org.dhis2.ehealthMobile.utils.IsDisabled;
 import org.dhis2.ehealthMobile.utils.PrefUtils;
 import org.dhis2.ehealthMobile.utils.TextFileUtils;
@@ -126,6 +131,7 @@ public class DataEntryActivity extends BaseActivity implements LoaderManager.Loa
 
     private EditText commentField;
     private IsDisabled isDisabled;
+
 
     public static void navigateTo(Activity activity, DatasetInfoHolder info) {
         if (info != null && activity != null) {
@@ -245,6 +251,10 @@ public class DataEntryActivity extends BaseActivity implements LoaderManager.Loa
 
     private void restartLoader(){
         getSupportLoaderManager().restartLoader(LOADER_FORM_ID, null, this).forceLoad();
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        AppPermissions.handleRequestResults(requestCode, permissions, grantResults, this);
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
     private void setupToolbar() {
@@ -467,6 +477,7 @@ public class DataEntryActivity extends BaseActivity implements LoaderManager.Loa
                 compulsoryData = PrefUtils.getCompulsoryDiseases(getApplicationContext(), infoHolder.getFormId());
             }
 
+            compulsoryData = PrefUtils.getConfigString(getApplicationContext(), infoHolder.getFormId(), ConfigFileProcessor.COMPULSORY_DISEASES);
         }
     }
 
@@ -559,7 +570,7 @@ public class DataEntryActivity extends BaseActivity implements LoaderManager.Loa
         });
     }
 
-    private void upload() {
+    public void upload() {
         if (adapters == null) {
             ToastManager.makeToast(this, getString(R.string.something_went_wrong),
                     Toast.LENGTH_SHORT).show();
@@ -577,22 +588,30 @@ public class DataEntryActivity extends BaseActivity implements LoaderManager.Loa
         DatasetInfoHolder info = getIntent().getExtras()
                 .getParcelable(DatasetInfoHolder.TAG);
 
-        Intent intent = new Intent(this, WorkService.class);
-        //Check if network is available. If not send via sms or else just upload via internet
-        if(!NetworkUtils.checkConnection(getApplicationContext())){
-            intent.putExtra(WorkService.METHOD, WorkService.METHOD_SEND_VIA_SMS);
-        }else {
-            intent.putExtra(WorkService.METHOD, WorkService.METHOD_UPLOAD_DATASET);
-        }
-        intent.putExtra(DatasetInfoHolder.TAG, info);
-        intent.putExtra(Group.TAG, groups);
-
         if(isInvalidForm(groups)){
             showCompulsoryFieldsDialog();
         }else {
             removeInProgressDataset(getApplicationContext(), info);
-            startService(intent);
-            finish();
+            Intent intent = new Intent(this, WorkService.class);
+            intent.putExtra(DatasetInfoHolder.TAG, info);
+            intent.putExtra(Group.TAG, groups);
+
+            boolean hasInternet = NetworkUtils.checkConnection(getApplicationContext());
+            boolean hasPermission = AppPermissions.isPermissionGranted(getApplicationContext(),
+                    Manifest.permission.SEND_SMS);
+            boolean canShowRationale = AppPermissions.canShowRationale(this, Manifest.permission.SEND_SMS);
+            if(!hasInternet && hasPermission){
+                intent.putExtra(WorkService.METHOD, WorkService.METHOD_SEND_VIA_SMS);
+                startService(intent);
+                finish();
+            }else if(!hasInternet && canShowRationale){
+                //When a previous requiredPermissions request hasn't been made and rejected
+                AppPermissions.requestPermission(this);
+            }else{
+                intent.putExtra(WorkService.METHOD, WorkService.METHOD_UPLOAD_DATASET);
+                startService(intent);
+                finish();
+            }
         }
 
     }
@@ -710,6 +729,10 @@ public class DataEntryActivity extends BaseActivity implements LoaderManager.Loa
                 // try to fit values
                 // from storage into form
                 loadValuesIntoForm(form);
+
+                if(FormUtils.shouldBeSquashed(getContext(), infoHolder.getFormId())){
+                    form = FormUtils.squashFormGroups(form);
+                }
 
                 return form;
             }
@@ -876,16 +899,14 @@ public class DataEntryActivity extends BaseActivity implements LoaderManager.Loa
             }
         }
 
-        assert isTimely != null;
         //Timely value not stored as boolean for some reason even though the data element is type boolean ¯\_(ツ)_/¯
-        if(isTimely.equals("true")){
+        if("true".equals(isTimely)){
             isTimelyIcon.setImageDrawable(isTimelyDrawable);
         }else{
             isTimelyIcon.setImageDrawable(notTimelyDrawable);
         }
 
-        assert submissionMethodValue != null;
-        if(!submissionMethodValue.equals("")){
+        if(!"".equals(submissionMethodValue)){
             submissionMethodText = getString(R.string.submission_method_prefix)+" "+submissionMethodValue;
             submissionMethod.setText(submissionMethodText);
         }else{

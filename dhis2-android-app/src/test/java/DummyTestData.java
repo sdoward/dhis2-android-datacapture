@@ -21,4 +21,13 @@ public class DummyTestData {
     public static final String ID = "iQgaTATK59f";
 
     public static final String ORG_UNITS = "[{\"id\":\"dar4XkzRmN0\",\"displayName\":\"ABERDEEN WOMENS CENTER Hospital \"},{\"id\":\"Dq86w8tvw1h\",\"displayName\":\"Ad-Bangs Quarry MCHP\"},{\"id\":\"OWlc4mW2hSs\",\"displayName\":\"Adonkia CHP\"},{\"id\":\"jRubpdIY41X\",\"displayName\":\"Adra Hospital-Waterloo\"},{\"id\":\"bYHihlIgrwM\",\"displayName\":\"Afro Arab Clinic\"},{\"id\":\"r7HlpPKHfWW\",\"displayName\":\"Agape CHP\"},{\"id\":\"NXPBaEbfw1g\",\"displayName\":\"Ahamadyya Mission Cl\"},{\"id\":\"rfK14JAVwtU\",\"displayName\":\"Ahmadiyya Muslim Hospital\"},{\"id\":\"DE3Qyg8PUTv\",\"displayName\":\"Air Port Centre, Lungi\"},{\"id\":\"gZpSPgbuBVd\",\"displayName\":\"Alkalia CHP\"},{\"id\":\"jgKElj4o4a6\",\"displayName\":\"Al-Khatab Clinic CHP\"},{\"id\":\"FFDoJvNboOc\",\"displayName\":\"Allen Town Health Post CHP \"},{\"id\":\"GfkWK0go9uI\",\"displayName\":\"Approved School CHP\"},{\"id\":\"phtyLB0ZfIz\",\"displayName\":\"AWAKE CHP\"},{\"id\":\"k5qLtwbMxwV\",\"displayName\":\"Baama CHC\"},{\"id\":\"DDEZcdYY7Zv\",\"displayName\":\"Babara CHC\"},{\"id\":\"OYB4r8Ess1c\",\"displayName\":\"Badala MCHP\"},{\"id\":\"t3OhkRzFmGl\",\"displayName\":\"Badjia\"},{\"id\":\"V5pqLY1TQC3\",\"displayName\":\"Bafodia CHC\"},{\"id\":\"R7c4EO4zFN8\",\"displayName\":\"Bagruwa\"},{\"id\":\"F7rKI2wvyCE\",\"displayName\":\"Baiama CHP\"},{\"id\":\"mjr7fbUFP93\",\"displayName\":\"Bai Bureh Memorial Hospital\"},{\"id\":\"q8y4sU9Mia6\",\"displayName\":\"Baiima CHP\"},{\"id\":\"v7grvTXSGvs\",\"displayName\":\"Bai Largo MCHP\"},{\"id\":\"NQpLWIjmmWY\",\"displayName\":\"Bailor CHP\"}]";
+
+    public static final String PERIOD = "2016W33";
+    public static final String PERIOD_LABEL = "W33 - 2016-08-15 - 2016-08-21";
+    public static final String ORG_UNIT_ID = "tWi9XVPNNue";
+    public static final String ORG_UNIT_LABEL = "Benkeh MCHP";
+    public static final String FORM_ID = "w9c9UJ3Prus";
+    public static final String FORM_LABEL = "IDSR Weekly DiseaseImporter Report(WDR)_old";
+    public static final String DATASETINFO_KEY = "tWi9XVPNNuew9c9UJ3Prus2016W33";
+
 }
