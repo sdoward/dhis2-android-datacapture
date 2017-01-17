@@ -42,7 +42,6 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Base64;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -58,202 +57,175 @@ import org.dhis2.ehealthMobile.utils.AppPermissions;
 import org.dhis2.ehealthMobile.utils.ToastManager;
 import org.dhis2.ehealthMobile.utils.ViewUtils;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+
 public class LoginActivity extends AppCompatActivity {
-    public static final String TAG = LoginActivity.class.getSimpleName();
-    public static final String USERNAME = "username";
-    public static final String SERVER = "server";
-    public static final String CREDENTIALS = "creds";
 
-    private Button mLoginButton;
-    private EditText mUsername;
-    private EditText mPassword;
-    private ImageView mDhis2Logo;
+	public static final String TAG = LoginActivity.class.getSimpleName();
+	public static final String USERNAME = "usernameEditText";
+	public static final String SERVER = "server";
+	public static final String CREDENTIALS = "creds";
 
-    // Disabled serverUrl EditText in order to allow
-    // developers to build app with custom server address
-    private EditText mServerUrl;
-    private ProgressBar mProgressBar;
 
-    // BroadcastReceiver which aim is to listen
-    // for network response on login post request
-    BroadcastReceiver mReceiver = new BroadcastReceiver() {
+	@BindView(R.id.url_edit_text)
+	public EditText urlEditText;
 
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            int code = intent.getExtras().getInt(Response.CODE);
+	@BindView(R.id.username_edit_text)
+	public EditText usernameEditText;
 
-            // If response code is 200, then MenuActivity is started
-            // If not, user is notified with error message
-            if (!HTTPClient.isError(code)) {
-                Intent menuActivity = new Intent(LoginActivity.this, MenuActivity.class);
-                startActivity(menuActivity);
-                overridePendingTransition(R.anim.activity_open_enter, R.anim.activity_open_exit);
-                finish();
-            } else {
-                hideProgress();
-                String message = HTTPClient.getErrorMessage(LoginActivity.this, code);
-                showMessage(message);
-            }
-        }
-    };
+	@BindView(R.id.password_edit_text)
+	public EditText passwordEditText;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+	@BindView(R.id.login_button)
+	public Button loginButton;
 
-        mDhis2Logo = (ImageView) findViewById(R.id.dhis2_logo);
-        mLoginButton = (Button) findViewById(R.id.login_button);
+	@BindView(R.id.dhis2_logo)
+	public ImageView logoImageView;
 
-        mServerUrl = (EditText) findViewById(R.id.server_url);
-        mUsername = (EditText) findViewById(R.id.username);
-        mPassword = (EditText) findViewById(R.id.password);
+	@BindView(R.id.progress_bar)
+	public ProgressBar progressBar;
 
-        mProgressBar = (ProgressBar) findViewById(R.id.progress_bar);
-        mProgressBar.setVisibility(View.GONE);
 
-        // textwatcher is responsible for watching
-        // after changes in all fields
-        final TextWatcher textWatcher = new TextWatcher() {
+	final TextWatcher loginCredentialsTextWatcher = new TextWatcher() {
 
-            @Override
-            public void afterTextChanged(Editable edit) {
-            }
+		@Override
+		public void afterTextChanged(Editable edit) {
+		}
 
-            @Override
-            public void beforeTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {
-            }
+		@Override
+		public void beforeTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {
+		}
 
-            @Override
-            public void onTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {
-                checkEditTextFields();
-            }
-        };
+		@Override
+		public void onTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {
+			checkLoginButtonEnabled();
+		}
+	};
 
-        mServerUrl.addTextChangedListener(textWatcher);
-        mUsername.addTextChangedListener(textWatcher);
-        mPassword.addTextChangedListener(textWatcher);
+	BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 
-        // Call method in order to check the fields
-        // and change state of login button
-        checkEditTextFields();
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			int code = intent.getExtras().getInt(Response.CODE);
 
-        mLoginButton.setOnClickListener(new OnClickListener() {
+			// If response code is 200, then MenuActivity is started
+			// If not, user is notified with error message
+			if (!HTTPClient.isError(code)) {
+				Intent menuActivity = new Intent(LoginActivity.this, MenuActivity.class);
+				startActivity(menuActivity);
+				overridePendingTransition(R.anim.activity_open_enter, R.anim.activity_open_exit);
+				finish();
+			} else {
+				hideProgress();
+				String message = HTTPClient.getErrorMessage(LoginActivity.this, code);
+				showMessage(message);
+			}
+		}
+	};
 
-            @Override
-            public void onClick(View view) {
-                loginUser();
-            }
-        });
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_login);
+		ButterKnife.bind(this);
 
-        if(!AppPermissions.isPermissionGranted(getApplicationContext(), Manifest.permission.SEND_SMS)){
-            AppPermissions.requestPermission(this);
-        }
+		progressBar.setVisibility(View.GONE);
 
-        // Restoring state of activity from saved bundle
-        if (savedInstanceState != null) {
-            boolean loginInProcess = savedInstanceState.getBoolean(TAG, false);
+		urlEditText.addTextChangedListener(loginCredentialsTextWatcher);
+		usernameEditText.addTextChangedListener(loginCredentialsTextWatcher);
+		passwordEditText.addTextChangedListener(loginCredentialsTextWatcher);
 
-            if (loginInProcess) {
-                ViewUtils.hideAndDisableViews(mDhis2Logo, mServerUrl, mUsername, mPassword, mLoginButton);
-                //ViewUtils.hideAndDisableViews(mDhis2Logo, mUsername, mPassword, mLoginButton);
-                showProgress();
-            }
-        }
-    }
+		checkLoginButtonEnabled();
 
-    @Override
-    public void onResume() {
-        super.onResume();
+		if (!AppPermissions.isPermissionGranted(getApplicationContext(), Manifest.permission.SEND_SMS)) {
+			AppPermissions.requestPermission(this);
+		}
 
-        // Registering BroadcastReceiver
-        LocalBroadcastManager.getInstance(this).registerReceiver(mReceiver, new IntentFilter(TAG));
+		// Restoring state of activity from saved bundle
+		if (savedInstanceState != null) {
+			boolean loginInProcess = savedInstanceState.getBoolean(TAG, false);
 
-    }
+			if (loginInProcess) {
+				ViewUtils.hideAndDisableViews(logoImageView, urlEditText, usernameEditText, passwordEditText, loginButton);
+				//ViewUtils.hideAndDisableViews(logoImageView, usernameEditText, passwordEditText, loginButton);
+				showProgress();
+			}
+		}
+	}
 
-    @Override
-    public void onPause() {
+	@Override
+	public void onResume() {
+		super.onResume();
+		LocalBroadcastManager.getInstance(this).registerReceiver(broadcastReceiver, new IntentFilter(TAG));
 
-        // Unregistering BroadcastReceiver in
-        // onPause() in order to prevent leaks
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(mReceiver);
-        super.onPause();
-    }
+	}
 
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        // Saving state of activity
-        if (mProgressBar != null) {
-            outState.putBoolean(TAG, mProgressBar.isShown());
-        }
-        super.onSaveInstanceState(outState);
-    }
+	@Override
+	public void onPause() {
+		super.onPause();
+		LocalBroadcastManager.getInstance(this).unregisterReceiver(broadcastReceiver);
+	}
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        AppPermissions.handleRequestResults(requestCode, permissions, grantResults, this);
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-    }
+	@Override
+	public void onSaveInstanceState(Bundle outState) {
+		if (progressBar != null) {
+			outState.putBoolean(TAG, progressBar.isShown());
+		}
+		super.onSaveInstanceState(outState);
+	}
 
-    // Activates *login button*,
-    // if all necessary fields are full
-    private void checkEditTextFields() {
-        String tempUrl = mServerUrl.getText().toString();
-        //Server address will be retrieved from .xml resources
-        //String tempUrl = getString(R.string.default_server_url);
-        String tempUsername = mUsername.getText().toString();
-        String tempPassword = mPassword.getText().toString();
+	@Override
+	public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+		AppPermissions.handleRequestResults(requestCode, permissions, grantResults, this);
+		super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+	}
 
-        if (tempUrl.equals("") || tempUsername.equals("") || tempPassword.equals("")) {
-            mLoginButton.setEnabled(false);
-        } else {
-            mLoginButton.setEnabled(true);
-        }
-    }
 
-    // loginUser() is called when user clicks *LoginButton*
-    private void loginUser() {
-        String tmpServer = mServerUrl.getText().toString();
-        //Server address will be retrieved from .xml resources
-        //String tmpServer = getString(R.string.default_server_url);
+	private void checkLoginButtonEnabled() {
+		loginButton.setEnabled(urlEditText.length() > 0 && usernameEditText.length() > 0 && passwordEditText.length() > 0);
+	}
 
-        String user = mUsername.getText().toString();
-        String pass = mPassword.getText().toString();
-        String pair = String.format("%s:%s", user, pass);
+	@OnClick(R.id.login_button)
+	public void loginUser() {
+		String tmpServer = urlEditText.getText().toString();
 
-        if (NetworkUtils.checkConnection(LoginActivity.this)) {
-            showProgress();
+		String user = usernameEditText.getText().toString();
+		String pass = passwordEditText.getText().toString();
+		String pair = String.format("%s:%s", user, pass);
 
-            String server = tmpServer + (tmpServer.endsWith("/") ? "" : "/");
-            String creds = Base64.encodeToString(pair.getBytes(), Base64.NO_WRAP);
+		if (NetworkUtils.checkConnection(LoginActivity.this)) {
+			showProgress();
 
-            // Preparing data to be sent to WorkService
-            Intent intent = new Intent(LoginActivity.this, WorkService.class);
-            intent.putExtra(WorkService.METHOD, WorkService.METHOD_LOGIN_USER);
-            intent.putExtra(SERVER, server);
-            intent.putExtra(USERNAME, user);
-            intent.putExtra(CREDENTIALS, creds);
+			String server = tmpServer + (tmpServer.endsWith("/") ? "" : "/");
+			String creds = Base64.encodeToString(pair.getBytes(), Base64.NO_WRAP);
 
-            // Starting WorkService
-            startService(intent);
-        } else {
-            showMessage(getString(R.string.check_connection));
-        }
-    }
+			Intent intent = new Intent(LoginActivity.this, WorkService.class);
+			intent.putExtra(WorkService.METHOD, WorkService.METHOD_LOGIN_USER);
+			intent.putExtra(SERVER, server);
+			intent.putExtra(USERNAME, user);
+			intent.putExtra(CREDENTIALS, creds);
 
-    private void showMessage(String message) {
-        ToastManager.makeToast(this, message, Toast.LENGTH_LONG).show();
-    }
+			startService(intent);
+		} else {
+			showMessage(getString(R.string.check_connection));
+		}
+	}
 
-    private void showProgress() {
-        ViewUtils.perfomOutAnimation(this, R.anim.out_up, true,
-                mDhis2Logo, mServerUrl, mUsername, mPassword, mLoginButton);
-        ViewUtils.enableViews(mProgressBar);
-    }
+	private void showMessage(String message) {
+		ToastManager.makeToast(this, message, Toast.LENGTH_LONG).show();
+	}
 
-    private void hideProgress() {
-        ViewUtils.perfomInAnimation(this, R.anim.in_down,
-                mDhis2Logo, mServerUrl, mUsername, mPassword, mLoginButton);
-        ViewUtils.hideAndDisableViews(mProgressBar);
-    }
+	private void showProgress() {
+		ViewUtils.perfomOutAnimation(this, R.anim.out_up, true,
+				logoImageView, urlEditText, usernameEditText, passwordEditText, loginButton);
+		ViewUtils.enableViews(progressBar);
+	}
+
+	private void hideProgress() {
+		ViewUtils.perfomInAnimation(this, R.anim.in_down,
+				logoImageView, urlEditText, usernameEditText, passwordEditText, loginButton);
+		ViewUtils.hideAndDisableViews(progressBar);
+	}
 }

@@ -25,7 +25,7 @@
         android:src="@drawable/dhis2_logo" />
 
     <org.dhis2.ehealthMobile.ui.views.FontEditText
-        android:id="@+id/server_url"
+        android:id="@+id/url_edit_text"
         style="@style/LoginEditTextProperies"
         android:layout_below="@id/dhis2_logo"
         android:layout_centerHorizontal="true"
@@ -35,18 +35,18 @@
         app:font="@string/regular_font_name" />
 
     <org.dhis2.ehealthMobile.ui.views.FontEditText
-        android:id="@+id/username"
+        android:id="@+id/username_edit_text"
         style="@style/LoginEditTextProperies"
-        android:layout_below="@+id/server_url"
+        android:layout_below="@+id/url_edit_text"
         android:layout_centerHorizontal="true"
         android:drawableLeft="@drawable/ic_username"
         android:hint="@string/username"
         app:font="@string/regular_font_name" />
 
     <org.dhis2.ehealthMobile.ui.views.FontEditText
-        android:id="@+id/password"
+        android:id="@+id/password_edit_text"
         style="@style/LoginEditTextProperies"
-        android:layout_below="@+id/username"
+        android:layout_below="@+id/username_edit_text"
         android:layout_centerHorizontal="true"
         android:drawableLeft="@drawable/ic_password"
         android:hint="@string/password"
@@ -57,7 +57,7 @@
         android:id="@+id/login_button"
         android:layout_width="180dp"
         android:layout_height="40dp"
-        android:layout_below="@+id/password"
+        android:layout_below="@+id/password_edit_text"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="15dp"
         android:background="@drawable/loginbutton_custom_selector"
