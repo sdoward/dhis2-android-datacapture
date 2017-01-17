@@ -35,6 +35,9 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.webkit.URLUtil;
 
+import com.google.gson.Gson;
+
+import org.dhis2.ehealthMobile.io.models.useraccount.UserAccount;
 import org.dhis2.ehealthMobile.network.HTTPClient;
 import org.dhis2.ehealthMobile.network.Response;
 import org.dhis2.ehealthMobile.network.URLConstants;
@@ -73,8 +76,13 @@ public class LoginProcessor {
         // user information will be saved to internal storage
         if (!HTTPClient.isError(resp.getCode())) {
             PrefUtils.initAppData(context, creds, username, url);
+
+            Gson gson = new Gson();
+
+            UserAccount userAccount = gson.fromJson(resp.getBody(), UserAccount.class);
+
             TextFileUtils.writeTextFile(context, TextFileUtils.Directory.ROOT,
-                    TextFileUtils.FileNames.ACCOUNT_INFO, resp.getBody());
+                    TextFileUtils.FileNames.ACCOUNT_INFO, gson.toJson(userAccount));
         }
 
         // Sending result back to activity

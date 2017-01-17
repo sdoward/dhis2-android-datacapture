@@ -1,0 +1,16 @@
+{
+	"id": "abc123",
+	"username": "admin",
+	"firstName": "admin",
+	"surname": "admin",
+	"email": "foobar@sl.ehealthafrica.org",
+	"phoneNumber": "123456",
+	"gender": "gender_male",
+	"settings": {
+		"keyDbLocale": null,
+		"keyMessageSmsNotification": "true",
+		"keyUiLocale": "en",
+		"keyAnalysisDisplayProperty": "name",
+		"keyMessageEmailNotification": "true"
+	}
+}

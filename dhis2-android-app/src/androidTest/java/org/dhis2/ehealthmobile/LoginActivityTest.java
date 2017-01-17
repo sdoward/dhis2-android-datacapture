@@ -3,12 +3,13 @@ package org.dhis2.ehealthmobile;
 import android.support.test.espresso.Espresso;
 import android.support.test.rule.ActivityTestRule;
 
+import com.google.gson.Gson;
 import com.squareup.okhttp.mockwebserver.MockResponse;
-import com.squareup.okhttp.mockwebserver.MockWebServer;
 
 import org.dhis2.ehealthMobile.R;
+import org.dhis2.ehealthMobile.io.models.useraccount.UserAccount;
 import org.dhis2.ehealthMobile.ui.activities.LoginActivity;
-import org.junit.Before;
+import org.dhis2.ehealthMobile.utils.TextFileUtils;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -17,7 +18,9 @@ import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.RootMatchers.withDecorView;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
+import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.core.IsNot.not;
 
@@ -26,16 +29,9 @@ public class LoginActivityTest extends BaseInstrumentationTest{
 	private static final String USERNAME = "username";
 	private static final String PASSWORD = "password";
 
-	MockWebServer server;
 
 	@Rule
 	public ActivityTestRule<LoginActivity> rule = new ActivityTestRule<>(LoginActivity.class);
-
-	@Before
-	public void setup(){
-		super.setup();
-		server = new MockWebServer();
-	}
 
 	protected void typeLoginData(String url, String username, String password){
 
@@ -49,10 +45,7 @@ public class LoginActivityTest extends BaseInstrumentationTest{
 
 	protected void failLogin(String url, String username, String password, int responseCode, int toastMessage){
 
-		server.enqueue(new MockResponse()
-				.setResponseCode(responseCode)
-				.setBody("")
-				.addHeader("Content-Type", "application/json"));
+		enqueueJsonResponse(responseCode, "");
 
 		typeLoginData(url, username, password);
 
@@ -78,20 +71,20 @@ public class LoginActivityTest extends BaseInstrumentationTest{
 
 		rotateNatural();
 
-		typeLoginData(server.url("").toString(), USERNAME, PASSWORD);
+		typeLoginData(serverUrl(""), USERNAME, PASSWORD);
 
 		rotateLeft();
-		rotateRigt();
+		rotateRight();
 		rotateNatural();
 
-		checkViewWithTextIsDisplayed(server.url("").toString());
+		checkViewWithTextIsDisplayed(serverUrl(""));
 		checkViewWithTextIsDisplayed(USERNAME);
 		checkViewWithTextIsDisplayed(PASSWORD);
 	}
 
 	@Test
 	public void loginShouldFailBecauseOfWrongCredentials() {
-		failLogin(server.url("foo/bar").toString(), USERNAME, PASSWORD,HttpURLConnection.HTTP_UNAUTHORIZED, R.string.wrong_username_password);
+		failLogin(serverUrl("foo/bar"), USERNAME, PASSWORD,HttpURLConnection.HTTP_UNAUTHORIZED, R.string.wrong_username_password);
 	}
 
 	@Test
@@ -101,6 +94,24 @@ public class LoginActivityTest extends BaseInstrumentationTest{
 
 	@Test
 	public void loginShouldFailBecauseOfUnexpectedReason(){
-		failLogin(server.url("").toString(), USERNAME, PASSWORD, Integer.MIN_VALUE, R.string.try_again);
+		failLogin(serverUrl(""), USERNAME, PASSWORD, Integer.MIN_VALUE, R.string.try_again);
+	}
+
+	@Test
+	public void loginShouldSucceedAndNavigateToMenuActivity() throws InterruptedException {
+		enqueueJsonResponse("api_me_user-account");
+
+		typeLoginData(serverUrl(""), USERNAME, PASSWORD);
+
+		clickView(R.id.login_button);
+		onView(withId(R.id.drawer_layout));
+
+		Thread.sleep(1000);
+		String userAccountJson = TextFileUtils.readTextFile(rule.getActivity(),
+				TextFileUtils.Directory.ROOT,
+				TextFileUtils.FileNames.ACCOUNT_INFO);
+
+		UserAccount userAccount = new Gson().fromJson(userAccountJson, UserAccount.class);
+		assertThat(userAccount.id).isEqualTo("abc123");
 	}
 }
