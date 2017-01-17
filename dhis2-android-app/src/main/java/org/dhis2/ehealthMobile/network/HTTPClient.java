@@ -49,23 +49,45 @@ import android.util.Log;
  */
 
 public class HTTPClient {
-    private static final int CONNECTION_TIME_OUT = 1500;
+	private static final int CONNECTION_TIME_OUT = 1500;
 
-	private HTTPClient() { }
+	private HTTPClient() {
+	}
 
-    /**
-     * Does a get call to the DHIS2 server
-     * @param server String The URL for the DHIS2 instance set by the user.
-     * @param creds String The users credentials aka username and password
-     * @return Response The response message from the server. This is parsed in as a new Response object.
-     * @see Response
-     */
+	/**
+	 * Does a get call to the DHIS2 server
+	 *
+	 * @param server String The URL for the DHIS2 instance set by the user.
+	 * @param creds  String The users credentials aka username and password
+	 * @return Response The response message from the server. This is parsed in as a new Response object.
+	 * @see Response
+	 */
 	public static Response get(String server, String creds) {
-        Log.i("GET", server);
+		return executeRequest(server, creds, "GET", null);
+	}
+
+		/**
+		 *
+		 * @param server String The URL of the DHIS2 instance set by the user.
+		 * @param creds String The users credentials aka username and password
+		 * @param data String The data to be posted to the DHIS2 server.
+		 * @return Response The response from the DHIS2 server parsed in a new Response object
+		 * @see Response
+		 */
+
+	public static Response post(String server, String creds, String data) {
+		return executeRequest(server, creds, "POST", data);
+	}
+
+
+	private static Response executeRequest(String server, String creds, String method, String data) {
+
+		Log.d(HTTPClient.class.getSimpleName(), String.format("executeRequest() %s %s", method, server));
+
+		HttpURLConnection connection = null;
 		int code = -1;
 		String body = "";
 
-		HttpURLConnection connection = null;
 		try {
 			URL url = new URL(server);
 			connection = (HttpURLConnection) url.openConnection();
@@ -73,74 +95,25 @@ public class HTTPClient {
 			connection.setConnectTimeout(CONNECTION_TIME_OUT);
 			connection.setRequestProperty("Authorization", "Basic " + creds);
 			connection.setRequestProperty("Accept", "application/json");
-			connection.setRequestMethod("GET");
+			connection.setRequestMethod(method);
 			connection.setDoInput(true);
-			connection.connect();
 
-			code = connection.getResponseCode();
-			body = readInputStream(connection.getInputStream());
-		} catch (MalformedURLException e) {
-            code = HttpURLConnection.HTTP_NOT_FOUND;
-            e.printStackTrace();
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
-            code = HttpURLConnection.HTTP_NOT_FOUND;
-		} catch (IOException one) {
-			one.printStackTrace();
-			try {
-				if (connection != null) {
-					code = connection.getResponseCode();
-				}
-			} catch (IOException two) {
-				two.printStackTrace();
+			if(data != null){
+				connection.setDoOutput(true);
+				OutputStream output = connection.getOutputStream();
+				output.write(data.getBytes());
+				output.close();
 			}
-		} finally {
-			if (connection != null) {
-				connection.disconnect();
-			}
-		}
-        Log.i(Integer.toString(code), body);
-        return (new Response(code, body));
-	}
 
-    /**
-     *
-     * @param server String The URL of the DHIS2 instance set by the user.
-     * @param creds String The users credentials aka username and password
-     * @param data String The data to be posted to the DHIS2 server.
-     * @return Response The response from the DHIS2 server parsed in a new Response object
-     * @see Response
-     */
-
-	public static Response post(String server, String creds, String data) {
-        Log.i("POST", server);
-		int code = -1;
-		String body = "";
-
-		HttpURLConnection connection = null;
-		try {
-			URL url = new URL(server);
-			connection = (HttpURLConnection) url.openConnection();
-			connection.setInstanceFollowRedirects(false);
-			connection.setConnectTimeout(CONNECTION_TIME_OUT);
-			connection.setRequestProperty("Authorization", "Basic " + creds);
-			connection.setRequestProperty("Content-Type", "application/json");
-			connection.setRequestMethod("POST");
-			connection.setDoOutput(true);
-
-			OutputStream output = connection.getOutputStream();
-			output.write(data.getBytes());
-			output.close();
-			
 			connection.connect();
 			code = connection.getResponseCode();
 			body = readInputStream(connection.getInputStream());
 		} catch (MalformedURLException e) {
 			code = HttpURLConnection.HTTP_NOT_FOUND;
 			e.printStackTrace();
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
-            code = HttpURLConnection.HTTP_NOT_FOUND;
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+			code = HttpURLConnection.HTTP_NOT_FOUND;
 		} catch (IOException one) {
 			one.printStackTrace();
 			try {
@@ -155,16 +128,19 @@ public class HTTPClient {
 				connection.disconnect();
 			}
 		}
-        Log.i(Integer.toString(code), body);
-		return (new Response(code, body));
+
+		Log.d(HTTPClient.class.getSimpleName(), String.format("return response (%s): %s", code, body));
+		return new Response(code, body);
 	}
 
-    /**
-     * Converts an InputStream of bytes to a String.
-     * @param stream InputStream
-     * @return String
-     * @throws IOException
-     */
+
+	/**
+	 * Converts an InputStream of bytes to a String.
+	 *
+	 * @param stream InputStream
+	 * @return String
+	 * @throws IOException
+	 */
 	private static String readInputStream(InputStream stream)
 			throws IOException {
 		BufferedReader reader = new BufferedReader(
@@ -191,17 +167,17 @@ public class HTTPClient {
 	public static boolean isError(int code) {
 		return code != HttpURLConnection.HTTP_OK;
 	}
-	
-    public static String getErrorMessage(Context context, int code) {
-    	switch (code) {
-    	case HttpURLConnection.HTTP_UNAUTHORIZED:
-    		return context.getString(R.string.wrong_username_password);
-    	case HttpURLConnection.HTTP_NOT_FOUND:
-    		return context.getString(R.string.wrong_url);
-        case HttpURLConnection.HTTP_MOVED_PERM:
-            return context.getString(R.string.wrong_url);
-    	default:
-    		return context.getString(R.string.try_again);
-    	}	
-    }
+
+	public static String getErrorMessage(Context context, int code) {
+		switch (code) {
+			case HttpURLConnection.HTTP_UNAUTHORIZED:
+				return context.getString(R.string.wrong_username_password);
+			case HttpURLConnection.HTTP_NOT_FOUND:
+				return context.getString(R.string.wrong_url);
+			case HttpURLConnection.HTTP_MOVED_PERM:
+				return context.getString(R.string.wrong_url);
+			default:
+				return context.getString(R.string.try_again);
+		}
+	}
 }
