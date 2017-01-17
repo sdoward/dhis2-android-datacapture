@@ -1,6 +1,7 @@
 package org.dhis2.ehealthmobile;
 
 import android.os.RemoteException;
+import android.support.test.espresso.Espresso;
 import android.support.test.runner.AndroidJUnit4;
 import android.support.test.uiautomator.UiDevice;
 
@@ -63,6 +64,7 @@ public abstract class BaseInstrumentationTest {
 
 	protected void typeTextInView(int viewId, String text) {
 		onView(withId(viewId)).perform(typeText(text));
+		Espresso.closeSoftKeyboard();
 	}
 
 	protected void checkViewWithTextIsDisplayed(String text) {

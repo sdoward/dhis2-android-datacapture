@@ -1,10 +1,8 @@
 package org.dhis2.ehealthmobile;
 
-import android.support.test.espresso.Espresso;
 import android.support.test.rule.ActivityTestRule;
 
 import com.google.gson.Gson;
-import com.squareup.okhttp.mockwebserver.MockResponse;
 
 import org.dhis2.ehealthMobile.R;
 import org.dhis2.ehealthMobile.io.models.useraccount.UserAccount;
@@ -18,6 +16,7 @@ import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.RootMatchers.withDecorView;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
+import static android.support.test.espresso.matcher.ViewMatchers.isEnabled;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -26,7 +25,7 @@ import static org.hamcrest.core.IsNot.not;
 
 public class LoginActivityTest extends BaseInstrumentationTest{
 
-	private static final String USERNAME = "username";
+	private static final String USERNAME = "usernameEditText";
 	private static final String PASSWORD = "password";
 
 
@@ -35,12 +34,9 @@ public class LoginActivityTest extends BaseInstrumentationTest{
 
 	protected void typeLoginData(String url, String username, String password){
 
-		typeTextInView(R.id.server_url, url);
-		Espresso.closeSoftKeyboard();
-		typeTextInView(R.id.username, username);
-		Espresso.closeSoftKeyboard();
-		typeTextInView(R.id.password, password);
-		Espresso.closeSoftKeyboard();
+		typeTextInView(R.id.url_edit_text, url);
+		typeTextInView(R.id.username_edit_text, username);
+		typeTextInView(R.id.password_edit_text, password);
 	}
 
 	protected void failLogin(String url, String username, String password, int responseCode, int toastMessage){
@@ -58,9 +54,9 @@ public class LoginActivityTest extends BaseInstrumentationTest{
 	public void loginScreenShouldShowSomeViews(){
 
 		checkViewDisplayed(R.id.dhis2_logo);
-		checkViewDisplayed(R.id.password);
-		checkViewDisplayed(R.id.username);
-		checkViewDisplayed(R.id.server_url);
+		checkViewDisplayed(R.id.password_edit_text);
+		checkViewDisplayed(R.id.username_edit_text);
+		checkViewDisplayed(R.id.url_edit_text);
 		checkViewDisplayed(R.id.login_button);
 
 		checkViewNotDisplayed(R.id.progress_bar);
@@ -113,5 +109,24 @@ public class LoginActivityTest extends BaseInstrumentationTest{
 
 		UserAccount userAccount = new Gson().fromJson(userAccountJson, UserAccount.class);
 		assertThat(userAccount.id).isEqualTo("abc123");
+	}
+
+	@Test
+	public void loginButtonShouldBeEnabledWhenAllFieldsAreTyped(){
+
+		typeTextInView(R.id.url_edit_text, "");
+		typeTextInView(R.id.username_edit_text, "");
+		typeTextInView(R.id.password_edit_text, "");
+
+		onView(withId(R.id.login_button)).check(matches(not(isEnabled())));
+
+		typeTextInView(R.id.url_edit_text, "something");
+		onView(withId(R.id.login_button)).check(matches(not(isEnabled())));
+
+		typeTextInView(R.id.username_edit_text, "something");
+		onView(withId(R.id.login_button)).check(matches(not(isEnabled())));
+
+		typeTextInView(R.id.password_edit_text, "something");
+		onView(withId(R.id.login_button)).check(matches(isEnabled()));
 	}
 }
