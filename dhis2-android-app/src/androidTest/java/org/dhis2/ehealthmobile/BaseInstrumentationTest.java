@@ -16,6 +16,7 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.util.Random;
 
 import static android.support.test.InstrumentationRegistry.getInstrumentation;
 import static android.support.test.espresso.Espresso.onView;
@@ -30,6 +31,8 @@ import static org.hamcrest.core.IsNot.not;
 @RunWith(AndroidJUnit4.class)
 public abstract class BaseInstrumentationTest {
 
+	private static final Random random = new Random();
+
 	protected UiDevice device;
 	private MockWebServer server;
 
@@ -37,6 +40,10 @@ public abstract class BaseInstrumentationTest {
 	public void setup() {
 		device = UiDevice.getInstance(getInstrumentation());
 		server = new MockWebServer();
+	}
+
+	protected long randomLong(){
+		return random.nextLong();
 	}
 
 	protected Context getContext(){
@@ -70,6 +77,9 @@ public abstract class BaseInstrumentationTest {
 	protected void typeTextInView(int viewId, String text) {
 		onView(withId(viewId)).perform(typeText(text));
 		Espresso.closeSoftKeyboard();
+	}
+	protected void checkViewWithTextIsDisplayed(int stringId) {
+		checkViewWithTextIsDisplayed(getContext().getString(stringId));
 	}
 
 	protected void checkViewWithTextIsDisplayed(String text) {
