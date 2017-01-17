@@ -58,6 +58,8 @@ import org.dhis2.ehealthMobile.utils.AppPermissions;
 import org.dhis2.ehealthMobile.utils.ToastManager;
 import org.dhis2.ehealthMobile.utils.ViewUtils;
 
+import java.util.HashMap;
+
 public class LoginActivity extends AppCompatActivity {
     public static final String TAG = LoginActivity.class.getSimpleName();
     public static final String USERNAME = "username";
@@ -191,7 +193,15 @@ public class LoginActivity extends AppCompatActivity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        AppPermissions.handleRequestResults(requestCode, permissions, grantResults, this);
+        AppPermissions.handleRequestResults(requestCode, permissions, grantResults, new AppPermissions.AppPermissionsCallback() {
+            @Override
+            public void onPermissionGranted(String permission) {}
+
+            @Override
+            public void onPermissionDenied(String permission) {
+                AppPermissions.showPermissionRationaleDialog(LoginActivity.this, permission);
+            }
+        });
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
