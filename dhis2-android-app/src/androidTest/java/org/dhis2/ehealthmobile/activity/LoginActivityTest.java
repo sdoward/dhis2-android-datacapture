@@ -1,4 +1,4 @@
-package org.dhis2.ehealthmobile;
+package org.dhis2.ehealthmobile.activity;
 
 import android.support.test.rule.ActivityTestRule;
 
@@ -8,6 +8,7 @@ import org.dhis2.ehealthMobile.R;
 import org.dhis2.ehealthMobile.io.models.useraccount.UserAccount;
 import org.dhis2.ehealthMobile.ui.activities.LoginActivity;
 import org.dhis2.ehealthMobile.utils.TextFileUtils;
+import org.dhis2.ehealthmobile.BaseInstrumentationTest;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -23,7 +24,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.core.IsNot.not;
 
-public class LoginActivityTest extends BaseInstrumentationTest{
+public class LoginActivityTest extends BaseInstrumentationTest {
 
 	private static final String USERNAME = "MyUsername";
 	private static final String PASSWORD = "MyPassword";

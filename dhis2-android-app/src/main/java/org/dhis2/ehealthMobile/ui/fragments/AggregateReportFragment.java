@@ -48,12 +48,9 @@ import org.dhis2.ehealthMobile.utils.PrefUtils;
 import org.dhis2.ehealthMobile.utils.TextFileUtils;
 import org.dhis2.ehealthMobile.utils.ToastManager;
 import org.dhis2.ehealthMobile.utils.date.DateHolder;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
@@ -273,7 +270,7 @@ public class AggregateReportFragment extends Fragment
     }
 
     private void setupSwipeRefreshLayout(View root, Bundle savedInstanceState) {
-        swipeRefreshLayout = (SwipeRefreshLayout) root.findViewById(R.id.ptr_layout);
+        swipeRefreshLayout = (SwipeRefreshLayout) root.findViewById(R.id.swipe_refresh_layout_aggregate_report);
         SwipeRefreshLayout.OnRefreshListener listener = new SwipeRefreshLayout.OnRefreshListener() {
 
             @Override

@@ -1,4 +1,4 @@
-package org.dhis2.ehealthmobile;
+package org.dhis2.ehealthmobile.activity;
 
 import android.content.Intent;
 import android.support.test.espresso.contrib.DrawerActions;
@@ -11,6 +11,7 @@ import org.dhis2.ehealthMobile.io.models.useraccount.UserAccount;
 import org.dhis2.ehealthMobile.ui.activities.MenuActivity;
 import org.dhis2.ehealthMobile.utils.PrefUtils;
 import org.dhis2.ehealthMobile.utils.TextFileUtils;
+import org.dhis2.ehealthmobile.BaseInstrumentationTest;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -32,9 +33,8 @@ public class MenuActivityTest extends BaseInstrumentationTest {
 	@Rule
 	public ActivityTestRule<MenuActivity> rule = new ActivityTestRule<>(MenuActivity.class, true, false);
 
-	String serverUrl = "https://www.asd.com";
 	String username = String.valueOf(new Random().nextLong());
-
+	String smsNumber = String.valueOf(randomLong());
 	UserAccount userAccount = new UserAccount.UserAccountBuilder()
 			.setUsername(String.valueOf(randomLong()))
 			.setFirstName(String.valueOf(randomLong()))
@@ -51,7 +51,10 @@ public class MenuActivityTest extends BaseInstrumentationTest {
 		TextFileUtils.writeTextFile(getContext(), TextFileUtils.Directory.ROOT,
 				TextFileUtils.FileNames.ACCOUNT_INFO, new Gson().toJson(userAccount));
 
-		PrefUtils.initAppData(getContext(), "creds", username, serverUrl);
+		PrefUtils.initAppData(getContext(), "creds", username, serverUrl(""));
+
+		enqueueJsonResponse(200, String.format("{\"smsNumber\": \"%s\"}", smsNumber));
+
 		rule.launchActivity(new Intent());
 	}
 
@@ -107,5 +110,14 @@ public class MenuActivityTest extends BaseInstrumentationTest {
 
 		// TODO: why delete the server url? typing it's so annoying...
 		assertThat(PrefUtils.getServerURL(getContext())).isNullOrEmpty();
+	}
+
+	@Test
+	public void shouldHaveDownloadedSmsNumber() throws InterruptedException {
+		onView(withId(R.id.drawer_layout)).check(matches(isDisplayed()));
+
+		onView(withId(R.id.swipe_refresh_layout_aggregate_report)).check(matches(isDisplayed()));
+		Thread.sleep(1000);
+		assertThat(PrefUtils.getSmsNumber(getContext())).isEqualTo(smsNumber);
 	}
 }

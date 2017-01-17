@@ -9,6 +9,7 @@ import android.support.test.uiautomator.UiDevice;
 import com.squareup.okhttp.mockwebserver.MockResponse;
 import com.squareup.okhttp.mockwebserver.MockWebServer;
 
+import org.dhis2.ehealthMobile.utils.TextFileUtils;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 
@@ -17,6 +18,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 import static android.support.test.InstrumentationRegistry.getInstrumentation;
 import static android.support.test.espresso.Espresso.onView;
@@ -40,18 +42,34 @@ public abstract class BaseInstrumentationTest {
 	public void setup() {
 		device = UiDevice.getInstance(getInstrumentation());
 		server = new MockWebServer();
+
+		// TODO: remove all stored data from shared preferences and files
+
+		TextFileUtils.removeFile(getContext(), TextFileUtils.Directory.ROOT, TextFileUtils.FileNames.ORG_UNITS_WITH_DATASETS);
 	}
 
-	protected long randomLong(){
+	protected long randomLong() {
 		return random.nextLong();
 	}
 
-	protected Context getContext(){
+	protected Context getContext() {
 		return getInstrumentation().getTargetContext();
 	}
 
 	protected String serverUrl(String path) {
 		return server.url(path).toString();
+	}
+
+	protected void enqueueJsonResponse(String jsonfile, long delayMs) {
+		enqueueResponse(new MockResponse()
+				.setResponseCode(HttpURLConnection.HTTP_OK)
+				.setBody(loadJson(jsonfile))
+				.addHeader("Content-Type", "application/json")
+				.setBodyDelay(delayMs, TimeUnit.MILLISECONDS));
+	}
+
+	protected void enqueueJsonResponse(String filename) {
+		enqueueJsonResponse(HttpURLConnection.HTTP_OK, loadJson(filename));
 	}
 
 	protected void enqueueJsonResponse(int code, String body) {
@@ -78,6 +96,7 @@ public abstract class BaseInstrumentationTest {
 		onView(withId(viewId)).perform(typeText(text));
 		Espresso.closeSoftKeyboard();
 	}
+
 	protected void checkViewWithTextIsDisplayed(int stringId) {
 		checkViewWithTextIsDisplayed(getContext().getString(stringId));
 	}
@@ -114,18 +133,14 @@ public abstract class BaseInstrumentationTest {
 		}
 	}
 
-	protected void enqueueJsonResponse(String filename){
-		enqueueJsonResponse(HttpURLConnection.HTTP_OK, loadJson(filename));
-	}
-
-	protected String loadJson(String filename){
-		if(!filename.endsWith(".json"))
+	protected String loadJson(String filename) {
+		if (!filename.endsWith(".json"))
 			filename = filename + ".json";
 
 		return readRawTextFile(String.format("json/%s", filename));
 	}
 
-	protected String readRawTextFile(String filename){
+	protected String readRawTextFile(String filename) {
 
 		try {
 			InputStream inputStream = getClass().getClassLoader().getResourceAsStream(filename);//getContext().getResources().openRawResource(id);
@@ -137,7 +152,7 @@ public abstract class BaseInstrumentationTest {
 			}
 
 			return builder.toString();
-		}catch (Exception e){
+		} catch (Exception e) {
 			e.printStackTrace();
 			return "";
 		}
