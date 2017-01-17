@@ -12,6 +12,7 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.ContextCompat;
@@ -249,7 +250,21 @@ public class DataEntryActivity extends BaseActivity implements LoaderManager.Loa
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        AppPermissions.handleRequestResults(requestCode, permissions, grantResults, this);
+        AppPermissions.handleRequestResults(requestCode, permissions, grantResults, new AppPermissions.AppPermissionsCallback() {
+            @Override
+            public void onPermissionGranted(String permission) {
+                upload();
+            }
+
+            @Override
+            public void onPermissionDenied(String permission) {
+                if(ActivityCompat.shouldShowRequestPermissionRationale(DataEntryActivity.this, Manifest.permission.SEND_SMS)){
+                    AppPermissions.showPermissionRationaleDialog(DataEntryActivity.this, permission);
+                }else {
+                    upload();
+                }
+            }
+        });
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
