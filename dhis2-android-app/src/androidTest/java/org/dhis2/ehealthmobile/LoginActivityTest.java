@@ -25,8 +25,8 @@ import static org.hamcrest.core.IsNot.not;
 
 public class LoginActivityTest extends BaseInstrumentationTest{
 
-	private static final String USERNAME = "usernameEditText";
-	private static final String PASSWORD = "password";
+	private static final String USERNAME = "MyUsername";
+	private static final String PASSWORD = "MyPassword";
 
 
 	@Rule

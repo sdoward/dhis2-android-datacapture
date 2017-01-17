@@ -1,5 +1,6 @@
 package org.dhis2.ehealthmobile;
 
+import android.content.Context;
 import android.os.RemoteException;
 import android.support.test.espresso.Espresso;
 import android.support.test.runner.AndroidJUnit4;
@@ -36,6 +37,10 @@ public abstract class BaseInstrumentationTest {
 	public void setup() {
 		device = UiDevice.getInstance(getInstrumentation());
 		server = new MockWebServer();
+	}
+
+	protected Context getContext(){
+		return getInstrumentation().getTargetContext();
 	}
 
 	protected String serverUrl(String path) {
