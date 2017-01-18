@@ -16,6 +16,7 @@ import org.dhis2.ehealthmobile.BaseInstrumentationTest;
 import org.junit.Rule;
 import org.junit.Test;
 
+import static android.support.test.espresso.Espresso.onData;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
@@ -25,6 +26,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static junit.framework.Assert.fail;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.anything;
 import static org.hamcrest.core.AllOf.allOf;
 
 public class MenuActivityTest extends BaseInstrumentationTest {
@@ -198,8 +200,12 @@ public class MenuActivityTest extends BaseInstrumentationTest {
 	public void shouldOpenDataEntryActivity() throws InterruptedException {
 		clickViewWithText(R.string.choose_data_set);
 
+		onView(withId(R.id.listview_picker_items)).check(matches(isDisplayed()));
 		clickViewWithText("IDSR Weekly Disease Report(WDR)");
 		clickViewWithText(R.string.choose_period);
+		onData(anything()).inAdapterView(withId(R.id.dates_listview)).atPosition(0).perform(click());
+		clickViewWithText(R.string.open_form);
+		onView(withId(R.id.coordinator_layout_data_entry)).check(matches(isDisplayed()));
 		Thread.sleep(10000);
 
 	}

@@ -7,6 +7,10 @@
       "parent": "Plmg8ikyfrK",
       "dataSets": [
         {
+          "id": "rq0LNr72Ndo",
+          "label": "IDSR Weekly Disease Report(WDR)"
+        },
+        {
           "id": "h6PK4knx7uW",
           "label": "Week report form Test"
         },

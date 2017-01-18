@@ -141,4 +141,5 @@
     <string name="sms_permission_dialog_title">Permission Required</string>
     <string name="sms_permission_dialog_message">The DHIS2 eHealth app requires %s permission in order to function properly</string>
     <string name="sms_permission_dialog_confirmation">OK</string>
+    <string name="open_form">Open Form</string>
 </resources>
