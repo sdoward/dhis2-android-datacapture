@@ -33,7 +33,7 @@ public class MenuActivityTest extends BaseInstrumentationTest {
 	@Rule
 	public ActivityTestRule<MenuActivity> rule = new ActivityTestRule<>(MenuActivity.class, true, false);
 
-	String username = String.valueOf(new Random().nextLong());
+	String username = String.valueOf(randomLong());
 	String smsNumber = String.valueOf(randomLong());
 	UserAccount userAccount = new UserAccount.UserAccountBuilder()
 			.setUsername(String.valueOf(randomLong()))
@@ -42,6 +42,8 @@ public class MenuActivityTest extends BaseInstrumentationTest {
 			.setId(String.valueOf(randomLong()))
 			.setEmail(String.valueOf(randomLong()))
 			.createUserAccount();
+
+	String configFileFormId = String.valueOf(randomLong());
 
 
 	@Override
@@ -54,6 +56,15 @@ public class MenuActivityTest extends BaseInstrumentationTest {
 		PrefUtils.initAppData(getContext(), "creds", username, serverUrl(""));
 
 		enqueueJsonResponse(200, String.format("{\"smsNumber\": \"%s\"}", smsNumber));
+
+		String configFile = loadJson("api_dataStore_android_config");
+		configFile = configFile.replace("rq0LNr72Ndo", configFileFormId);
+		enqueueJsonResponse(200, configFile);
+
+		enqueueJsonResponse("api_me_assignedDataSets");
+
+		for (int i = 0; i < 10; i++)
+			enqueueJsonResponse(200, "{}");
 
 		rule.launchActivity(new Intent());
 	}
@@ -114,10 +125,19 @@ public class MenuActivityTest extends BaseInstrumentationTest {
 
 	@Test
 	public void shouldHaveDownloadedSmsNumber() throws InterruptedException {
-		onView(withId(R.id.drawer_layout)).check(matches(isDisplayed()));
-
 		onView(withId(R.id.swipe_refresh_layout_aggregate_report)).check(matches(isDisplayed()));
 		Thread.sleep(1000);
+
 		assertThat(PrefUtils.getSmsNumber(getContext())).isEqualTo(smsNumber);
+	}
+
+	@Test
+	public void shouldHaveDownloadedConfigFile() throws InterruptedException {
+		onView(withId(R.id.swipe_refresh_layout_aggregate_report)).check(matches(isDisplayed()));
+		Thread.sleep(1000);
+
+		assertThat(PrefUtils.getDiseaseConfigs(getContext(), configFileFormId).length()).isGreaterThan(1);
+		assertThat(PrefUtils.getCompulsoryDiseases(getContext(), configFileFormId).length()).isGreaterThan(1);
+
 	}
 }

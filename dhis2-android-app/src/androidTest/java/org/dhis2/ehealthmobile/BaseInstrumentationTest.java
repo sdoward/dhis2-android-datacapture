@@ -9,7 +9,9 @@ import android.support.test.uiautomator.UiDevice;
 import com.squareup.okhttp.mockwebserver.MockResponse;
 import com.squareup.okhttp.mockwebserver.MockWebServer;
 
+import org.dhis2.ehealthMobile.utils.PrefUtils;
 import org.dhis2.ehealthMobile.utils.TextFileUtils;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 
@@ -42,10 +44,18 @@ public abstract class BaseInstrumentationTest {
 	public void setup() {
 		device = UiDevice.getInstance(getInstrumentation());
 		server = new MockWebServer();
+		clearData();
+	}
 
+	@After
+	public void tearDown(){
+		clearData();
+	}
+
+	private void clearData(){
 		// TODO: remove all stored data from shared preferences and files
-
 		TextFileUtils.removeFile(getContext(), TextFileUtils.Directory.ROOT, TextFileUtils.FileNames.ORG_UNITS_WITH_DATASETS);
+		PrefUtils.eraseData(getContext());
 	}
 
 	protected long randomLong() {
