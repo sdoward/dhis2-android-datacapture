@@ -270,7 +270,8 @@ public class FormsDownloadProcessor {
 
         for (OptionSet optionSet : optionSets) {
             String jOptionSet = gson.toJson(optionSet);
-            TextFileUtils.writeTextFile(context,
+            if(optionSet.getId() != null)
+                TextFileUtils.writeTextFile(context,
                     TextFileUtils.Directory.OPTION_SETS, optionSet.getId(), jOptionSet);
         }
     }

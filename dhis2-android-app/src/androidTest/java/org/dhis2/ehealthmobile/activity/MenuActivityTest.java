@@ -7,6 +7,7 @@ import android.support.test.rule.ActivityTestRule;
 import com.google.gson.Gson;
 
 import org.dhis2.ehealthMobile.R;
+import org.dhis2.ehealthMobile.io.models.OrganizationUnit;
 import org.dhis2.ehealthMobile.io.models.useraccount.UserAccount;
 import org.dhis2.ehealthMobile.ui.activities.MenuActivity;
 import org.dhis2.ehealthMobile.utils.PrefUtils;
@@ -14,8 +15,6 @@ import org.dhis2.ehealthMobile.utils.TextFileUtils;
 import org.dhis2.ehealthmobile.BaseInstrumentationTest;
 import org.junit.Rule;
 import org.junit.Test;
-
-import java.util.Random;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
@@ -44,7 +43,8 @@ public class MenuActivityTest extends BaseInstrumentationTest {
 			.createUserAccount();
 
 	String configFileFormId = String.valueOf(randomLong());
-
+	String orgUnitBontheId = "iQgaTATK59f";
+	String orgUnitBontheLabel = String.valueOf(randomLong());
 
 	@Override
 	public void setup() {
@@ -57,11 +57,19 @@ public class MenuActivityTest extends BaseInstrumentationTest {
 
 		enqueueJsonResponse(200, String.format("{\"smsNumber\": \"%s\"}", smsNumber));
 
-		String configFile = loadJson("api_dataStore_android_config");
-		configFile = configFile.replace("rq0LNr72Ndo", configFileFormId);
+		String configFile = loadJson("api_dataStore_android_config").replace("rq0LNr72Ndo", configFileFormId);
 		enqueueJsonResponse(200, configFile);
 
-		enqueueJsonResponse("api_me_assignedDataSets");
+
+		String original = "\"id\": \"iQgaTATK59f\",\n" +
+				"      \"label\": \"Bonthe\",";
+		String replacement = String.format("\"id\": \"iQgaTATK59f\",\n" +
+				"      \"label\": \"%s\",", orgUnitBontheLabel);
+
+		String datasetsFile = loadJson("api_me_assignedDataSets").replace(original, replacement);
+
+
+		enqueueJsonResponse(200, datasetsFile);
 
 		for (int i = 0; i < 10; i++)
 			enqueueJsonResponse(200, "{}");
@@ -138,6 +146,24 @@ public class MenuActivityTest extends BaseInstrumentationTest {
 
 		assertThat(PrefUtils.getDiseaseConfigs(getContext(), configFileFormId).length()).isGreaterThan(1);
 		assertThat(PrefUtils.getCompulsoryDiseases(getContext(), configFileFormId).length()).isGreaterThan(1);
+	}
 
+	@Test
+	public void shouldHaveDownloadedAssignedDataSets() throws InterruptedException {
+		onView(withId(R.id.swipe_refresh_layout_aggregate_report)).check(matches(isDisplayed()));
+		Thread.sleep(10000);
+
+		String orgUnitsWithDatasets = TextFileUtils.readTextFile(getContext(), TextFileUtils.Directory.ROOT, TextFileUtils.FileNames.ORG_UNITS_WITH_DATASETS);
+		OrganizationUnit[] units = new Gson().fromJson(orgUnitsWithDatasets, OrganizationUnit[].class);
+
+		boolean hasTestOrganizationUnitId = false;
+		for(OrganizationUnit unit : units){
+			if(unit.getId().equals(orgUnitBontheId)){
+				hasTestOrganizationUnitId = unit.getLabel().equals(orgUnitBontheLabel);
+				break;
+			}
+		}
+
+		assertThat(hasTestOrganizationUnitId).isTrue();
 	}
 }
