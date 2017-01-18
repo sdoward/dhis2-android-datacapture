@@ -46,7 +46,7 @@ public class LoginActivityTest extends BaseInstrumentationTest {
 
 		typeLoginData(url, username, password);
 
-		clickView(R.id.login_button);
+		clickViewWithId(R.id.login_button);
 		onView(withText(toastMessage)).inRoot(withDecorView(not(is(rule.getActivity().getWindow().getDecorView())))).check(matches(isDisplayed()));
 	}
 
@@ -100,7 +100,7 @@ public class LoginActivityTest extends BaseInstrumentationTest {
 
 		typeLoginData(serverUrl(""), USERNAME, PASSWORD);
 
-		clickView(R.id.login_button);
+		clickViewWithId(R.id.login_button);
 		onView(withId(R.id.drawer_layout));
 
 		Thread.sleep(1000);

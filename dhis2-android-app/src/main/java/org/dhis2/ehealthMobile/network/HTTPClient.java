@@ -100,6 +100,7 @@ public class HTTPClient {
 
 			if(data != null){
 				connection.setDoOutput(true);
+				connection.setRequestProperty("Content-Type", "application/json");
 				OutputStream output = connection.getOutputStream();
 				output.write(data.getBytes());
 				output.close();

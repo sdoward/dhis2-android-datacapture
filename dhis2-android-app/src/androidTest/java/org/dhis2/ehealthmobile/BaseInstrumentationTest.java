@@ -115,8 +115,16 @@ public abstract class BaseInstrumentationTest {
 		onView(withText(text)).check(matches(isDisplayed()));
 	}
 
-	protected void clickView(int id) {
+	protected void clickViewWithId(int id) {
 		onView(withId(id)).perform(click());
+	}
+
+	protected void clickViewWithText(int stringId){
+		onView(withText(stringId)).perform(click());
+	}
+
+	protected void clickViewWithText(String text){
+		onView(withText(text)).perform(click());
 	}
 
 	protected void rotateLeft() {

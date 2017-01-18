@@ -166,12 +166,41 @@ public class MenuActivityTest extends BaseInstrumentationTest {
 	}
 
 	@Test
-	public void shouldOpenProfileScreen() {
+	public void shouldOpenProfileScreen() throws InterruptedException {
 		onView(withId(R.id.drawer_layout)).perform(DrawerActions.open());
 		onView(allOf(withText(R.string.profile), isDescendantOfA(withId(R.id.navigation_view)))).perform(click());
 
 		onView(withId(R.id.swipe_refresh_layout_my_profile)).check(matches(isDisplayed()));
-		// TODO: the list of fields shown here is empty...?
+		// TODO: MyProfileFragment is creating FieldAdapter twice and the second time is empty
+	}
+
+	@Test
+	public void shouldSwitchBetweenAggregateReportAndProfile(){
+		onView(withId(R.id.drawer_layout)).perform(DrawerActions.open());
+		onView(allOf(withText(R.string.profile), isDescendantOfA(withId(R.id.navigation_view)))).perform(click());
+		onView(withId(R.id.swipe_refresh_layout_my_profile)).check(matches(isDisplayed()));
+
+		onView(withId(R.id.drawer_layout)).perform(DrawerActions.open());
+		onView(allOf(withText(R.string.aggregate_reporting), isDescendantOfA(withId(R.id.navigation_view)))).perform(click());
+		onView(withId(R.id.swipe_refresh_layout_aggregate_report)).check(matches(isDisplayed()));
+
+		onView(withId(R.id.drawer_layout)).perform(DrawerActions.open());
+		onView(allOf(withText(R.string.profile), isDescendantOfA(withId(R.id.navigation_view)))).perform(click());
+		onView(withId(R.id.swipe_refresh_layout_my_profile)).check(matches(isDisplayed()));
+
+		onView(withId(R.id.drawer_layout)).perform(DrawerActions.open());
+		onView(allOf(withText(R.string.aggregate_reporting), isDescendantOfA(withId(R.id.navigation_view)))).perform(click());
+		onView(withId(R.id.swipe_refresh_layout_aggregate_report)).check(matches(isDisplayed()));
+
+	}
+
+	@Test
+	public void shouldOpenDataEntryActivity() throws InterruptedException {
+		clickViewWithText(R.string.choose_data_set);
+
+		clickViewWithText("IDSR Weekly Disease Report(WDR)");
+		clickViewWithText(R.string.choose_period);
+		Thread.sleep(10000);
 
 	}
 }

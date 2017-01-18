@@ -577,7 +577,7 @@ public class AggregateReportFragment extends Fragment
         }
     };
 
-    /* This class is responsible for async. data loading from storage */
+    /* This class is responsible for async. data loading from storage and your headache*/
     private static class DataLoader extends AsyncTaskLoader<Picker> {
 
         public DataLoader(FragmentActivity activity) {
