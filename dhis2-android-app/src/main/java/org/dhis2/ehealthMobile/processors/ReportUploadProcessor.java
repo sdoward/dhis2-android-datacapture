@@ -197,7 +197,7 @@ public class ReportUploadProcessor {
     }
 
     private static String getTimeliness(Field field, String period) {
-        String value = null;
+        String value;
 
         //Check whether a timely report has already been sent
         if(!IsTimely.hasBeenSet(field)) {

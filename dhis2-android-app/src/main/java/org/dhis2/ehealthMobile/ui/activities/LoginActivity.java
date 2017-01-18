@@ -178,7 +178,16 @@ public class LoginActivity extends AppCompatActivity {
 
 	@Override
 	public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-		AppPermissions.handleRequestResults(requestCode, permissions, grantResults, this);
+		AppPermissions.handleRequestResults(requestCode, permissions, grantResults, new AppPermissions.AppPermissionsCallback() {
+			@Override
+			public void onPermissionGranted(String permission) {
+			}
+
+			@Override
+			public void onPermissionDenied(String permission) {
+				AppPermissions.showPermissionRationaleDialog(LoginActivity.this, permission);
+			}
+		});
 		super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 	}
 
@@ -228,4 +237,5 @@ public class LoginActivity extends AppCompatActivity {
 				logoImageView, urlEditText, usernameEditText, passwordEditText, loginButton);
 		ViewUtils.hideAndDisableViews(progressBar);
 	}
+
 }
