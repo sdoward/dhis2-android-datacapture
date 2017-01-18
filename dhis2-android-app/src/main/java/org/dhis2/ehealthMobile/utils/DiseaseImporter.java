@@ -39,7 +39,7 @@ public class DiseaseImporter {
     public static Map importDiseases(Context context, String formId) {
         Map<String, Disease> mapOfDiseases = new HashMap<>();
         String data;
-        data = PrefUtils.getConfigString(context, formId, ConfigFileProcessor.DISEASE_CONFIGS);
+        data = PrefUtils.getDiseaseConfigs(context, formId);
 
         JsonObject obj = new JsonObject();
         if(!data.isEmpty()){

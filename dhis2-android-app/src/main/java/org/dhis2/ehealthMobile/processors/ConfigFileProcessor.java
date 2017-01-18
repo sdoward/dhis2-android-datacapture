@@ -42,13 +42,13 @@ public class ConfigFileProcessor {
                     boolean shouldBeSquashed;
 
                     shouldBeSquashed = getBoolean(obj,key, SHOULD_BE_SQUASHED);
-                    PrefUtils.saveConfigBoolean(context, formId, shouldBeSquashed, SHOULD_BE_SQUASHED);
+                    PrefUtils.saveConfigFileShouldBeSquashed(context, formId, shouldBeSquashed);
 
                     compulsoryDiseases = getString(obj,key, COMPULSORY_DISEASES);
-                    PrefUtils.saveConfigString(context, formId, compulsoryDiseases, COMPULSORY_DISEASES);
+                    PrefUtils.saveConfigFileCompulsoryDiseases(context, formId, compulsoryDiseases);
 
                     diseaseConfigs = obj.getJSONObject(key).getString(DISEASE_CONFIGS);
-                    PrefUtils.saveConfigString(context, formId, diseaseConfigs, DISEASE_CONFIGS);
+                    PrefUtils.saveConfigFileDiseaseConfig(context, formId, diseaseConfigs);
 
                 }
             } catch (JSONException e) {

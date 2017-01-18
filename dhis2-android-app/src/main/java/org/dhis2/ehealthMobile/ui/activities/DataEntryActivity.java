@@ -487,7 +487,7 @@ public class DataEntryActivity extends BaseActivity implements LoaderManager.Loa
                 getCompletionDate();
             }
 
-            compulsoryData = PrefUtils.getConfigString(getApplicationContext(), infoHolder.getFormId(), ConfigFileProcessor.COMPULSORY_DISEASES);
+            compulsoryData = PrefUtils.getCompulsoryDiseases(getApplicationContext(), infoHolder.getFormId());
 
         }
     }

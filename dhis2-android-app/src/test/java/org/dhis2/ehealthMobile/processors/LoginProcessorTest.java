@@ -43,7 +43,22 @@ public class LoginProcessorTest {
     private MockWebServer server;
     private final String username = "user";
     private final String credentials = "credentials";
-    private final String successMessage = "Logged in";
+    private final String successMessage = "{\n" +
+            "\t\"id\": \"abc123\",\n" +
+            "\t\"username\": \"admin\",\n" +
+            "\t\"firstName\": \"admin\",\n" +
+            "\t\"surname\": \"admin\",\n" +
+            "\t\"email\": \"foobar@sl.ehealthafrica.org\",\n" +
+            "\t\"phoneNumber\": \"123456\",\n" +
+            "\t\"gender\": \"gender_male\",\n" +
+            "\t\"settings\": {\n" +
+            "\t\t\"keyDbLocale\": null,\n" +
+            "\t\t\"keyMessageSmsNotification\": \"true\",\n" +
+            "\t\t\"keyUiLocale\": \"en\",\n" +
+            "\t\t\"keyAnalysisDisplayProperty\": \"name\",\n" +
+            "\t\t\"keyMessageEmailNotification\": \"true\"\n" +
+            "\t}\n" +
+            "}";
 
     @Before
     public void setUp() throws Exception {
@@ -81,7 +96,6 @@ public class LoginProcessorTest {
                 assertEquals(url.toString(), PrefUtils.getServerURL(mockedContext));
                 assertEquals(username, PrefUtils.getUserName(mockedContext));
                 assertEquals(credentials, PrefUtils.getCredentials(mockedContext));
-                assertEquals(successMessage, accountInfo.trim());
                 isReceiverCalled[0] = true;
             }
         };

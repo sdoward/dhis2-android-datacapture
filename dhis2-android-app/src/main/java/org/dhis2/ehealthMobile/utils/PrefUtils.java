@@ -29,11 +29,14 @@
 
 package org.dhis2.ehealthMobile.utils;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences.Editor;
+import android.preference.PreferenceManager;
 
 import org.dhis2.ehealthMobile.processors.SMSNumberProcessor;
 
+@SuppressLint("CommitPrefEdits")
 public class PrefUtils {
 	private static final String APP_DATA = "APP_DATA";
 	private static final String USER_DATA = "USER_DATA";
@@ -48,16 +51,19 @@ public class PrefUtils {
 	private static final String USER_NAME = "userName";
     private static final String SMS= "sms";
     private static final String COMPLETION_DATE = "completionDate";
+	public static final String SHOULD_BE_SQUASHED = "shouldBeSquashed";
+	public static final String COMPULSORY_DISEASES = "compulsoryDiseases";
+	public static final String DISEASE_CONFIGS = "diseaseConfigs";
 
 	private PrefUtils() { }
 
-    public static enum Resources {
+    public enum Resources {
         DATASETS,
         SINGLE_EVENTS_WITHOUT_REGISTRATION,
         PROFILE_DETAILS
     }
 
-    public static enum State {
+    public enum State {
         OUT_OF_DATE,
         UP_TO_DATE,
         REFRESHING,
@@ -81,7 +87,6 @@ public class PrefUtils {
 		context.getSharedPreferences(OFFLINE_REPORTS_INFO, Context.MODE_PRIVATE).edit().commit();
 	}
 
-
 	public static boolean isUserLoggedIn(Context context) {
 		return context.getSharedPreferences(APP_DATA, Context.MODE_PRIVATE).getBoolean(LOGGED_IN, false);
 	}
@@ -99,10 +104,13 @@ public class PrefUtils {
 	}
 
 	public static void eraseData(Context context) {
+		PreferenceManager.getDefaultSharedPreferences(context).edit().clear().commit();
 		context.getSharedPreferences(USER_DATA, Context.MODE_PRIVATE).edit().clear().commit();
 		context.getSharedPreferences(APP_DATA, Context.MODE_PRIVATE).edit().clear().commit();
 		context.getSharedPreferences(OFFLINE_REPORTS_INFO, Context.MODE_PRIVATE).edit().clear().commit();
         context.getSharedPreferences(RESOURCE_STATE, Context.MODE_PRIVATE).edit().clear().commit();
+		context.getSharedPreferences(SMSNumberProcessor.SMS_NUMBER, Context.MODE_PRIVATE).edit().clear().commit();
+		context.getSharedPreferences(SMS, Context.MODE_PRIVATE).edit().clear().commit();
 	}
 
     public static void setResourceState(Context context, Resources res, State state) {
@@ -137,32 +145,35 @@ public class PrefUtils {
         editor.putString(id, status).commit();
     }
 
-    public static void saveConfigString(Context context, String formId, String data, String key){
-        Editor editor = context.getSharedPreferences(key, Context.MODE_PRIVATE).edit();
-        editor.putString(formId, data);
-        editor.commit();
-    }
+	public static void saveConfigFileShouldBeSquashed(Context context, String formId, boolean shouldBeSquashed){
+		PreferenceManager.getDefaultSharedPreferences(context).edit()
+				.putBoolean(formId+SHOULD_BE_SQUASHED, shouldBeSquashed)
+				.commit();
+	}
 
-    public static void saveConfigBoolean(Context context, String formId, boolean bool, String key){
-        Editor editor = context.getSharedPreferences(key, Context.MODE_PRIVATE).edit();
-        editor.putBoolean(formId, bool);
-        editor.commit();
-    }
+	public static void saveConfigFileCompulsoryDiseases(Context context, String formId, String compulsoryDiseases){
+		PreferenceManager.getDefaultSharedPreferences(context).edit()
+				.putString(formId+COMPULSORY_DISEASES, compulsoryDiseases)
+				.commit();
+	}
+
+	public static void saveConfigFileDiseaseConfig(Context context, String formId, String diseaseConfig){
+		PreferenceManager.getDefaultSharedPreferences(context).edit()
+				.putString(formId+DISEASE_CONFIGS, diseaseConfig)
+				.commit();
+	}
+
+	public static String getDiseaseConfigs(Context context, String formId){
+		return PreferenceManager.getDefaultSharedPreferences(context).getString(formId+DISEASE_CONFIGS, "");
+	}
+
+	public static String getCompulsoryDiseases(Context context, String formId){
+		return PreferenceManager.getDefaultSharedPreferences(context).getString(formId+COMPULSORY_DISEASES, "");
+	}
 
     public static boolean getConfigBoolean(Context context, String formId, String key){
         return context.getSharedPreferences(key, Context.MODE_PRIVATE)
                 .getBoolean(formId, false);
-    }
-
-    public static String getConfigString(Context context, String formId, String key){
-        return context.getSharedPreferences(key, Context.MODE_PRIVATE)
-                .getString(formId, "");
-    }
-
-    @Deprecated
-    public static boolean areFormsAvailable(Context context) {
-        return context.getSharedPreferences(APP_DATA, Context.MODE_PRIVATE).getBoolean(
-                FORMS_DOWNLOAD_STATE, false);
     }
 
     @Deprecated
@@ -175,12 +186,6 @@ public class PrefUtils {
     public static void setAccountUpdateFlag(Context context, boolean flag) {
         Editor editor = context.getSharedPreferences(APP_DATA, Context.MODE_PRIVATE).edit();
         editor.putBoolean(ACCOUNT_NEEDS_UPDATE, flag).commit();
-    }
-
-    @Deprecated
-    public static void setFormsDownloadStateFlag(Context context, boolean downloaded) {
-        Editor editor = context.getSharedPreferences(APP_DATA, Context.MODE_PRIVATE).edit();
-        editor.putBoolean(FORMS_DOWNLOAD_STATE, downloaded).commit();
     }
 
     @Deprecated
