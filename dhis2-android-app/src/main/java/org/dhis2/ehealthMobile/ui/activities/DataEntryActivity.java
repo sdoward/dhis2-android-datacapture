@@ -12,6 +12,7 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.ContextCompat;
@@ -52,6 +53,7 @@ import org.dhis2.ehealthMobile.io.json.ParsingException;
 import org.dhis2.ehealthMobile.io.models.Field;
 import org.dhis2.ehealthMobile.io.models.Form;
 import org.dhis2.ehealthMobile.io.models.Group;
+import org.dhis2.ehealthMobile.io.models.eidsr.Disease;
 import org.dhis2.ehealthMobile.network.HTTPClient;
 import org.dhis2.ehealthMobile.network.NetworkUtils;
 import org.dhis2.ehealthMobile.network.Response;
@@ -79,7 +81,7 @@ import java.util.Map;
 
 import static android.text.TextUtils.isEmpty;
 
-public class DataEntryActivity extends BaseActivity implements LoaderManager.LoaderCallbacks<Form> {
+public class DataEntryActivity extends BaseActivity implements LoaderManager.LoaderCallbacks<Form>, AdditionalDiseasesFragment.AdditionalDiseaseOnClickListener{
     public static final String TAG = DataEntryActivity.class.getSimpleName();
 
     // state keys
@@ -120,9 +122,6 @@ public class DataEntryActivity extends BaseActivity implements LoaderManager.Loa
     private AlertDialog deleteDiseaseDialog;
     //compulsory disease alert dialog;
     private AlertDialog compulsoryDataDialog;
-
-    // key for additional diseases that have been displayed on the list.
-    public static final String ALREADY_DISPLAYED = "alreadyDisplayed";
 
     private Map additionalDiseaseIds = new HashMap();
 
@@ -248,8 +247,29 @@ public class DataEntryActivity extends BaseActivity implements LoaderManager.Loa
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        AppPermissions.handleRequestResults(requestCode, permissions, grantResults, this);
+        AppPermissions.handleRequestResults(requestCode, permissions, grantResults, new AppPermissions.AppPermissionsCallback() {
+            @Override
+            public void onPermissionGranted(String permission) {
+                upload();
+            }
+
+            @Override
+            public void onPermissionDenied(String permission) {
+                if(ActivityCompat.shouldShowRequestPermissionRationale(DataEntryActivity.this, Manifest.permission.SEND_SMS)){
+                    AppPermissions.showPermissionRationaleDialog(DataEntryActivity.this, permission);
+                }else {
+                    upload();
+                }
+            }
+        });
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
+    @Override
+    public void onClick(Disease disease) {
+        adapters.get(0).addItem(disease);
+        addToDiseasesShown(disease.getId(), disease.getLabel());
+        scrollToBottomOfListView();
     }
 
     private void setupToolbar() {
@@ -357,12 +377,10 @@ public class DataEntryActivity extends BaseActivity implements LoaderManager.Loa
         addDiseaseButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                AdditionalDiseasesFragment additionalDiseasesFragment = new AdditionalDiseasesFragment();
-                Bundle args = new Bundle();
-                args.putString(ALREADY_DISPLAYED, additionalDiseaseIds.keySet().toString());
-                args.putString(Form.TAG, info.getFormId());
-                additionalDiseasesFragment.setArguments(args);
-                additionalDiseasesFragment.show(getSupportFragmentManager(), TAG);
+
+                String alreadyDisplayed = additionalDiseaseIds.keySet().toString();
+                AdditionalDiseasesFragment fragment = AdditionalDiseasesFragment.newInstance(alreadyDisplayed, info.getFormId());
+                fragment.show(getSupportFragmentManager(), TAG);
 
             }
         });

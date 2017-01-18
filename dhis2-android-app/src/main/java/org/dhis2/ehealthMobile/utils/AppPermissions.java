@@ -11,21 +11,19 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 
 import org.dhis2.ehealthMobile.R;
-import org.dhis2.ehealthMobile.ui.activities.DataEntryActivity;
-
-import java.util.Arrays;
-import java.util.HashMap;
 
 /**
  * Created by george on 12/2/16.
  */
 
 public class AppPermissions {
+
+    public interface AppPermissionsCallback{
+        void onPermissionGranted(String permission);
+        void onPermissionDenied(String permission);
+    }
     public static final int MY_PERMISSIONS = 1;
     public static String[] requiredPermissions = new String[]{Manifest.permission.SEND_SMS};
-    private static final String TITLE = "TITLE";
-    private static final String MESSAGE = "MESSAGE";
-    private static final String CONFIRMATION_TEXT = "CONFIRMATION_TEXT";
 
     private AppPermissions(){
 
@@ -40,10 +38,11 @@ public class AppPermissions {
         return PackageManager.PERMISSION_GRANTED == checkPermission(context, permission);
     }
 
-    private static void showPermissionRationaleDialog(final Activity activity, HashMap dialogText){
-        String title = dialogText.get(TITLE).toString();
-        String message = dialogText.get(MESSAGE).toString();
-        String confirmationText = dialogText.get(CONFIRMATION_TEXT).toString();
+    public static void showPermissionRationaleDialog(final Activity activity, String permission){
+        permission = permission.split("\\.")[permission.split("\\.").length-1];
+        String title = activity.getString(R.string.sms_permission_dialog_title);
+        String message = activity.getString(R.string.sms_permission_dialog_message, permission);
+        String confirmationText = activity.getString(R.string.sms_permission_dialog_confirmation);
 
         AlertDialog dialog = new AlertDialog.Builder(activity).create();
         dialog.setTitle(title);
@@ -64,7 +63,7 @@ public class AppPermissions {
                     MY_PERMISSIONS);
     }
 
-    public static void handleRequestResults(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults, Activity activity){
+    public static void handleRequestResults(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults, AppPermissionsCallback callback){
         switch (requestCode){
             case AppPermissions.MY_PERMISSIONS:{
                 int index = 0;
@@ -73,23 +72,10 @@ public class AppPermissions {
                         if (grantResults.length > 0
                                 && grantResults[index] == PackageManager.PERMISSION_GRANTED) {
                             //Permission granted ヽ(´▽`)/
-                            DataEntryActivity dataEntryActivity = (DataEntryActivity) activity;
-                            dataEntryActivity.upload();
+                            callback.onPermissionGranted(permission);
                         } else {
                             // permission denied, ¯\_(⊙︿⊙)_/¯
-                            //call the upload method again, but this time it'll call the report upload service.
-                            //Without an internet connection this will then store the data locally for upload when there is one.
-                            if(ActivityCompat.shouldShowRequestPermissionRationale(activity, Manifest.permission.SEND_SMS)){
-                                Context context = activity.getApplicationContext();
-                                HashMap <String, String> dialogText = new HashMap<>();
-                                dialogText.put(TITLE, context.getString(R.string.sms_permission_dialog_title));
-                                dialogText.put(MESSAGE, context.getString(R.string.sms_permission_dialog_message));
-                                dialogText.put(CONFIRMATION_TEXT, context.getString(R.string.sms_permission_dialog_confirmation));
-                                AppPermissions.showPermissionRationaleDialog(activity, dialogText);
-                            }else {
-                                DataEntryActivity dataEntryActivity = (DataEntryActivity) activity;
-                                dataEntryActivity.upload();
-                            }
+                            callback.onPermissionDenied(permission);
                         }
                     }
                     index++;
@@ -101,4 +87,5 @@ public class AppPermissions {
     public static boolean canShowRationale(Activity activity, String permission){
         return ActivityCompat.shouldShowRequestPermissionRationale(activity, permission);
     }
+
 }
