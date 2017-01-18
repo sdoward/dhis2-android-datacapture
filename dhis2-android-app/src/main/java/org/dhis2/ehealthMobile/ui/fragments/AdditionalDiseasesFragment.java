@@ -1,6 +1,8 @@
 package org.dhis2.ehealthMobile.ui.fragments;
 
 import android.app.Dialog;
+import android.content.Context;
+import android.os.Bundle;
 import android.support.design.widget.BottomSheetDialogFragment;
 import android.view.View;
 import android.widget.AdapterView;
@@ -10,7 +12,6 @@ import android.widget.ListView;
 import org.dhis2.ehealthMobile.R;
 import org.dhis2.ehealthMobile.io.models.Form;
 import org.dhis2.ehealthMobile.io.models.eidsr.Disease;
-import org.dhis2.ehealthMobile.ui.activities.DataEntryActivity;
 import org.dhis2.ehealthMobile.utils.DiseaseImporter;
 
 import java.util.ArrayList;
@@ -22,6 +23,12 @@ import java.util.Map;
 
 public class AdditionalDiseasesFragment extends BottomSheetDialogFragment {
 
+    public interface AdditionalDiseaseOnClickListener{
+        void onClick(Disease disease);
+    }
+
+    // key for additional diseases that have been displayed on the list.
+    public static final String ALREADY_DISPLAYED = "alreadyDisplayed";
     private ListView listview;
     private ArrayList<String> additionalDiseases;
     private ArrayAdapter<String> adapter;
@@ -30,20 +37,48 @@ public class AdditionalDiseasesFragment extends BottomSheetDialogFragment {
     //Diseases already displayed in the DataEntryActivity listView.
     private String alreadyDisplayed;
     private String formId;
+    private AdditionalDiseaseOnClickListener onClickListener;
+
+    public static AdditionalDiseasesFragment newInstance(String alreadyDisplayed, String formId){
+        AdditionalDiseasesFragment fragment = new AdditionalDiseasesFragment();
+        Bundle args = new Bundle();
+        args.putString(AdditionalDiseasesFragment.ALREADY_DISPLAYED, alreadyDisplayed);
+        args.putString(Form.TAG, formId);
+        fragment.setArguments(args);
+
+        return fragment;
+    }
+
     @Override
     public void setupDialog(final Dialog dialog, int style) {
         super.setupDialog(dialog, style);
         View contentView = View.inflate(getContext(), R.layout.fragment_bottomsheet, null);
         dialog.setContentView(contentView);
 
-        alreadyDisplayed = getArguments().getString(DataEntryActivity.ALREADY_DISPLAYED);
+        alreadyDisplayed = getArguments().getString(ALREADY_DISPLAYED);
         formId = getArguments().getString(Form.TAG);
         listview = (ListView) dialog.findViewById(R.id.additional_diseases_listview);
         setupListView();
         setupListViewOnclickListener();
 
-
     }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        try{
+            onClickListener = (AdditionalDiseaseOnClickListener) context;
+        }catch(ClassCastException e ){
+            throw new ClassCastException(context.toString() + " must implement AdditionalDiseaseOnClickListener");
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        onClickListener = null;
+    }
+
     private void setupListView(){
         additionalDiseases = new ArrayList<>();
         additionalDiseasesIds = new ArrayList<>();
@@ -62,19 +97,16 @@ public class AdditionalDiseasesFragment extends BottomSheetDialogFragment {
         listview.setAdapter(adapter);
 
     }
+
     private void setupListViewOnclickListener(){
         listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                DataEntryActivity dataEntryActivity = (DataEntryActivity) getActivity();
                 Disease disease = (Disease) diseases.get(additionalDiseasesIds.get(i));
-
-                dataEntryActivity.adapters.get(0).addItem(disease);
-                dataEntryActivity.addToDiseasesShown(disease.getId(), disease.getLabel());
-                dataEntryActivity.scrollToBottomOfListView();
+                onClickListener.onClick(disease);
                 dismiss();
-
             }
         });
     }
+
 }
