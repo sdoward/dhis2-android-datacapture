@@ -33,7 +33,6 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 public class BaseFormInfoHolder implements Parcelable {
-    public static final String TAG = "org.dhis2.mobile.io.holders.BaseFormInfoHolder";
 
     private String orgUnitLabel;
     private String orgUnitId;
@@ -52,7 +51,7 @@ public class BaseFormInfoHolder implements Parcelable {
 
     @Override
     public int describeContents() {
-        return TAG.length();
+        return getClass().getSimpleName().length();
     }
 
     @Override

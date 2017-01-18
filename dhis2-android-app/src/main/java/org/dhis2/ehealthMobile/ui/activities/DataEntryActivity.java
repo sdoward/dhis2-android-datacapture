@@ -89,6 +89,8 @@ public class DataEntryActivity extends BaseActivity implements LoaderManager.Loa
     private static final String STATE_DOWNLOAD_ATTEMPTED = "state:downloadAttempted";
     private static final String STATE_DOWNLOAD_IN_PROGRESS = "state:downloadInProgress";
 
+    public static final String KEY_DATASET_INFO_HOLDER = "datasetinfoholder";
+
     private String compulsoryData;
 
     // loader ids
@@ -116,8 +118,7 @@ public class DataEntryActivity extends BaseActivity implements LoaderManager.Loa
     // state
     private boolean downloadAttempted;
 
-    //info
-    private static DatasetInfoHolder infoHolder;
+    private DatasetInfoHolder infoHolder;
 
     //delete disease alert dialog
     private AlertDialog deleteDiseaseDialog;
@@ -132,11 +133,9 @@ public class DataEntryActivity extends BaseActivity implements LoaderManager.Loa
 
     public static void navigateTo(Activity activity, DatasetInfoHolder info) {
         if (info != null && activity != null) {
-            infoHolder = info;
+//            infoHolder = info;
             Intent intent = new Intent(activity, DataEntryActivity.class);
-            intent.putExtra(DatasetInfoHolder.TAG, info);
-
-
+            intent.putExtra(KEY_DATASET_INFO_HOLDER, info);
 
             activity.startActivity(intent);
             activity.overridePendingTransition(
@@ -149,6 +148,8 @@ public class DataEntryActivity extends BaseActivity implements LoaderManager.Loa
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_data_entry);
 
+        if(getIntent().hasExtra(KEY_DATASET_INFO_HOLDER))
+            infoHolder = getIntent().getParcelableExtra(KEY_DATASET_INFO_HOLDER);
 
         setupToolbar();
         setupFormSpinner();
@@ -161,6 +162,7 @@ public class DataEntryActivity extends BaseActivity implements LoaderManager.Loa
         setupAddDiseaseBtn();
         setupDeleteDialog();
         setupCompulsoryFieldsDialog();
+
         isDisabled = new IsDisabled(getApplicationContext(), infoHolder);
         setupSubmissionDetailsViews();
 
@@ -225,7 +227,7 @@ public class DataEntryActivity extends BaseActivity implements LoaderManager.Loa
     @Override
     public Loader<Form> onCreateLoader(int id, Bundle args) {
         DatasetInfoHolder info = getIntent().getExtras()
-                .getParcelable(DatasetInfoHolder.TAG);
+                .getParcelable(KEY_DATASET_INFO_HOLDER);
 
         if (id == LOADER_FORM_ID && info != null) {
             return new DataLoader(DataEntryActivity.this, info);
@@ -373,7 +375,7 @@ public class DataEntryActivity extends BaseActivity implements LoaderManager.Loa
 
     private void setupAddDiseaseBtn(){
         final DatasetInfoHolder info = getIntent().getExtras()
-                .getParcelable(DatasetInfoHolder.TAG);
+                .getParcelable(KEY_DATASET_INFO_HOLDER);
         addDiseaseButton = findViewById(R.id.add_button);
         addDiseaseButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -531,7 +533,7 @@ public class DataEntryActivity extends BaseActivity implements LoaderManager.Loa
 
     private void loadGroupsIntoAdapters(List<Group> groups) {
         DatasetInfoHolder info = getIntent().getExtras()
-                .getParcelable(DatasetInfoHolder.TAG);
+                .getParcelable(KEY_DATASET_INFO_HOLDER);
         if (groups != null) {
             List<FieldAdapter> adapters = new ArrayList<>();
 
@@ -600,7 +602,7 @@ public class DataEntryActivity extends BaseActivity implements LoaderManager.Loa
             addFooterCommentToGroup(groups.get(0));
 
             DatasetInfoHolder info = getIntent().getExtras()
-                    .getParcelable(DatasetInfoHolder.TAG);
+                    .getParcelable(KEY_DATASET_INFO_HOLDER);
 
         if(isInvalidForm(groups)){
             showCompulsoryFieldsDialog();
@@ -646,7 +648,7 @@ public class DataEntryActivity extends BaseActivity implements LoaderManager.Loa
         showProgressBar();
 
         DatasetInfoHolder info = getIntent().getExtras()
-                .getParcelable(DatasetInfoHolder.TAG);
+                .getParcelable(KEY_DATASET_INFO_HOLDER);
 
         Intent intent = new Intent(this, WorkService.class);
         intent.putExtra(WorkService.METHOD,
@@ -657,7 +659,7 @@ public class DataEntryActivity extends BaseActivity implements LoaderManager.Loa
 
     private void getCompletionDate(){
         DatasetInfoHolder info = getIntent().getExtras()
-                .getParcelable(DatasetInfoHolder.TAG);
+                .getParcelable(KEY_DATASET_INFO_HOLDER);
 
         Intent intent = new Intent(this, WorkService.class);
         intent.putExtra(WorkService.METHOD, WorkService.METHOD_DOWNLOAD_SUBMISSION_DETAILS);
