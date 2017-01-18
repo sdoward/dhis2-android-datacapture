@@ -378,12 +378,10 @@ public class DataEntryActivity extends BaseActivity implements LoaderManager.Loa
         addDiseaseButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                AdditionalDiseasesFragment additionalDiseasesFragment = new AdditionalDiseasesFragment();
-                Bundle args = new Bundle();
-                args.putString(AdditionalDiseasesFragment.ALREADY_DISPLAYED, additionalDiseaseIds.keySet().toString());
-                args.putString(Form.TAG, info.getFormId());
-                additionalDiseasesFragment.setArguments(args);
-                additionalDiseasesFragment.show(getSupportFragmentManager(), TAG);
+
+                String alreadyDisplayed = additionalDiseaseIds.keySet().toString();
+                AdditionalDiseasesFragment fragment = AdditionalDiseasesFragment.newInstance(alreadyDisplayed, info.getFormId());
+                fragment.show(getSupportFragmentManager(), TAG);
 
             }
         });

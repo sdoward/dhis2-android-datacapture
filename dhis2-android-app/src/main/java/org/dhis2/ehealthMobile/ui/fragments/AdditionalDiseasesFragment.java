@@ -2,6 +2,7 @@ package org.dhis2.ehealthMobile.ui.fragments;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.os.Bundle;
 import android.support.design.widget.BottomSheetDialogFragment;
 import android.view.View;
 import android.widget.AdapterView;
@@ -38,6 +39,16 @@ public class AdditionalDiseasesFragment extends BottomSheetDialogFragment {
     private String formId;
     private AdditionalDiseaseOnClickListener onClickListener;
 
+    public static AdditionalDiseasesFragment newInstance(String alreadyDisplayed, String formId){
+        AdditionalDiseasesFragment fragment = new AdditionalDiseasesFragment();
+        Bundle args = new Bundle();
+        args.putString(AdditionalDiseasesFragment.ALREADY_DISPLAYED, alreadyDisplayed);
+        args.putString(Form.TAG, formId);
+        fragment.setArguments(args);
+
+        return fragment;
+    }
+
     @Override
     public void setupDialog(final Dialog dialog, int style) {
         super.setupDialog(dialog, style);
@@ -60,6 +71,12 @@ public class AdditionalDiseasesFragment extends BottomSheetDialogFragment {
         }catch(ClassCastException e ){
             throw new ClassCastException(context.toString() + " must implement AdditionalDiseaseOnClickListener");
         }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        onClickListener = null;
     }
 
     private void setupListView(){
