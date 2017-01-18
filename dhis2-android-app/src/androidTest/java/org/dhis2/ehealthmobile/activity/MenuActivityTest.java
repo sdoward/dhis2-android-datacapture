@@ -140,9 +140,8 @@ public class MenuActivityTest extends BaseInstrumentationTest {
 	}
 
 	@Test
-	public void shouldHaveDownloadedConfigFile() throws InterruptedException {
+	public void shouldHaveDownloadedConfigFile(){
 		onView(withId(R.id.swipe_refresh_layout_aggregate_report)).check(matches(isDisplayed()));
-		Thread.sleep(1000);
 
 		assertThat(PrefUtils.getDiseaseConfigs(getContext(), configFileFormId).length()).isGreaterThan(1);
 		assertThat(PrefUtils.getCompulsoryDiseases(getContext(), configFileFormId).length()).isGreaterThan(1);
@@ -151,7 +150,6 @@ public class MenuActivityTest extends BaseInstrumentationTest {
 	@Test
 	public void shouldHaveDownloadedAssignedDataSets() throws InterruptedException {
 		onView(withId(R.id.swipe_refresh_layout_aggregate_report)).check(matches(isDisplayed()));
-		Thread.sleep(10000);
 
 		String orgUnitsWithDatasets = TextFileUtils.readTextFile(getContext(), TextFileUtils.Directory.ROOT, TextFileUtils.FileNames.ORG_UNITS_WITH_DATASETS);
 		OrganizationUnit[] units = new Gson().fromJson(orgUnitsWithDatasets, OrganizationUnit[].class);
@@ -165,5 +163,15 @@ public class MenuActivityTest extends BaseInstrumentationTest {
 		}
 
 		assertThat(hasTestOrganizationUnitId).isTrue();
+	}
+
+	@Test
+	public void shouldOpenProfileScreen() {
+		onView(withId(R.id.drawer_layout)).perform(DrawerActions.open());
+		onView(allOf(withText(R.string.profile), isDescendantOfA(withId(R.id.navigation_view)))).perform(click());
+
+		onView(withId(R.id.swipe_refresh_layout_my_profile)).check(matches(isDisplayed()));
+		// TODO: the list of fields shown here is empty...?
+
 	}
 }

@@ -150,7 +150,7 @@ public class MyProfileFragment extends Fragment implements LoaderManager.LoaderC
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_my_profile, container, false);
-        mSwipeRefreshLayout = (SwipeRefreshLayout) root.findViewById(R.id.swipe_refresh_layout_aggregate_report);
+        mSwipeRefreshLayout = (SwipeRefreshLayout) root.findViewById(R.id.swipe_refresh_layout_my_profile);
         mList = (ListView) mSwipeRefreshLayout.findViewById(R.id.list_of_fields);
         mProgressBar = (ProgressBar) root.findViewById(R.id.progress_bar);
         mUploadButton = (FloatingActionButton) root.findViewById(R.id.upload_button);
@@ -171,7 +171,7 @@ public class MyProfileFragment extends Fragment implements LoaderManager.LoaderC
         int grey = R.color.light_grey;
 
         mSwipeRefreshLayout.setOnRefreshListener(listener);
-        mSwipeRefreshLayout.setColorScheme(blue, grey, blue, grey);
+        mSwipeRefreshLayout.setColorSchemeResources(blue, grey, blue, grey);
 
         mUploadButton.setOnClickListener(new OnClickListener() {
 

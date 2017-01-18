@@ -4,7 +4,7 @@
     android:layout_height="match_parent">
 
     <android.support.v4.widget.SwipeRefreshLayout
-        android:id="@+id/swipe_refresh_layout_aggregate_report"
+        android:id="@+id/swipe_refresh_layout_my_profile"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
