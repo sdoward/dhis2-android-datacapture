@@ -69,12 +69,13 @@ public class MenuActivityTest extends BaseInstrumentationTest {
 				"      \"label\": \"%s\",", orgUnitBontheLabel);
 
 		String datasetsFile = loadJson("api_me_assignedDataSets").replace(original, replacement);
-
-
 		enqueueJsonResponse(200, datasetsFile);
 
-		for (int i = 0; i < 10; i++)
-			enqueueJsonResponse(200, "{}");
+		enqueueJsonResponse("api_optionSets_zldRzH14bAq");
+		enqueueJsonResponse("api_optionSets_zldRzH14bAq");
+		enqueueJsonResponse("api_optionSets_JXuNf5J2jCB");
+		enqueueJsonResponse("api_optionSets_l0k2pkGQyjl");
+		enqueueJsonResponse("api_optionSets_Itt129Alfha");
 
 		rule.launchActivity(new Intent());
 	}
@@ -204,8 +205,10 @@ public class MenuActivityTest extends BaseInstrumentationTest {
 		clickViewWithText("IDSR Weekly Disease Report(WDR)");
 		clickViewWithText(R.string.choose_period);
 		onData(anything()).inAdapterView(withId(R.id.dates_listview)).atPosition(0).perform(click());
+		enqueueJsonResponse("api_dataSets_rq0LNr72Ndo_form");
 		clickViewWithText(R.string.open_form);
 		onView(withId(R.id.coordinator_layout_data_entry)).check(matches(isDisplayed()));
+
 		Thread.sleep(10000);
 
 	}
