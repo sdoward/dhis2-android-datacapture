@@ -63,11 +63,11 @@ import org.dhis2.ehealthMobile.ui.adapters.dataEntry.rows.Row;
 import org.dhis2.ehealthMobile.ui.adapters.dataEntry.rows.RowTypes;
 import org.dhis2.ehealthMobile.ui.adapters.dataEntry.rows.TextRow;
 import org.dhis2.ehealthMobile.utils.DiseaseGroupLabels;
-import org.dhis2.ehealthMobile.utils.IsAdditionalDisease;
-import org.dhis2.ehealthMobile.utils.IsCritical;
+import org.dhis2.ehealthMobile.utils.DiseaseImporter;
 import org.dhis2.ehealthMobile.utils.TextFileUtils;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -76,8 +76,9 @@ public class FieldAdapter extends BaseAdapter {
     private final String adapterLabel;
     private final Group group;
     private LayoutInflater inflater;
-    private IsCritical isCritical;
-    private IsAdditionalDisease isAdditionalDisease;
+    private final Map<String, Disease> diseases;
+//    private IsCritical isCritical;
+//    private IsAdditionalDisease isAdditionalDisease;
     private Map<String, Map<String, PosOrZeroIntegerRow2>> additionalDiseasesRows = new HashMap<>();
     private LabelRow diseaseLabel;
     private DiseaseGroupLabels diseaseGroupLabels;
@@ -94,8 +95,9 @@ public class FieldAdapter extends BaseAdapter {
         this.rows = new ArrayList<Row>();
         this.adapterLabel = group.getLabel();
         inflater = LayoutInflater.from(context);
-        isCritical = new IsCritical(context, info);
-        isAdditionalDisease = new IsAdditionalDisease(context, info);
+        this.diseases = info != null ? DiseaseImporter.importDiseases(context, info.getFormId()) : Collections.EMPTY_MAP;
+//        isCritical = new IsCritical(context, info);
+//        isAdditionalDisease = new IsAdditionalDisease(context, info);
         diseaseGroupLabels = new DiseaseGroupLabels(context, info);
 
         for (int i = 0; i < fields.size(); i++) {
@@ -249,12 +251,23 @@ public class FieldAdapter extends BaseAdapter {
         return isEmpty;
     }
 
+    private boolean isCriticalDisease(String diseaseId){
+        Disease disease = diseases.get(diseaseId);
+        return disease != null && disease.isCritical();
+    }
+
+    private boolean isAdditionalDisease(String diseaseId){
+        Disease disease = diseases.get(diseaseId);
+        return disease != null && disease.isAdditionalDisease();
+    }
+
     private void handleIntegerOrZeroRow2(DatasetInfoHolder info,  Field field, ArrayList<Field> groupedFields, String previousFieldId){
+
         if(!field.getDataElement().equals(previousFieldId) && groupedFields.size() > 0
-                && !isAdditionalDisease.check(previousFieldId)){
+                && !isAdditionalDisease(previousFieldId)){
             //each disease has four fields.
-            Boolean isCriticalDisease = isCritical.check(previousFieldId);
-            Boolean isAnAdditionalDisease = isAdditionalDisease.check(previousFieldId);
+            Boolean isCriticalDisease = isCriticalDisease(previousFieldId);
+            Boolean isAnAdditionalDisease = isAdditionalDisease(previousFieldId);
             rows.add(new PosOrZeroIntegerRow2(inflater, info,  groupedFields,isCriticalDisease, isAnAdditionalDisease));
 
             //handle diseases that belong to groups.
@@ -269,12 +282,12 @@ public class FieldAdapter extends BaseAdapter {
 
         }
         //check if its an additional disease and has values.
-        if(!field.getDataElement().equals(previousFieldId) && groupedFields.size() > 0 && isAdditionalDisease.check(previousFieldId)
+        if(!field.getDataElement().equals(previousFieldId) && groupedFields.size() > 0 && isAdditionalDisease(previousFieldId)
                 && groupedFieldsHasValue(groupedFields))
         {
             //if it is an additional disease and does have value then we add it to a map of additional diseases rows
             //we later iterate over the map and add these additional diseases to the bottom of the listView
-            Boolean isAnAdditionalDisease = isAdditionalDisease.check(previousFieldId);
+            boolean isAnAdditionalDisease = isAdditionalDisease(previousFieldId);
             additionalDiseasesRows.put(previousFieldId, new HashMap<String, PosOrZeroIntegerRow2>());
             additionalDiseasesRows.get(previousFieldId).put(groupedFields.get(groupedFields.size()-1).getLabel(),
                     new PosOrZeroIntegerRow2(inflater, info,  groupedFields,false, isAnAdditionalDisease));

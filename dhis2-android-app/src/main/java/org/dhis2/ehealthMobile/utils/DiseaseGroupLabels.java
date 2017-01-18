@@ -5,6 +5,7 @@ import android.content.Context;
 import org.dhis2.ehealthMobile.io.holders.DatasetInfoHolder;
 import org.dhis2.ehealthMobile.io.models.eidsr.Disease;
 
+import java.util.Collections;
 import java.util.Map;
 
 /**
@@ -15,7 +16,7 @@ public class DiseaseGroupLabels {
     private final Map diseases;
 
     public DiseaseGroupLabels(Context context, DatasetInfoHolder info){
-        this.diseases = DiseaseImporter.importDiseases(context, info.getFormId());
+        this.diseases = info != null ? DiseaseImporter.importDiseases(context, info.getFormId()) : Collections.EMPTY_MAP;
     }
 
     public Boolean hasGroup(String id){

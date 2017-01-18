@@ -36,7 +36,7 @@ public class DiseaseImporter {
      * @param context Context
      * @return Map A map of diseases.
      */
-    public static Map importDiseases(Context context, String formId) {
+    public static Map<String, Disease> importDiseases(Context context, String formId) {
         Map<String, Disease> mapOfDiseases = new HashMap<>();
         String data;
         data = PrefUtils.getDiseaseConfigs(context, formId);
