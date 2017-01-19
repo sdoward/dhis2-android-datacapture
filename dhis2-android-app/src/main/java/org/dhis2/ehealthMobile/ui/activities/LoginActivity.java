@@ -137,6 +137,10 @@ public class LoginActivity extends AppCompatActivity {
 		usernameEditText.addTextChangedListener(loginCredentialsTextWatcher);
 		passwordEditText.addTextChangedListener(loginCredentialsTextWatcher);
 
+//		urlEditText.setText("https://dhis2-sl-dev.ehealthafrica.org");
+//		usernameEditText.setText("admin");
+//		passwordEditText.setText("JdGKpmGvewkwFkL00uteU0SI6vv4IFln");
+
 		checkLoginButtonEnabled();
 
 		if (!AppPermissions.isPermissionGranted(getApplicationContext(), Manifest.permission.SEND_SMS)) {

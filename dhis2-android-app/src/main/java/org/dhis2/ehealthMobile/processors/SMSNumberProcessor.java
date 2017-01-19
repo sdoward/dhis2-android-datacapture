@@ -24,10 +24,9 @@ public class SMSNumberProcessor {
 
     public static String SMS_NUMBER = "smsNumber";
 
-    public static void download(Context context){
-        String url  = buildUrl(context);
-        String credentials = PrefUtils.getCredentials(context);
-        Response response = HTTPClient.get(url, credentials);
+    public static void download(HTTPClient httpClient, Context context){
+
+        Response response = httpClient.getSmsNumber();
 
         if (response.getCode() >= 200 && response.getCode() < 300) {
             String smsNumber;
@@ -41,10 +40,5 @@ public class SMSNumberProcessor {
 
             PrefUtils.saveSmsNumber(context, smsNumber);
         }
-    }
-
-    private static String buildUrl(Context context){
-        String server = PrefUtils.getServerURL(context);
-        return server + URLConstants.DATA_STORE + "/" + URLConstants.SMS_NUMBER_URL ;
     }
 }

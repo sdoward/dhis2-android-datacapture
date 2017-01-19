@@ -22,30 +22,17 @@ import org.dhis2.ehealthMobile.utils.PrefUtils;
 public class SubmissionDetailsProcessor {
     public static String SUBMISSION_DETAILS = "submissionDetails";
 
-    public static void download(Context context, DatasetInfoHolder info){
-        String url  = buildUrl(context, info);
-        String credentials = PrefUtils.getCredentials(context);
-        Response response = HTTPClient.get(url, credentials);
-        String completionDate = null;
+    public static void download(HTTPClient httpClient, Context context, DatasetInfoHolder info){
+
+        Response response = httpClient.getSubmissionDetails(info.getFormId(), info.getOrgUnitId(), info.getPeriod());
 
         if (response.getCode() >= 200 && response.getCode() < 300) {
-            completionDate = getCompletionDate(response.getBody());
+            String completionDate = getCompletionDate(response.getBody());
             Intent intent  = new Intent(DataEntryActivity.TAG);
             intent.putExtra(Response.CODE, response.getCode());
             intent.putExtra(SUBMISSION_DETAILS, completionDate);
             LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
         }
-
-    }
-    
-
-    private static String buildUrl(Context context, DatasetInfoHolder info){
-         String server = PrefUtils.getServerURL(context);
-
-         return server + URLConstants.DATASET_UPLOAD_URL+ "?"+URLConstants.DATASET_PARAM + info.getFormId()
-                + "&" + URLConstants.ORG_UNIT_PARAM + info.getOrgUnitId() + URLConstants.PERIOD_PARAM_2 + info.getPeriod()
-                + "&" + URLConstants.LIMIT_PARAM+ "0";
-
     }
 
     private static String getCompletionDate(String responseBody){

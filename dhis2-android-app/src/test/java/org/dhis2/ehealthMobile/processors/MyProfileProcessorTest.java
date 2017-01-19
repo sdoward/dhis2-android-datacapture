@@ -12,7 +12,9 @@ import com.squareup.okhttp.mockwebserver.MockResponse;
 import com.squareup.okhttp.mockwebserver.MockWebServer;
 import com.squareup.okhttp.mockwebserver.RecordedRequest;
 
+import org.dhis2.ehealthMobile.BaseRoboElectricTest;
 import org.dhis2.ehealthMobile.io.models.Field;
+import org.dhis2.ehealthMobile.network.HTTPClient;
 import org.dhis2.ehealthMobile.network.Response;
 import org.dhis2.ehealthMobile.ui.fragments.MyProfileFragment;
 import org.dhis2.ehealthMobile.utils.PrefUtils;
@@ -38,18 +40,15 @@ import static org.junit.Assert.assertTrue;
 /**
  * Created by george on 1/6/17.
  */
-@RunWith(RobolectricTestRunner.class)
-@Config(manifest=Config.NONE)
-public class MyProfileProcessorTest {
-    private Context applicationContext = ShadowApplication.getInstance().getApplicationContext();
-    private MockWebServer server;
+public class MyProfileProcessorTest extends BaseRoboElectricTest{
+
     private ArrayList<Field> fields;
     private HttpUrl url;
     private final String userDataFromFields = "{\"KPMZxGkiqiQ\":\"value\"}";
 
-    @Before
-    public void setUp() throws Exception {
-        server = new MockWebServer();
+    @Override
+    public void setup() {
+        super.setup();
         Field field = new Field();
         fields = new ArrayList<>();
         field.setDataElement(DummyData.FIELD_DATA_ELEMENT);
@@ -64,7 +63,7 @@ public class MyProfileProcessorTest {
                 response.setResponseCode(HttpURLConnection.HTTP_OK);
                 //We want to simulate network delay so we can test the refreshing state.
                 response.throttleBody(1024, 1, TimeUnit.SECONDS);
-                assertThat(PrefUtils.getResourceState(applicationContext, PrefUtils.Resources.PROFILE_DETAILS), is(PrefUtils.State.REFRESHING));
+                assertThat(PrefUtils.getResourceState(getContext(), PrefUtils.Resources.PROFILE_DETAILS), is(PrefUtils.State.REFRESHING));
 
                 if(recordedRequest.getMethod().equals("GET")){
                     response.setBody(DummyData.USER_PROFILE);
@@ -80,9 +79,9 @@ public class MyProfileProcessorTest {
             }
         };
 
-        server.setDispatcher(dispatcher);
-        url = server.url("/");
-        PrefUtils.initAppData(applicationContext, "", "", url.toString());
+        getServer().setDispatcher(dispatcher);
+        url = getServer().url("/");
+        PrefUtils.initAppData(getContext(), "", "", url.toString());
     }
 
     @Test
@@ -98,7 +97,7 @@ public class MyProfileProcessorTest {
                 RecordedRequest request;
 
                 try {
-                    request = server.takeRequest();
+                    request = getServer().takeRequest();
                     assertNotNull(request.getHeader("Authorization"));
                     assertEquals(DummyData.API_USER_ACCOUNT_URL, request.getPath());
                 } catch (InterruptedException e) {
@@ -106,15 +105,15 @@ public class MyProfileProcessorTest {
                 }
 
                 assertThat(intent.getExtras().getInt(Response.CODE), is(HttpURLConnection.HTTP_OK));
-                assertThat(PrefUtils.getResourceState(applicationContext, PrefUtils.Resources.PROFILE_DETAILS), is(PrefUtils.State.UP_TO_DATE));
+                assertThat(PrefUtils.getResourceState(getContext(), PrefUtils.Resources.PROFILE_DETAILS), is(PrefUtils.State.UP_TO_DATE));
                 assertEquals(DummyData.USER_PROFILE, profileInfo.trim());
                 isReceiverCalled[0] = true;
             }
         };
-        LocalBroadcastManager.getInstance(applicationContext)
+        LocalBroadcastManager.getInstance(getContext())
                 .registerReceiver(profileReceiver, new IntentFilter(MyProfileFragment.ON_UPDATE_FINISHED_LISTENER_TAG));
 
-        MyProfileProcessor.updateProfileInfo(applicationContext);
+        MyProfileProcessor.updateProfileInfo(HTTPClient.getInstance(), getContext());
         assertTrue(true);
     }
 
@@ -131,7 +130,7 @@ public class MyProfileProcessorTest {
                 RecordedRequest request;
 
                 try {
-                    request = server.takeRequest();
+                    request = getServer().takeRequest();
                     assertNotNull(request.getHeader("Authorization"));
                     assertEquals(DummyData.API_USER_ACCOUNT_URL, request.getPath());
                 } catch (InterruptedException e) {
@@ -139,22 +138,18 @@ public class MyProfileProcessorTest {
                 }
 
                 assertThat(intent.getExtras().getInt(Response.CODE), is(HttpURLConnection.HTTP_OK));
-                assertThat(PrefUtils.getResourceState(applicationContext, PrefUtils.Resources.PROFILE_DETAILS), is(PrefUtils.State.UP_TO_DATE));
+                assertThat(PrefUtils.getResourceState(getContext(), PrefUtils.Resources.PROFILE_DETAILS), is(PrefUtils.State.UP_TO_DATE));
                 assertEquals(userDataFromFields, profileInfo.trim());
                 isReceiverCalled[0] = true;
             }
         };
 
-        LocalBroadcastManager.getInstance(applicationContext)
+        LocalBroadcastManager.getInstance(getContext())
                 .registerReceiver(profileReceiver, new IntentFilter(MyProfileFragment.ON_UPLOAD_FINISHED_LISTENER_TAG));
 
-        MyProfileProcessor.uploadProfileInfo(applicationContext, fields);
+        MyProfileProcessor.uploadProfileInfo(HTTPClient.getInstance(), getContext(), fields);
         assertTrue(isReceiverCalled[0]);
     }
 
-    @After
-    public void tearDown() throws Exception {
-        server.shutdown();
-    }
 
 }

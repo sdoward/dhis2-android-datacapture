@@ -51,10 +51,10 @@ public class OfflineDataProcessor {
     private OfflineDataProcessor() {
     }
 
-    public static void upload(Context context) {
+    public static void upload(HTTPClient httpClient, Context context) {
         isRunning = true;
-        uploadOfflineReports(context);
-        uploadProfileInfo(context);
+        uploadOfflineReports(httpClient, context);
+        uploadProfileInfo(httpClient, context);
         isRunning = false;
     }
 
@@ -62,36 +62,34 @@ public class OfflineDataProcessor {
         return isRunning;
     }
 
-    private static void uploadProfileInfo(Context context) {
+    private static void uploadProfileInfo(HTTPClient httpClient, Context context) {
         if (PrefUtils.accountInfoNeedsUpdate(context)) {
-            String url = PrefUtils.getServerURL(context) + URLConstants.API_USER_ACCOUNT_URL;
-            String creds = PrefUtils.getCredentials(context);
+
             String accInfo = TextFileUtils.readTextFile(context,
                     TextFileUtils.Directory.ROOT,
                     TextFileUtils.FileNames.ACCOUNT_INFO);
-            Response resp = HTTPClient.post(url, creds, accInfo);
+            Response resp = httpClient.postProfileInfo(accInfo);
             if (!HTTPClient.isError(resp.getCode())) {
                 PrefUtils.setAccountUpdateFlag(context, false);
             }
         }
     }
 
-    private static void uploadOfflineReports(Context context) {
+    private static void uploadOfflineReports(HTTPClient httpClient, Context context) {
         String path = TextFileUtils.getDirectoryPath(context, TextFileUtils.Directory.OFFLINE_DATASETS);
         File directory = new File(path);
         if (!directory.exists()) {
             return;
         }
         File[] reportFiles = directory.listFiles();
-        String url = PrefUtils.getServerURL(context) + URLConstants.DATASET_UPLOAD_URL;
-        String creds = PrefUtils.getCredentials(context);
+
         Gson gson = new Gson();
         if (reportFiles != null && reportFiles.length > 0) {
             for (File reportFile : reportFiles) {
                 // Retrieve offline report from file system
                 String report = TextFileUtils.readTextFile(reportFile);
                 // Try to upload to server
-                Response resp = HTTPClient.post(url, creds, report);
+                Response resp = httpClient.postDataset(report);
                 // If upload was successful, notify user and delete offline
                 // report
                 if (!HTTPClient.isError(resp.getCode())) {

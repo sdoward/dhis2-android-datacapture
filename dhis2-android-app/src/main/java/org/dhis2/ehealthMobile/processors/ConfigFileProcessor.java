@@ -26,10 +26,11 @@ public class ConfigFileProcessor {
     public static final String SHOULD_BE_SQUASHED = "shouldBeSquashed";
     private static final String ID = "id";
 
-    public static void download(Context context){
-        String url  = buildUrl(context);
+    public static void download(HTTPClient httpClient, Context context){
+
         String credentials = PrefUtils.getCredentials(context);
-        Response response = HTTPClient.get(url, credentials);
+
+        Response response = httpClient.getConfigFile();
 
         if (response.getCode() >= 200 && response.getCode() < 300) {
             String compulsoryDiseases, diseaseConfigs;
@@ -58,11 +59,6 @@ public class ConfigFileProcessor {
         Intent intent = new Intent(AggregateReportFragment.TAG);
         intent.putExtra(Response.CODE, response.getCode());
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
-    }
-
-    private static String buildUrl(Context context){
-        String server = PrefUtils.getServerURL(context);
-        return server + URLConstants.DATA_STORE + "/" + URLConstants.CONFIG_URL;
     }
 
     private static String getString(JSONObject obj, String key, String value){

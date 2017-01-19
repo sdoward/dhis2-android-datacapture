@@ -37,7 +37,7 @@ public class DataEntryActivityTest extends BaseInstrumentationTest {
 		PrefUtils.initAppData(getContext(), "creds", username, serverUrl(""));
 
 		enqueueJsonResponse("api_dataStore_android_config");
-		ConfigFileProcessor.download(getContext());
+		//ConfigFileProcessor.download(getContext());
 		try {
 			Thread.sleep(1000);
 		} catch (InterruptedException e) {
@@ -63,10 +63,11 @@ public class DataEntryActivityTest extends BaseInstrumentationTest {
 
 	@Test
 	public void listViewShouldContainsCertainElements(){
-
+	int breakme=1;
 		onData(anything()).inAdapterView(withId(R.id.list_of_fields)).atPosition(0).check(matches(containsString("Acute Flaccid Paralysis")));
 		onData(anything()).inAdapterView(withId(R.id.list_of_fields)).atPosition(9).check(matches(containsString("Dengue Fever")));
 		onData(anything()).inAdapterView(withId(R.id.list_of_fields)).atPosition(44).check(matches(containsString("Tuberculosis")));
+		breakme=1;
 	}
 
 	@Test
