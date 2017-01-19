@@ -77,8 +77,6 @@ public class FieldAdapter extends BaseAdapter {
     private final Group group;
     private LayoutInflater inflater;
     private final Map<String, Disease> diseases;
-//    private IsCritical isCritical;
-//    private IsAdditionalDisease isAdditionalDisease;
     private Map<String, Map<String, PosOrZeroIntegerRow2>> additionalDiseasesRows = new HashMap<>();
     private LabelRow diseaseLabel;
     private DiseaseGroupLabels diseaseGroupLabels;
@@ -96,8 +94,6 @@ public class FieldAdapter extends BaseAdapter {
         this.adapterLabel = group.getLabel();
         inflater = LayoutInflater.from(context);
         this.diseases = info != null ? DiseaseImporter.importDiseases(context, info.getFormId()) : Collections.EMPTY_MAP;
-//        isCritical = new IsCritical(context, info);
-//        isAdditionalDisease = new IsAdditionalDisease(context, info);
         diseaseGroupLabels = new DiseaseGroupLabels(context, info);
 
         for (int i = 0; i < fields.size(); i++) {

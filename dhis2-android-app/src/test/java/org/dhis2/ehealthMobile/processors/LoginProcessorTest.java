@@ -23,7 +23,10 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowApplication;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 
 import static org.hamcrest.Matchers.is;
@@ -43,22 +46,6 @@ public class LoginProcessorTest {
     private MockWebServer server;
     private final String username = "user";
     private final String credentials = "credentials";
-    private final String successMessage = "{\n" +
-            "\t\"id\": \"abc123\",\n" +
-            "\t\"username\": \"admin\",\n" +
-            "\t\"firstName\": \"admin\",\n" +
-            "\t\"surname\": \"admin\",\n" +
-            "\t\"email\": \"foobar@sl.ehealthafrica.org\",\n" +
-            "\t\"phoneNumber\": \"123456\",\n" +
-            "\t\"gender\": \"gender_male\",\n" +
-            "\t\"settings\": {\n" +
-            "\t\t\"keyDbLocale\": null,\n" +
-            "\t\t\"keyMessageSmsNotification\": \"true\",\n" +
-            "\t\t\"keyUiLocale\": \"en\",\n" +
-            "\t\t\"keyAnalysisDisplayProperty\": \"name\",\n" +
-            "\t\t\"keyMessageEmailNotification\": \"true\"\n" +
-            "\t}\n" +
-            "}";
 
     @Before
     public void setUp() throws Exception {
@@ -69,7 +56,7 @@ public class LoginProcessorTest {
     public void shouldLoginUser() throws InterruptedException {
         MockResponse serverResponse = new MockResponse();
         serverResponse.setResponseCode(HttpURLConnection.HTTP_OK);
-        serverResponse.setBody(successMessage);
+        serverResponse.setBody(readRawTextFile("json/login_success.json"));
         serverResponse.addHeader("Content-Type", "application/json");
 
         server.enqueue(serverResponse);
@@ -106,6 +93,24 @@ public class LoginProcessorTest {
         assertTrue(isReceiverCalled[0]);
 
     }
+
+	protected String readRawTextFile(String filename) {
+
+		try {
+			InputStream inputStream = getClass().getClassLoader().getResourceAsStream(filename);
+			BufferedReader r = new BufferedReader(new InputStreamReader(inputStream));
+			StringBuilder builder = new StringBuilder();
+			String line;
+			while ((line = r.readLine()) != null) {
+				builder.append(line).append('\n');
+			}
+
+			return builder.toString();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "";
+		}
+	}
 
     @Test
     public void shouldFailIfNoContextIsProvided(){

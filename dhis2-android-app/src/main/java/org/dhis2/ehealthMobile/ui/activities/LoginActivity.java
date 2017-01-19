@@ -149,7 +149,6 @@ public class LoginActivity extends AppCompatActivity {
 
 			if (loginInProcess) {
 				ViewUtils.hideAndDisableViews(logoImageView, urlEditText, usernameEditText, passwordEditText, loginButton);
-				//ViewUtils.hideAndDisableViews(logoImageView, usernameEditText, passwordEditText, loginButton);
 				showProgress();
 			}
 		}

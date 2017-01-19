@@ -167,7 +167,7 @@ public abstract class BaseInstrumentationTest {
 	protected String readRawTextFile(String filename) {
 
 		try {
-			InputStream inputStream = getClass().getClassLoader().getResourceAsStream(filename);//getContext().getResources().openRawResource(id);
+			InputStream inputStream = getClass().getClassLoader().getResourceAsStream(filename);
 			BufferedReader r = new BufferedReader(new InputStreamReader(inputStream));
 			StringBuilder builder = new StringBuilder();
 			String line;

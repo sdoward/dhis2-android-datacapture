@@ -133,7 +133,7 @@ public class DataEntryActivity extends BaseActivity implements LoaderManager.Loa
 
     public static void navigateTo(Activity activity, DatasetInfoHolder info) {
         if (info != null && activity != null) {
-//            infoHolder = info;
+
             Intent intent = new Intent(activity, DataEntryActivity.class);
             intent.putExtra(KEY_DATASET_INFO_HOLDER, info);
 
