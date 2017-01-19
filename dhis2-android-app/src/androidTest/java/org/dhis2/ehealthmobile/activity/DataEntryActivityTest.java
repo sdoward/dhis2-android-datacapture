@@ -5,7 +5,6 @@ import android.support.test.rule.ActivityTestRule;
 
 import org.dhis2.ehealthMobile.R;
 import org.dhis2.ehealthMobile.io.holders.DatasetInfoHolder;
-import org.dhis2.ehealthMobile.processors.ConfigFileProcessor;
 import org.dhis2.ehealthMobile.ui.activities.DataEntryActivity;
 import org.dhis2.ehealthMobile.utils.PrefUtils;
 import org.dhis2.ehealthMobile.utils.TextFileUtils;
@@ -37,7 +36,7 @@ public class DataEntryActivityTest extends BaseInstrumentationTest {
 		PrefUtils.initAppData(getContext(), "creds", username, serverUrl(""));
 
 		enqueueJsonResponse("api_dataStore_android_config");
-		//ConfigFileProcessor.download(getContext());
+
 		try {
 			Thread.sleep(1000);
 		} catch (InterruptedException e) {
@@ -63,11 +62,11 @@ public class DataEntryActivityTest extends BaseInstrumentationTest {
 
 	@Test
 	public void listViewShouldContainsCertainElements(){
-	int breakme=1;
+
 		onData(anything()).inAdapterView(withId(R.id.list_of_fields)).atPosition(0).check(matches(containsString("Acute Flaccid Paralysis")));
 		onData(anything()).inAdapterView(withId(R.id.list_of_fields)).atPosition(9).check(matches(containsString("Dengue Fever")));
 		onData(anything()).inAdapterView(withId(R.id.list_of_fields)).atPosition(44).check(matches(containsString("Tuberculosis")));
-		breakme=1;
+
 	}
 
 	@Test

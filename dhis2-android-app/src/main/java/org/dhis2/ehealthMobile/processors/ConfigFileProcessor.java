@@ -28,8 +28,6 @@ public class ConfigFileProcessor {
 
     public static void download(HTTPClient httpClient, Context context){
 
-        String credentials = PrefUtils.getCredentials(context);
-
         Response response = httpClient.getConfigFile();
 
         if (response.getCode() >= 200 && response.getCode() < 300) {

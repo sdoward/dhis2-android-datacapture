@@ -270,13 +270,4 @@ public class FormsDownloadProcessor {
         }
     }
 
-    /*private static Response download(String url, String creds) throws NetworkException {
-        Response response = HTTPClient.get(url, creds);
-
-        if (!HTTPClient.isError(response.getCode())) {
-            return response;
-        } else {
-            throw new NetworkException(response.getCode());
-        }
-    }*/
 }
