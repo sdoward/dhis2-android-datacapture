@@ -49,4 +49,8 @@ public class Response {
 	public String getBody() {
 		return body;
 	}
+
+	public boolean isError() {
+		return HTTPClient.isError(code);
+	}
 }

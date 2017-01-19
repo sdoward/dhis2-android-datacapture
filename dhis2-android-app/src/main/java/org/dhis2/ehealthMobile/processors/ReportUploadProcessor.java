@@ -71,7 +71,7 @@ public class ReportUploadProcessor {
      * @param groups ArrayList<Group>
      */
 
-    public static void upload(Context context, DatasetInfoHolder info, ArrayList<Group> groups) {
+    public static void upload(HTTPClient httpClient, Context context, DatasetInfoHolder info, ArrayList<Group> groups) {
         String data = prepareContent(info, groups);
 
 
@@ -80,9 +80,7 @@ public class ReportUploadProcessor {
             return;
         }
 
-        String url = PrefUtils.getServerURL(context) + URLConstants.DATASET_UPLOAD_URL;
-        String creds = PrefUtils.getCredentials(context);
-        Response response = HTTPClient.post(url, creds, data);
+        Response response = httpClient.postDataset(data);
 
         String log = String.format("[%s] %s", response.getCode(), response.getBody());
         Log.i(TAG, log);

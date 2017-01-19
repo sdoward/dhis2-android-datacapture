@@ -49,7 +49,7 @@ public class MyProfileProcessor {
 
     // This method will be invoked from service
     // in order to post new profile info to server.
-    public static void uploadProfileInfo(Context context, ArrayList<Field> fields) {
+    public static void uploadProfileInfo(HTTPClient httpClient, Context context, ArrayList<Field> fields) {
         PrefUtils.setResourceState(context,
                 PrefUtils.Resources.PROFILE_DETAILS,
                 PrefUtils.State.REFRESHING);
@@ -58,9 +58,7 @@ public class MyProfileProcessor {
         TextFileUtils.writeTextFile(context, TextFileUtils.Directory.ROOT,
                 TextFileUtils.FileNames.ACCOUNT_INFO, accountInfo);
 
-        String url = PrefUtils.getServerURL(context) + URLConstants.API_USER_ACCOUNT_URL;
-        String creds = PrefUtils.getCredentials(context);
-        Response response = HTTPClient.post(url, creds, accountInfo);
+        Response response = httpClient.postMyProfile(accountInfo);
 
         if (HTTPClient.isError(response.getCode())) {
             PrefUtils.setAccountUpdateFlag(context, true);
@@ -77,14 +75,12 @@ public class MyProfileProcessor {
 
     // updateProfileInfo() is invoked from service
     // in order to get latest profile info.
-    public static void updateProfileInfo(Context context) {
+    public static void updateProfileInfo(HTTPClient httpClient, Context context) {
         PrefUtils.setResourceState(context,
                 PrefUtils.Resources.PROFILE_DETAILS,
                 PrefUtils.State.REFRESHING);
 
-        String url = PrefUtils.getServerURL(context) + URLConstants.API_USER_ACCOUNT_URL;
-        String creds = PrefUtils.getCredentials(context);
-        Response response = HTTPClient.get(url, creds);
+        Response response = httpClient.getProfileInfo();
 
         PrefUtils.State profileState;
         if (!HTTPClient.isError(response.getCode())) {

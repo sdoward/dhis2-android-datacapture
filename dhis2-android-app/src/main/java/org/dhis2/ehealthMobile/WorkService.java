@@ -40,6 +40,7 @@ import org.dhis2.ehealthMobile.io.holders.DatasetInfoHolder;
 import org.dhis2.ehealthMobile.io.models.Field;
 import org.dhis2.ehealthMobile.io.models.Form;
 import org.dhis2.ehealthMobile.io.models.Group;
+import org.dhis2.ehealthMobile.network.HTTPClient;
 import org.dhis2.ehealthMobile.processors.ConfigFileProcessor;
 import org.dhis2.ehealthMobile.processors.FormsDownloadProcessor;
 import org.dhis2.ehealthMobile.processors.LoginProcessor;
@@ -132,42 +133,44 @@ public class WorkService extends Service {
             return;
         }
 
+        HTTPClient httpClient = HTTPClient.getInstance();
+
         final String methodName = extras.getString(METHOD);
         Log.i(TAG, methodName);
 
         if (METHOD_UPLOAD_PROFILE_INFO.equals(methodName)) {
             ArrayList<Field> fields = extras.getParcelableArrayList(MyProfileFragment.GROUP);
-            MyProfileProcessor.uploadProfileInfo(context, fields);
+            MyProfileProcessor.uploadProfileInfo(httpClient, context, fields);
         }
 
         if (METHOD_UPDATE_PROFILE_INFO.equals(methodName)) {
-            MyProfileProcessor.updateProfileInfo(context);
+            MyProfileProcessor.updateProfileInfo(httpClient, context);
         }
 
         if (METHOD_LOGIN_USER.equals(methodName)) {
             String username = extras.getString(LoginActivity.USERNAME);
             String server = extras.getString(LoginActivity.SERVER);
             String creds = extras.getString(LoginActivity.CREDENTIALS);
-            LoginProcessor.loginUser(context, server, creds, username);
+            LoginProcessor.loginUser(httpClient, context, server, creds, username);
         }
 
         if (METHOD_UPDATE_DATASETS.equals(methodName)) {
-            FormsDownloadProcessor.updateDatasets(context);
+            FormsDownloadProcessor.updateDatasets(httpClient, context);
         }
 
         if (METHOD_DOWNLOAD_LATEST_DATASET_VALUES.equals(methodName)) {
             DatasetInfoHolder info = extras.getParcelable(DatasetInfoHolder.TAG);
-            ReportDownloadProcessor.download(context, info);
+            ReportDownloadProcessor.download(httpClient, context, info);
         }
 
         if (METHOD_UPLOAD_DATASET.equals(methodName)) {
             DatasetInfoHolder info = extras.getParcelable(DatasetInfoHolder.TAG);
             ArrayList<Group> groups = extras.getParcelableArrayList(Group.TAG);
-            ReportUploadProcessor.upload(context, info, groups);
+            ReportUploadProcessor.upload(httpClient, context, info, groups);
         }
 
         if (METHOD_OFFLINE_DATA_UPLOAD.equals(methodName)) {
-            OfflineDataProcessor.upload(context);
+            OfflineDataProcessor.upload(httpClient, context);
         }
 
         if (METHOD_REMOVE_ALL_DATA.equals(methodName)) {
@@ -182,15 +185,15 @@ public class WorkService extends Service {
 
         if(METHOD_DOWNLOAD_SUBMISSION_DETAILS.equals(methodName)){
             DatasetInfoHolder info = extras.getParcelable(DatasetInfoHolder.TAG);
-            SubmissionDetailsProcessor.download(context, info);
+            SubmissionDetailsProcessor.download(httpClient, context, info);
         }
 
         if(METHOD_DOWNLOAD_SMS_NUMBER.equals(methodName)){
-            SMSNumberProcessor.download(context);
+            SMSNumberProcessor.download(httpClient, context);
         }
 
         if(METHOD_DOWNLOAD_CONFIG_FILE.equals(methodName)){
-            ConfigFileProcessor.download(context);
+            ConfigFileProcessor.download(httpClient, context);
         }
     }
 

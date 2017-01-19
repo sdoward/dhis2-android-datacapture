@@ -11,7 +11,9 @@ import com.squareup.okhttp.mockwebserver.MockResponse;
 import com.squareup.okhttp.mockwebserver.MockWebServer;
 import com.squareup.okhttp.mockwebserver.RecordedRequest;
 
+import org.dhis2.ehealthMobile.BaseRoboElectricTest;
 import org.dhis2.ehealthMobile.io.json.JsonHandler;
+import org.dhis2.ehealthMobile.network.HTTPClient;
 import org.dhis2.ehealthMobile.network.Response;
 import org.dhis2.ehealthMobile.ui.fragments.AggregateReportFragment;
 import org.dhis2.ehealthMobile.utils.PrefUtils;
@@ -33,15 +35,9 @@ import static org.junit.Assert.assertTrue;
 /**
  * Created by george on 1/5/17.
  */
-@RunWith(RobolectricTestRunner.class)
-@Config(manifest=Config.NONE)
-public class FormsDownloadProcessorTest {
-    private MockWebServer server;
 
-    @Before
-    public void setUp() throws Exception {
-        server = new MockWebServer();
-    }
+public class FormsDownloadProcessorTest extends BaseRoboElectricTest{
+
 
     @Test
     public void shouldUpdateDatasets() throws InterruptedException {
@@ -51,6 +47,7 @@ public class FormsDownloadProcessorTest {
         serverResponse.setBody(DummyData.ASSIGNED_DATA_SETS_RESPONSE);
         serverResponse.addHeader("Content-Type", "application/json");
 
+        final MockWebServer server = getServer();
         server.enqueue(serverResponse);
         HttpUrl url = server.url("/");
 
@@ -78,13 +75,8 @@ public class FormsDownloadProcessorTest {
         LocalBroadcastManager.getInstance(applicationContext)
                 .registerReceiver(onFormsUpdateListener, new IntentFilter(AggregateReportFragment.TAG));
 
-        FormsDownloadProcessor.updateDatasets(applicationContext);
+        FormsDownloadProcessor.updateDatasets(HTTPClient.getInstance(), applicationContext);
         assertTrue(isReceiverCalled[0]);
-    }
-
-    @After
-    public void tearDown() throws Exception {
-        server.shutdown();
     }
 
 }

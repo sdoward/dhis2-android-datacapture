@@ -11,6 +11,7 @@ import com.squareup.okhttp.mockwebserver.MockResponse;
 import com.squareup.okhttp.mockwebserver.MockWebServer;
 import com.squareup.okhttp.mockwebserver.RecordedRequest;
 
+import org.dhis2.ehealthMobile.network.HTTPClient;
 import org.dhis2.ehealthMobile.network.Response;
 import org.dhis2.ehealthMobile.ui.activities.LoginActivity;
 import org.dhis2.ehealthMobile.utils.PrefUtils;
@@ -89,7 +90,7 @@ public class LoginProcessorTest {
         LocalBroadcastManager.getInstance(mockedContext)
                 .registerReceiver(onUserLoginListener, new IntentFilter(LoginActivity.TAG));
 
-        LoginProcessor.loginUser(mockedContext, url.toString(), credentials, username);
+        LoginProcessor.loginUser(HTTPClient.getInstance(), mockedContext, url.toString(), credentials, username);
         assertTrue(isReceiverCalled[0]);
 
     }
@@ -114,21 +115,21 @@ public class LoginProcessorTest {
 
     @Test
     public void shouldFailIfNoContextIsProvided(){
-        LoginProcessor.loginUser(null, "", credentials, username);
+        LoginProcessor.loginUser(HTTPClient.getInstance(), null, "", credentials, username);
         assertNull(PrefUtils.getUserName(mockedContext));
         assertNull(PrefUtils.getCredentials(mockedContext));
     }
 
     @Test
     public void shouldFailIfNoCredentialsAreProvided(){
-        LoginProcessor.loginUser(mockedContext, "", null, username);
+        LoginProcessor.loginUser(HTTPClient.getInstance(), mockedContext, "", null, username);
         assertNull(PrefUtils.getUserName(mockedContext));
         assertNull(PrefUtils.getCredentials(mockedContext));
     }
 
     @Test
     public void shouldFailIfNoUsernameIsProvided(){
-        LoginProcessor.loginUser(mockedContext, "", credentials, null);
+        LoginProcessor.loginUser(HTTPClient.getInstance(), mockedContext, "", credentials, null);
         assertNull(PrefUtils.getUserName(mockedContext));
         assertNull(PrefUtils.getCredentials(mockedContext));
     }

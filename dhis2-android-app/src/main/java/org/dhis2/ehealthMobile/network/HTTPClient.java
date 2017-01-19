@@ -44,43 +44,114 @@ import org.dhis2.ehealthMobile.R;
 import android.content.Context;
 import android.util.Log;
 
-/**
- * Does HTTP requests.
- */
 
-public class HTTPClient {
+public class HTTPClient implements IHttpClient{
+
 	private static final int CONNECTION_TIME_OUT = 1500;
 
+	private static HTTPClient instance;
+
+	public static HTTPClient getInstance(){
+		if(instance == null)
+			instance = new HTTPClient();
+
+		return instance;
+	}
+
+	private String baseUrl = "";
+	private String credentials = "";
+
 	private HTTPClient() {
+
 	}
 
-	/**
-	 * Does a get call to the DHIS2 server
-	 *
-	 * @param server String The URL for the DHIS2 instance set by the user.
-	 * @param creds  String The users credentials aka username and password
-	 * @return Response The response message from the server. This is parsed in as a new Response object.
-	 * @see Response
-	 */
-	public static Response get(String server, String creds) {
-		return executeRequest(server, creds, "GET", null);
+	public void setCredentials(String credentials){
+		this.credentials = credentials;
 	}
 
-		/**
-		 *
-		 * @param server String The URL of the DHIS2 instance set by the user.
-		 * @param creds String The users credentials aka username and password
-		 * @param data String The data to be posted to the DHIS2 server.
-		 * @return Response The response from the DHIS2 server parsed in a new Response object
-		 * @see Response
-		 */
+	public void setBaseUrl(String baseUrl){
+		this.baseUrl = baseUrl;
+	}
 
-	public static Response post(String server, String creds, String data) {
-		return executeRequest(server, creds, "POST", data);
+	@Override
+	public Response getDatasetValues(String formId, String orgUnitId, String period, String categoryOptions) {
+		String url = baseUrl
+				+ URLConstants.DATASET_VALUES_URL + "/" + formId + "/"
+				+ URLConstants.FORM_PARAM + orgUnitId
+				+ URLConstants.PERIOD_PARAM + period;
+
+		if (categoryOptions != null)
+			url = url + URLConstants.CATEGORY_OPTIONS_PARAM + categoryOptions;
+
+		return get(url);
+	}
+
+	@Override
+	public Response postProfileInfo(String accountInfo) {
+		return post(baseUrl + URLConstants.API_USER_ACCOUNT_URL, accountInfo);
+	}
+
+	@Override
+	public Response postDataset(String data) {
+		return post(baseUrl + URLConstants.DATASET_UPLOAD_URL, data);
+	}
+
+	@Override
+	public Response getConfigFile(){
+		return get(baseUrl + URLConstants.DATA_STORE + "/" + URLConstants.CONFIG_URL);
+	}
+
+	@Override
+	public Response getOptionSets(String id) {
+		return get(baseUrl + URLConstants.OPTION_SET_URL + "/" + id + URLConstants.OPTION_SET_PARAM);
+	}
+
+	@Override
+	public Response getDatasets() {
+		return get(baseUrl + URLConstants.DATASETS_URL);
+	}
+
+	@Override
+	public Response getProfileInfo() {
+		return get(baseUrl + URLConstants.API_USER_ACCOUNT_URL);
+	}
+
+	@Override
+	public Response postMyProfile(String accountInfo) {
+		return post(baseUrl + URLConstants.API_USER_ACCOUNT_URL, accountInfo);
+	}
+
+	@Override
+	public Response getSmsNumber() {
+		return get(baseUrl + URLConstants.DATA_STORE + "/" + URLConstants.SMS_NUMBER_URL);
+	}
+
+	@Override
+	public Response getSubmissionDetails(String formId, String orgUnitId, String period) {
+		String url = baseUrl + URLConstants.DATASET_UPLOAD_URL+ "?"+URLConstants.DATASET_PARAM + formId
+				+ "&" + URLConstants.ORG_UNIT_PARAM + orgUnitId + URLConstants.PERIOD_PARAM_2 + period
+				+ "&" + URLConstants.LIMIT_PARAM+ "0";
+
+		return get(url);
+	}
+
+	@Override
+	public Response loginUser() {
+		return get(baseUrl + URLConstants.API_USER_ACCOUNT_URL);
 	}
 
 
-	private static Response executeRequest(String server, String creds, String method, String data) {
+	private Response get(String url) {
+		return executeRequest(url, credentials, "GET", null);
+	}
+
+
+	private Response post(String url, String data) {
+		return executeRequest(url, credentials, "POST", data);
+	}
+
+
+	private Response executeRequest(String server, String creds, String method, String data) {
 
 		Log.d(HTTPClient.class.getSimpleName(), String.format("executeRequest() %s %s", method, server));
 
@@ -135,13 +206,6 @@ public class HTTPClient {
 	}
 
 
-	/**
-	 * Converts an InputStream of bytes to a String.
-	 *
-	 * @param stream InputStream
-	 * @return String
-	 * @throws IOException
-	 */
 	private static String readInputStream(InputStream stream)
 			throws IOException {
 		BufferedReader reader = new BufferedReader(
@@ -181,4 +245,5 @@ public class HTTPClient {
 				return context.getString(R.string.try_again);
 		}
 	}
+
 }

@@ -81,7 +81,7 @@ public class FormsDownloadProcessor {
     private static final String OPTIONS = "options";
     private static final String CATEGORY_COMBO = "categoryCombo";
 
-    public static void updateDatasets(Context context) {
+    public static void updateDatasets(HTTPClient httpClient, Context context) {
         PrefUtils.setResourceState(context,
                 PrefUtils.Resources.DATASETS,
                 PrefUtils.State.REFRESHING);
@@ -90,7 +90,7 @@ public class FormsDownloadProcessor {
         int parsingStatusCode = JsonHandler.PARSING_OK_CODE;
 
         try {
-            downloadDatasets(context);
+            downloadDatasets(httpClient, context);
         } catch (NetworkException e) {
             e.printStackTrace();
             networkStatusCode = e.getErrorCode();
@@ -120,12 +120,9 @@ public class FormsDownloadProcessor {
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
     }
 
-    private static void downloadDatasets(Context context) throws NetworkException, ParsingException {
-        final String creds = PrefUtils.getCredentials(context);
-        final String server = PrefUtils.getServerURL(context);
-        final String datasetsURL = server + URLConstants.DATASETS_URL;
+    private static void downloadDatasets(HTTPClient httpClient, Context context) throws NetworkException, ParsingException {
 
-        Response response = download(datasetsURL, creds);
+        Response response = httpClient.getDatasets();
         JsonObject jSource = buildJsonObject(response);
 
         if (!jSource.has(ORG_UNITS) || !jSource.has(FORMS)) {
@@ -145,7 +142,7 @@ public class FormsDownloadProcessor {
         HashMap<String, Form> forms = handleForms(context, jDatasets);
 
         HashSet<String> optionSetIds = getOptionSetIds(forms);
-        updateOptionSets(context, optionSetIds);
+        updateOptionSets(httpClient, context, optionSetIds);
 
         Gson gson = new Gson();
         for (String key : forms.keySet()) {
@@ -239,24 +236,21 @@ public class FormsDownloadProcessor {
         return ids;
     }
 
-    private static void updateOptionSets(Context context, HashSet<String> ids)
+    private static void updateOptionSets(HTTPClient httpClient, Context context, HashSet<String> ids)
             throws NetworkException, ParsingException {
         if (ids == null || ids.size() == 0) {
             return;
         }
-
-        final String creds = PrefUtils.getCredentials(context);
-        final String server = PrefUtils.getServerURL(context);
 
         ArrayList<OptionSet> optionSets = new ArrayList<OptionSet>();
         Gson gson = new Gson();
 
         try {
             for (String id : ids) {
-                String url = server + URLConstants.OPTION_SET_URL + "/" +
-                        id + URLConstants.OPTION_SET_PARAM;
 
-                Response response = download(url, creds);
+                Response response = httpClient.getOptionSets(id);
+                if(response.isError())
+                    throw new NetworkException(response.getCode());
 
                 System.out.println(response.getBody());
                 JsonObject jOptionset = buildJsonObject(response);
@@ -276,7 +270,7 @@ public class FormsDownloadProcessor {
         }
     }
 
-    private static Response download(String url, String creds) throws NetworkException {
+    /*private static Response download(String url, String creds) throws NetworkException {
         Response response = HTTPClient.get(url, creds);
 
         if (!HTTPClient.isError(response.getCode())) {
@@ -284,5 +278,5 @@ public class FormsDownloadProcessor {
         } else {
             throw new NetworkException(response.getCode());
         }
-    }
+    }*/
 }

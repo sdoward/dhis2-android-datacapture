@@ -51,18 +51,22 @@ public class LoginProcessor {
     private static final String HTTP = "http://";
     private static final String HTTPS = "https://";
 
-
-    public static void loginUser(Context context, String server,
+    public static void loginUser(HTTPClient httpClient, Context context, String url,
                                  String creds, String username) {
 
-        if (context == null || server == null
+        if (context == null || url == null
                 || creds == null || username == null) {
             Log.i(LoginActivity.TAG, "Login failed");
             return;
         }
 
-        String url = prepareUrl(server, creds);
-        Response resp = tryToLogIn(url, creds);
+        if(!url.startsWith(HTTPS) && !url.startsWith(HTTP))
+            url = HTTPS + url;
+
+        httpClient.setCredentials(creds);
+        httpClient.setBaseUrl(url);
+
+        Response resp = httpClient.loginUser();
 
         // Checking validity of server URL
         if (!URLUtil.isValidUrl(url)) {
@@ -92,22 +96,4 @@ public class LoginProcessor {
         LocalBroadcastManager.getInstance(context).sendBroadcast(result);
     }
 
-    private static String prepareUrl(String initialUrl, String creds) {
-        if (initialUrl.contains(HTTPS) || initialUrl.contains(HTTP)) {
-            return initialUrl;
-        }
-
-        // try to use https
-        Response response = tryToLogIn(HTTPS + initialUrl, creds);
-        if (response.getCode() != HttpURLConnection.HTTP_MOVED_PERM) {
-            return HTTPS + initialUrl;
-        } else {
-            return HTTP + initialUrl;
-        }
-    }
-
-    private static Response tryToLogIn(String server, String creds) {
-        String url = server + URLConstants.API_USER_ACCOUNT_URL;
-        return HTTPClient.get(url, creds);
-    }
 }

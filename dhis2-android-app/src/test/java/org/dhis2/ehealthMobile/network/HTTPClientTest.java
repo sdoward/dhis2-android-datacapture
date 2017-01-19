@@ -36,9 +36,15 @@ public class HTTPClientTest {
     private final String data = "The quick brown fox jumped over the lazy dog";
     private final String contentType = "application/json";
 
+    HTTPClient httpClient;
+
     @Before
     public void setUp() throws Exception {
         server = new MockWebServer();
+
+        httpClient = HTTPClient.getInstance();
+        httpClient.setBaseUrl(server.url("").toString());
+        httpClient.setCredentials(credentials);
     }
 
     @Test
@@ -51,7 +57,7 @@ public class HTTPClientTest {
         server.enqueue(serverResponse);
 
         HttpUrl url = server.url("");
-        Response httpResponse = HTTPClient.get(url.toString(), credentials);
+        Response httpResponse = httpClient.loginUser();
 
         assertThat(httpResponse.getBody(), is(successMessage));
         assertNotNull(server.takeRequest().getHeader("Authorization"));
@@ -69,7 +75,7 @@ public class HTTPClientTest {
         server.enqueue(serverResponse);
 
         HttpUrl url = server.url("");
-        Response httpResponse = HTTPClient.get(url.toString(), credentials);
+        Response httpResponse = httpClient.loginUser();
 
         assertThat(httpResponse.getBody(), is(Response.EMPTY_RESPONSE));
         assertNotNull(server.takeRequest().getHeader("Authorization"));
@@ -86,7 +92,7 @@ public class HTTPClientTest {
         server.enqueue(serverResponse);
 
         HttpUrl url = server.url("");
-        Response httpResponse = HTTPClient.get(url.toString(), "");
+        Response httpResponse = httpClient.loginUser();
 
         assertThat(httpResponse.getBody(), is(Response.EMPTY_RESPONSE));
         assertNotNull(server.takeRequest().getHeader("Authorization"));
@@ -103,7 +109,7 @@ public class HTTPClientTest {
         server.enqueue(serverResponse);
 
         HttpUrl url = server.url("");
-        Response httpResponse = HTTPClient.post(url.toString(), credentials, data);
+        Response httpResponse = httpClient.postDataset(data);
 
         RecordedRequest request = server.takeRequest();
         assertThat(httpResponse.getBody(), is(successMessage));
@@ -121,7 +127,7 @@ public class HTTPClientTest {
         server.enqueue(serverResponse);
 
         HttpUrl url = server.url("");
-        Response httpResponse = HTTPClient.post(url.toString(), credentials, data);
+        Response httpResponse = httpClient.postDataset(data);
 
         RecordedRequest request = server.takeRequest();
         assertThat(httpResponse.getBody(), is(Response.EMPTY_RESPONSE));

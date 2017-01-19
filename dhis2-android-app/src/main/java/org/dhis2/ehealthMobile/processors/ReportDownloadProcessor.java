@@ -66,10 +66,9 @@ public class ReportDownloadProcessor {
      * @param info DatasetInfoHolder
      * @see DatasetInfoHolder
      */
-    public static void download(Context context, DatasetInfoHolder info) {
-        String url = buildUrl(context, info);
-        String creds = PrefUtils.getCredentials(context);
-        Response response = HTTPClient.get(url, creds);
+    public static void download(HTTPClient httpClient, Context context, DatasetInfoHolder info) {
+
+        Response response = httpClient.getDatasetValues(info.getFormId(), info.getOrgUnitId(), info.getPeriod(),buildCategoryOptionsString(info));
 
         Form form = null;
         if (response.getCode() >= 200 && response.getCode() < 300) {
@@ -87,20 +86,6 @@ public class ReportDownloadProcessor {
         }
 
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
-    }
-
-    private static String buildUrl(Context context, DatasetInfoHolder info) {
-        String server = PrefUtils.getServerURL(context);
-        String categoryOptions = buildCategoryOptionsString(info);
-        String url = server
-                + URLConstants.DATASET_VALUES_URL + "/" + info.getFormId() + "/"
-                + URLConstants.FORM_PARAM + info.getOrgUnitId()
-                + URLConstants.PERIOD_PARAM + info.getPeriod();
-        if (categoryOptions != null) {
-            url = url + URLConstants.CATEGORY_OPTIONS_PARAM + categoryOptions;
-        }
-
-        return url;
     }
 
     private static String buildCategoryOptionsString(DatasetInfoHolder info) {
