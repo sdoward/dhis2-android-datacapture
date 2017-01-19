@@ -21,14 +21,16 @@ import java.util.Map;
  * Created by george on 9/28/16.
  */
 
-public class AdditionalDiseasesFragment extends BottomSheetDialogFragment {
+public class AdditionalDiseasesFragment extends BottomSheetDialogFragment implements AdapterView.OnItemClickListener {
 
     public interface AdditionalDiseaseOnClickListener{
         void onClick(Disease disease);
     }
 
-    // key for additional diseases that have been displayed on the list.
-    public static final String ALREADY_DISPLAYED = "alreadyDisplayed";
+
+    private static final String KEY_ALREADY_DISPLAYED = "alreadyDisplayed";
+    private static final String KEY_FORM_ID = "formId";
+
     private ListView listview;
     private ArrayList<String> additionalDiseases;
     private ArrayAdapter<String> adapter;
@@ -42,8 +44,8 @@ public class AdditionalDiseasesFragment extends BottomSheetDialogFragment {
     public static AdditionalDiseasesFragment newInstance(String alreadyDisplayed, String formId){
         AdditionalDiseasesFragment fragment = new AdditionalDiseasesFragment();
         Bundle args = new Bundle();
-        args.putString(AdditionalDiseasesFragment.ALREADY_DISPLAYED, alreadyDisplayed);
-        args.putString(Form.TAG, formId);
+        args.putString(KEY_ALREADY_DISPLAYED, alreadyDisplayed);
+        args.putString(KEY_FORM_ID, formId);
         fragment.setArguments(args);
 
         return fragment;
@@ -55,12 +57,19 @@ public class AdditionalDiseasesFragment extends BottomSheetDialogFragment {
         View contentView = View.inflate(getContext(), R.layout.fragment_bottomsheet, null);
         dialog.setContentView(contentView);
 
-        alreadyDisplayed = getArguments().getString(ALREADY_DISPLAYED);
-        formId = getArguments().getString(Form.TAG);
+        alreadyDisplayed = getArguments().getString(KEY_ALREADY_DISPLAYED);
+        formId = getArguments().getString(KEY_FORM_ID);
         listview = (ListView) dialog.findViewById(R.id.additional_diseases_listview);
         setupListView();
-        setupListViewOnclickListener();
+        listview.setOnItemClickListener(this);
 
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+        Disease disease = (Disease) diseases.get(additionalDiseasesIds.get(i));
+        onClickListener.onClick(disease);
+        dismiss();
     }
 
     @Override
@@ -82,9 +91,10 @@ public class AdditionalDiseasesFragment extends BottomSheetDialogFragment {
     private void setupListView(){
         additionalDiseases = new ArrayList<>();
         additionalDiseasesIds = new ArrayList<>();
+
+        // TODO: pass diseases as argument
         diseases = DiseaseImporter.importDiseases(getContext(), formId);
 
-        assert diseases != null;
         for (Object key : diseases.keySet()) {
             Disease disease = (Disease) diseases.get(key);
             if(disease.isAdditionalDisease() && !alreadyDisplayed.contains(disease.getId())){
@@ -96,17 +106,6 @@ public class AdditionalDiseasesFragment extends BottomSheetDialogFragment {
         adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_expandable_list_item_1, additionalDiseases);
         listview.setAdapter(adapter);
 
-    }
-
-    private void setupListViewOnclickListener(){
-        listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Disease disease = (Disease) diseases.get(additionalDiseasesIds.get(i));
-                onClickListener.onClick(disease);
-                dismiss();
-            }
-        });
     }
 
 }

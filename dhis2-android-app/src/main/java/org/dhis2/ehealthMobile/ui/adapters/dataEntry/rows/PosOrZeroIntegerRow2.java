@@ -119,8 +119,10 @@ public class PosOrZeroIntegerRow2 implements Row {
 
             view = rowRoot;
 
+            // TODO: create dialog only when actually needed and remove duplicate code
             alertDialog = new AlertDialog.Builder(view.getContext()).create();
             criticalDiseaseAlertDialog = new AlertDialog.Builder(view.getContext()).create();
+
             isDisabled = new IsDisabled(view.getContext(), info);
             diseaseGroupLabels = new DiseaseGroupLabels(view.getContext(), info);
         } else {
@@ -131,8 +133,10 @@ public class PosOrZeroIntegerRow2 implements Row {
             holders.add((EditTextHolder) view.getTag(R.id.TAG_HOLDER3_ID));
             holders.add((EditTextHolder) view.getTag(R.id.TAG_HOLDER4_ID));
 
+            // TODO: create dialog only when actually needed and remove duplicate code
             alertDialog = new AlertDialog.Builder(view.getContext()).create();
             criticalDiseaseAlertDialog = new AlertDialog.Builder(view.getContext()).create();
+
             isDisabled = new IsDisabled(view.getContext(), info);
             diseaseGroupLabels = new DiseaseGroupLabels(view.getContext(), info);
         }

@@ -3,14 +3,20 @@ package org.dhis2.ehealthmobile;
 import android.content.Context;
 import android.os.RemoteException;
 import android.support.test.espresso.Espresso;
+import android.support.test.espresso.matcher.BoundedMatcher;
 import android.support.test.runner.AndroidJUnit4;
 import android.support.test.uiautomator.UiDevice;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.squareup.okhttp.mockwebserver.MockResponse;
 import com.squareup.okhttp.mockwebserver.MockWebServer;
 
 import org.dhis2.ehealthMobile.utils.PrefUtils;
 import org.dhis2.ehealthMobile.utils.TextFileUtils;
+import org.hamcrest.Description;
+import org.hamcrest.Matcher;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.runner.RunWith;
@@ -48,7 +54,7 @@ public abstract class BaseInstrumentationTest {
 	}
 
 	@After
-	public void tearDown(){
+	public void tearDown() {
 		clearData();
 	}
 
@@ -174,5 +180,31 @@ public abstract class BaseInstrumentationTest {
 			e.printStackTrace();
 			return "";
 		}
+	}
+
+	protected Matcher<View> containsString(final String targetString){
+		return new BoundedMatcher<View, View>(View.class) {
+			@Override
+			public void describeTo(Description description) {
+				description.appendText("view should contain a TextView with text \""+targetString+"\"");
+			}
+
+			@Override
+			protected boolean matchesSafely(View view) {
+				if(view instanceof TextView){
+					return ((TextView) view).getText().toString().equals(targetString);
+				}else if(view instanceof ViewGroup){
+					ViewGroup viewGroup = (ViewGroup) view;
+					int childCount = viewGroup.getChildCount();
+					for(int i=0;i<childCount;i++){
+						boolean found = matchesSafely(viewGroup.getChildAt(i));
+						if(found )
+							return found;
+					}
+				}
+
+				return false;
+			}
+		};
 	}
 }
