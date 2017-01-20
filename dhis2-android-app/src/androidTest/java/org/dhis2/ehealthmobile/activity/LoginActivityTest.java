@@ -106,7 +106,7 @@ public class LoginActivityTest extends BaseInstrumentationTest {
 		Thread.sleep(1000);
 		String userAccountJson = TextFileUtils.readTextFile(rule.getActivity(),
 				TextFileUtils.Directory.ROOT,
-				TextFileUtils.FileNames.ACCOUNT_INFO);
+				TextFileUtils.FileNames.ACCOUNT_INFO.toString());
 
 		UserAccount userAccount = new Gson().fromJson(userAccountJson, UserAccount.class);
 		assertThat(userAccount.id).isEqualTo("abc123");

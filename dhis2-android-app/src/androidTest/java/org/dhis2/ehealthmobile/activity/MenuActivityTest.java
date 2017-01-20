@@ -53,7 +53,7 @@ public class MenuActivityTest extends BaseInstrumentationTest {
 		super.setup();
 
 		TextFileUtils.writeTextFile(getContext(), TextFileUtils.Directory.ROOT,
-				TextFileUtils.FileNames.ACCOUNT_INFO, new Gson().toJson(userAccount));
+				TextFileUtils.FileNames.ACCOUNT_INFO.toString(), new Gson().toJson(userAccount));
 
 		PrefUtils.initAppData(getContext(), "creds", username, serverUrl(""));
 
@@ -122,7 +122,7 @@ public class MenuActivityTest extends BaseInstrumentationTest {
 		try {
 			String userAccountDetails = TextFileUtils.readTextFile(getContext(),
 					TextFileUtils.Directory.ROOT,
-					TextFileUtils.FileNames.ACCOUNT_INFO);
+					TextFileUtils.FileNames.ACCOUNT_INFO.toString());
 			fail("TextFileUtils.readTextFile throws an exception if the file doesn't exists");
 		}catch(IllegalArgumentException e){
 			assertThat(e).isNotNull();
@@ -154,7 +154,7 @@ public class MenuActivityTest extends BaseInstrumentationTest {
 	public void shouldHaveDownloadedAssignedDataSets() throws InterruptedException {
 		onView(withId(R.id.swipe_refresh_layout_aggregate_report)).check(matches(isDisplayed()));
 
-		String orgUnitsWithDatasets = TextFileUtils.readTextFile(getContext(), TextFileUtils.Directory.ROOT, TextFileUtils.FileNames.ORG_UNITS_WITH_DATASETS);
+		String orgUnitsWithDatasets = TextFileUtils.readTextFile(getContext(), TextFileUtils.Directory.ROOT, TextFileUtils.FileNames.ORG_UNITS_WITH_DATASETS.toString());
 		OrganizationUnit[] units = new Gson().fromJson(orgUnitsWithDatasets, OrganizationUnit[].class);
 
 		boolean hasTestOrganizationUnitId = false;

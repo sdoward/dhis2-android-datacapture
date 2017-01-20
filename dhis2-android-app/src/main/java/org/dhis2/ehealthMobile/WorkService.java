@@ -133,7 +133,7 @@ public class WorkService extends Service {
             return;
         }
 
-        HTTPClient httpClient = HTTPClient.getInstance();
+        HTTPClient httpClient = HTTPClient.getInstance(this);
 
         final String methodName = extras.getString(METHOD);
         Log.i(TAG, methodName);

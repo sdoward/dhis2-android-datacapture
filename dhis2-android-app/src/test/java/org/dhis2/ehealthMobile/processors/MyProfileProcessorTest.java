@@ -93,7 +93,7 @@ public class MyProfileProcessorTest extends BaseRoboElectricTest{
             public void onReceive(Context context, Intent intent) {
                 String profileInfo = TextFileUtils.readTextFile(context,
                         TextFileUtils.Directory.ROOT,
-                        TextFileUtils.FileNames.ACCOUNT_INFO);
+                        TextFileUtils.FileNames.ACCOUNT_INFO.toString());
                 RecordedRequest request;
 
                 try {
@@ -126,7 +126,7 @@ public class MyProfileProcessorTest extends BaseRoboElectricTest{
             public void onReceive(Context context, Intent intent) {
                 String profileInfo = TextFileUtils.readTextFile(context,
                         TextFileUtils.Directory.ROOT,
-                        TextFileUtils.FileNames.ACCOUNT_INFO);
+                        TextFileUtils.FileNames.ACCOUNT_INFO.toString());
                 RecordedRequest request;
 
                 try {

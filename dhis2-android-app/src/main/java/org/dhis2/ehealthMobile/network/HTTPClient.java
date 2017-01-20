@@ -40,6 +40,7 @@ import java.net.URL;
 import java.net.UnknownHostException;
 
 import org.dhis2.ehealthMobile.R;
+import org.dhis2.ehealthMobile.utils.PrefUtils;
 
 import android.content.Context;
 import android.util.Log;
@@ -51,18 +52,19 @@ public class HTTPClient implements IHttpClient{
 
 	private static HTTPClient instance;
 
-	public static HTTPClient getInstance(){
+	public static HTTPClient getInstance(Context context){
 		if(instance == null)
-			instance = new HTTPClient();
+			instance = new HTTPClient(context);
 
 		return instance;
 	}
 
-	private String baseUrl = "";
-	private String credentials = "";
+	private String baseUrl;
+	private String credentials;
 
-	private HTTPClient() {
-
+	private HTTPClient(Context context) {
+		baseUrl = PrefUtils.getServerURL(context);
+		credentials = PrefUtils.getCredentials(context);
 	}
 
 	public void setCredentials(String credentials){
