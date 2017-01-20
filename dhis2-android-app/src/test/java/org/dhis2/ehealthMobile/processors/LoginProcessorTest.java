@@ -21,6 +21,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
+import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowApplication;
 
@@ -90,7 +91,7 @@ public class LoginProcessorTest {
         LocalBroadcastManager.getInstance(mockedContext)
                 .registerReceiver(onUserLoginListener, new IntentFilter(LoginActivity.TAG));
 
-        LoginProcessor.loginUser(HTTPClient.getInstance(), mockedContext, url.toString(), credentials, username);
+        LoginProcessor.loginUser(HTTPClient.getInstance(RuntimeEnvironment.application), mockedContext, url.toString(), credentials, username);
         assertTrue(isReceiverCalled[0]);
 
     }
@@ -115,21 +116,21 @@ public class LoginProcessorTest {
 
     @Test
     public void shouldFailIfNoContextIsProvided(){
-        LoginProcessor.loginUser(HTTPClient.getInstance(), null, "", credentials, username);
+        LoginProcessor.loginUser(HTTPClient.getInstance(RuntimeEnvironment.application), null, "", credentials, username);
         assertNull(PrefUtils.getUserName(mockedContext));
         assertNull(PrefUtils.getCredentials(mockedContext));
     }
 
     @Test
     public void shouldFailIfNoCredentialsAreProvided(){
-        LoginProcessor.loginUser(HTTPClient.getInstance(), mockedContext, "", null, username);
+        LoginProcessor.loginUser(HTTPClient.getInstance(RuntimeEnvironment.application), mockedContext, "", null, username);
         assertNull(PrefUtils.getUserName(mockedContext));
         assertNull(PrefUtils.getCredentials(mockedContext));
     }
 
     @Test
     public void shouldFailIfNoUsernameIsProvided(){
-        LoginProcessor.loginUser(HTTPClient.getInstance(), mockedContext, "", credentials, null);
+        LoginProcessor.loginUser(HTTPClient.getInstance(RuntimeEnvironment.application), mockedContext, "", credentials, null);
         assertNull(PrefUtils.getUserName(mockedContext));
         assertNull(PrefUtils.getCredentials(mockedContext));
     }

@@ -12,6 +12,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
+import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 
 import java.io.IOException;
@@ -42,7 +43,7 @@ public class HTTPClientTest {
     public void setUp() throws Exception {
         server = new MockWebServer();
 
-        httpClient = HTTPClient.getInstance();
+        httpClient = HTTPClient.getInstance(RuntimeEnvironment.application);
         httpClient.setBaseUrl(server.url("").toString());
         httpClient.setCredentials(credentials);
     }

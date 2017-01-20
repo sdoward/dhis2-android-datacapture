@@ -22,6 +22,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
+import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowApplication;
 
@@ -75,7 +76,7 @@ public class FormsDownloadProcessorTest extends BaseRoboElectricTest{
         LocalBroadcastManager.getInstance(applicationContext)
                 .registerReceiver(onFormsUpdateListener, new IntentFilter(AggregateReportFragment.TAG));
 
-        FormsDownloadProcessor.updateDatasets(HTTPClient.getInstance(), applicationContext);
+        FormsDownloadProcessor.updateDatasets(HTTPClient.getInstance(RuntimeEnvironment.application), applicationContext);
         assertTrue(isReceiverCalled[0]);
     }
 

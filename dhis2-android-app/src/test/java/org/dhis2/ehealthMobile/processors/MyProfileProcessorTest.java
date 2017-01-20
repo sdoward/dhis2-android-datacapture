@@ -24,6 +24,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
+import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowApplication;
 
@@ -113,7 +114,7 @@ public class MyProfileProcessorTest extends BaseRoboElectricTest{
         LocalBroadcastManager.getInstance(getContext())
                 .registerReceiver(profileReceiver, new IntentFilter(MyProfileFragment.ON_UPDATE_FINISHED_LISTENER_TAG));
 
-        MyProfileProcessor.updateProfileInfo(HTTPClient.getInstance(), getContext());
+        MyProfileProcessor.updateProfileInfo(HTTPClient.getInstance(RuntimeEnvironment.application), getContext());
         assertTrue(true);
     }
 
@@ -147,7 +148,7 @@ public class MyProfileProcessorTest extends BaseRoboElectricTest{
         LocalBroadcastManager.getInstance(getContext())
                 .registerReceiver(profileReceiver, new IntentFilter(MyProfileFragment.ON_UPLOAD_FINISHED_LISTENER_TAG));
 
-        MyProfileProcessor.uploadProfileInfo(HTTPClient.getInstance(), getContext(), fields);
+        MyProfileProcessor.uploadProfileInfo(HTTPClient.getInstance(RuntimeEnvironment.application), getContext(), fields);
         assertTrue(isReceiverCalled[0]);
     }
 

@@ -9,6 +9,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
+import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowApplication;
 
@@ -21,7 +22,7 @@ public abstract class BaseRoboElectricTest {
 	@Before
 	public void setup(){
 		server = new MockWebServer();
-		HTTPClient.getInstance().setBaseUrl(server.url("/").toString());
+		HTTPClient.getInstance(RuntimeEnvironment.application).setBaseUrl(server.url("/").toString());
 	}
 
 	@After
