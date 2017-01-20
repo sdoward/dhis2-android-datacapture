@@ -155,7 +155,7 @@ public class FormsDownloadProcessor {
         String orgUnitsWithDatasets = gson.toJson(units);
         TextFileUtils.writeTextFile(context,
                 TextFileUtils.Directory.ROOT,
-                TextFileUtils.FileNames.ORG_UNITS_WITH_DATASETS,
+                TextFileUtils.FileNames.ORG_UNITS_WITH_DATASETS.toString(),
                 orgUnitsWithDatasets);
     }
 

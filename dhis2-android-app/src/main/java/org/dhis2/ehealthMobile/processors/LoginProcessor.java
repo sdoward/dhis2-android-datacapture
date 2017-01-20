@@ -86,7 +86,7 @@ public class LoginProcessor {
             UserAccount userAccount = gson.fromJson(resp.getBody(), UserAccount.class);
 
             TextFileUtils.writeTextFile(context, TextFileUtils.Directory.ROOT,
-                    TextFileUtils.FileNames.ACCOUNT_INFO, gson.toJson(userAccount));
+                    TextFileUtils.FileNames.ACCOUNT_INFO.toString(), gson.toJson(userAccount));
         }
 
         // Sending result back to activity

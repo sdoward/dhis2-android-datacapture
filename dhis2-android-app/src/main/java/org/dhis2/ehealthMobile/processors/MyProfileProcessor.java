@@ -56,7 +56,7 @@ public class MyProfileProcessor {
 
         String accountInfo = UserAccountHandler.fromFields(fields);
         TextFileUtils.writeTextFile(context, TextFileUtils.Directory.ROOT,
-                TextFileUtils.FileNames.ACCOUNT_INFO, accountInfo);
+                TextFileUtils.FileNames.ACCOUNT_INFO.toString(), accountInfo);
 
         Response response = httpClient.postMyProfile(accountInfo);
 
@@ -86,7 +86,7 @@ public class MyProfileProcessor {
         if (!HTTPClient.isError(response.getCode())) {
             profileState = PrefUtils.State.UP_TO_DATE;
             TextFileUtils.writeTextFile(context, TextFileUtils.Directory.ROOT,
-                    TextFileUtils.FileNames.ACCOUNT_INFO, response.getBody());
+                    TextFileUtils.FileNames.ACCOUNT_INFO.toString(), response.getBody());
         } else {
             profileState = PrefUtils.State.ATTEMPT_TO_REFRESH_IS_MADE;
         }

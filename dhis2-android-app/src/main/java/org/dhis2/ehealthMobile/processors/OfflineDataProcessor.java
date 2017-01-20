@@ -67,8 +67,10 @@ public class OfflineDataProcessor {
 
             String accInfo = TextFileUtils.readTextFile(context,
                     TextFileUtils.Directory.ROOT,
-                    TextFileUtils.FileNames.ACCOUNT_INFO);
+                    TextFileUtils.FileNames.ACCOUNT_INFO.toString());
+
             Response resp = httpClient.postProfileInfo(accInfo);
+            
             if (!HTTPClient.isError(resp.getCode())) {
                 PrefUtils.setAccountUpdateFlag(context, false);
             }
