@@ -48,3 +48,12 @@ A guide to the project structure
 | ----------------- | --------------------- |
 | /utils 			| Utilities. These are classes that are meant to provide services other classes. |
 | /utils/date 		| Date utilities.		|
+
+#Tests
+in order to run automated tests:
+
+| unit tests    | instrumentation tests*         |
+| ------------- | ------------------------------ |
+|./gradlew test | ./gradlew connectedAndroidTest |
+
+\* needs an android device/emulator connected to adb
