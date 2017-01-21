@@ -36,8 +36,8 @@ import android.support.v4.content.LocalBroadcastManager;
 import org.dhis2.ehealthMobile.io.handlers.UserAccountHandler;
 import org.dhis2.ehealthMobile.io.models.Field;
 import org.dhis2.ehealthMobile.network.HTTPClient;
+import org.dhis2.ehealthMobile.network.IHttpClient;
 import org.dhis2.ehealthMobile.network.Response;
-import org.dhis2.ehealthMobile.network.URLConstants;
 import org.dhis2.ehealthMobile.ui.fragments.MyProfileFragment;
 import org.dhis2.ehealthMobile.utils.PrefUtils;
 import org.dhis2.ehealthMobile.utils.TextFileUtils;
@@ -49,7 +49,7 @@ public class MyProfileProcessor {
 
     // This method will be invoked from service
     // in order to post new profile info to server.
-    public static void uploadProfileInfo(HTTPClient httpClient, Context context, ArrayList<Field> fields) {
+    public static void uploadProfileInfo(IHttpClient httpClient, Context context, ArrayList<Field> fields) {
         PrefUtils.setResourceState(context,
                 PrefUtils.Resources.PROFILE_DETAILS,
                 PrefUtils.State.REFRESHING);
@@ -75,7 +75,7 @@ public class MyProfileProcessor {
 
     // updateProfileInfo() is invoked from service
     // in order to get latest profile info.
-    public static void updateProfileInfo(HTTPClient httpClient, Context context) {
+    public static void updateProfileInfo(IHttpClient httpClient, Context context) {
         PrefUtils.setResourceState(context,
                 PrefUtils.Resources.PROFILE_DETAILS,
                 PrefUtils.State.REFRESHING);

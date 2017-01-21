@@ -44,9 +44,9 @@ import org.dhis2.ehealthMobile.io.models.CategoryOption;
 import org.dhis2.ehealthMobile.io.models.Field;
 import org.dhis2.ehealthMobile.io.models.Group;
 import org.dhis2.ehealthMobile.network.HTTPClient;
+import org.dhis2.ehealthMobile.network.IHttpClient;
 import org.dhis2.ehealthMobile.network.NetworkUtils;
 import org.dhis2.ehealthMobile.network.Response;
-import org.dhis2.ehealthMobile.network.URLConstants;
 import org.dhis2.ehealthMobile.utils.IsTimely;
 import org.dhis2.ehealthMobile.utils.NotificationBuilder;
 import org.dhis2.ehealthMobile.utils.PrefUtils;
@@ -71,7 +71,7 @@ public class ReportUploadProcessor {
      * @param groups ArrayList<Group>
      */
 
-    public static void upload(HTTPClient httpClient, Context context, DatasetInfoHolder info, ArrayList<Group> groups) {
+    public static void upload(IHttpClient httpClient, Context context, DatasetInfoHolder info, ArrayList<Group> groups) {
         String data = prepareContent(info, groups);
 
 

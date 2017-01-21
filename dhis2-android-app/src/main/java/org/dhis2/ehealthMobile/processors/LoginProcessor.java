@@ -39,8 +39,8 @@ import com.google.gson.Gson;
 
 import org.dhis2.ehealthMobile.io.models.useraccount.UserAccount;
 import org.dhis2.ehealthMobile.network.HTTPClient;
+import org.dhis2.ehealthMobile.network.IHttpClient;
 import org.dhis2.ehealthMobile.network.Response;
-import org.dhis2.ehealthMobile.network.URLConstants;
 import org.dhis2.ehealthMobile.ui.activities.LoginActivity;
 import org.dhis2.ehealthMobile.utils.PrefUtils;
 import org.dhis2.ehealthMobile.utils.TextFileUtils;
@@ -51,7 +51,7 @@ public class LoginProcessor {
     private static final String HTTP = "http://";
     private static final String HTTPS = "https://";
 
-    public static void loginUser(HTTPClient httpClient, Context context, String url,
+    public static void loginUser(IHttpClient httpClient, Context context, String url,
                                  String creds, String username) {
 
         if (context == null || url == null

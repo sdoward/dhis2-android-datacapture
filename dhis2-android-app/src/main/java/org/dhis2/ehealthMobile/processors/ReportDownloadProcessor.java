@@ -42,12 +42,10 @@ import org.dhis2.ehealthMobile.io.json.JsonHandler;
 import org.dhis2.ehealthMobile.io.json.ParsingException;
 import org.dhis2.ehealthMobile.io.models.CategoryOption;
 import org.dhis2.ehealthMobile.io.models.Form;
-import org.dhis2.ehealthMobile.network.HTTPClient;
+import org.dhis2.ehealthMobile.network.IHttpClient;
 import org.dhis2.ehealthMobile.network.Response;
-import org.dhis2.ehealthMobile.network.URLConstants;
 import org.dhis2.ehealthMobile.ui.activities.DataEntryActivity;
 import org.dhis2.ehealthMobile.utils.FormUtils;
-import org.dhis2.ehealthMobile.utils.PrefUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -66,7 +64,7 @@ public class ReportDownloadProcessor {
      * @param info DatasetInfoHolder
      * @see DatasetInfoHolder
      */
-    public static void download(HTTPClient httpClient, Context context, DatasetInfoHolder info) {
+    public static void download(IHttpClient httpClient, Context context, DatasetInfoHolder info) {
 
         Response response = httpClient.getDatasetValues(info.getFormId(), info.getOrgUnitId(), info.getPeriod(),buildCategoryOptionsString(info));
 

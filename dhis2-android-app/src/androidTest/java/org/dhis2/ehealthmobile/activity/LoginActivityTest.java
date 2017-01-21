@@ -8,7 +8,7 @@ import org.dhis2.ehealthMobile.R;
 import org.dhis2.ehealthMobile.io.models.useraccount.UserAccount;
 import org.dhis2.ehealthMobile.ui.activities.LoginActivity;
 import org.dhis2.ehealthMobile.utils.TextFileUtils;
-import org.dhis2.ehealthmobile.BaseInstrumentationTest;
+import org.dhis2.ehealthmobile.HttpClientInstrumentationTest;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -24,8 +24,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.core.IsNot.not;
 
-public class LoginActivityTest extends BaseInstrumentationTest {
+public class LoginActivityTest extends HttpClientInstrumentationTest {
 
+	private static final String SERVER_URL = "http://www.asd.com";
 	private static final String USERNAME = "MyUsername";
 	private static final String PASSWORD = "MyPassword";
 
@@ -42,7 +43,7 @@ public class LoginActivityTest extends BaseInstrumentationTest {
 
 	protected void failLogin(String url, String username, String password, int responseCode, int toastMessage){
 
-		enqueueJsonResponse(responseCode, "");
+		setLoginUserResponse(responseCode, "");
 
 		typeLoginData(url, username, password);
 
@@ -68,20 +69,20 @@ public class LoginActivityTest extends BaseInstrumentationTest {
 
 		rotateNatural();
 
-		typeLoginData(serverUrl(""), USERNAME, PASSWORD);
+		typeLoginData(SERVER_URL, USERNAME, PASSWORD);
 
 		rotateLeft();
 		rotateRight();
 		rotateNatural();
 
-		checkViewWithTextIsDisplayed(serverUrl(""));
+		checkViewWithTextIsDisplayed(SERVER_URL);
 		checkViewWithTextIsDisplayed(USERNAME);
 		checkViewWithTextIsDisplayed(PASSWORD);
 	}
 
 	@Test
 	public void loginShouldFailBecauseOfWrongCredentials() {
-		failLogin(serverUrl("foo/bar"), USERNAME, PASSWORD,HttpURLConnection.HTTP_UNAUTHORIZED, R.string.wrong_username_password);
+		failLogin(SERVER_URL, USERNAME, PASSWORD, HttpURLConnection.HTTP_UNAUTHORIZED, R.string.wrong_username_password);
 	}
 
 	@Test
@@ -91,14 +92,14 @@ public class LoginActivityTest extends BaseInstrumentationTest {
 
 	@Test
 	public void loginShouldFailBecauseOfUnexpectedReason(){
-		failLogin(serverUrl(""), USERNAME, PASSWORD, Integer.MIN_VALUE, R.string.try_again);
+		failLogin(SERVER_URL, USERNAME, PASSWORD, Integer.MIN_VALUE, R.string.try_again);
 	}
 
 	@Test
 	public void loginShouldSucceedAndNavigateToMenuActivity() throws InterruptedException {
-		enqueueJsonResponse("api_me_user-account");
+		setLoginUserResponse(HttpURLConnection.HTTP_OK, loadJson("api_me_user-account"));
 
-		typeLoginData(serverUrl(""), USERNAME, PASSWORD);
+		typeLoginData(SERVER_URL, USERNAME, PASSWORD);
 
 		clickViewWithId(R.id.login_button);
 		onView(withId(R.id.drawer_layout));

@@ -2,6 +2,9 @@ package org.dhis2.ehealthMobile.network;
 
 public interface IHttpClient {
 
+	void setBaseUrl(String url);
+	void setCredentials(String credentials);
+
 	Response getSubmissionDetails(String formId, String orgUnitId, String period);
 	Response getSmsNumber();
 	Response getProfileInfo();

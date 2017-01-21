@@ -5,9 +5,8 @@ import android.content.Intent;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
-import org.dhis2.ehealthMobile.network.HTTPClient;
+import org.dhis2.ehealthMobile.network.IHttpClient;
 import org.dhis2.ehealthMobile.network.Response;
-import org.dhis2.ehealthMobile.network.URLConstants;
 import org.dhis2.ehealthMobile.ui.fragments.AggregateReportFragment;
 import org.dhis2.ehealthMobile.utils.PrefUtils;
 import org.json.JSONException;
@@ -26,7 +25,7 @@ public class ConfigFileProcessor {
     public static final String SHOULD_BE_SQUASHED = "shouldBeSquashed";
     private static final String ID = "id";
 
-    public static void download(HTTPClient httpClient, Context context){
+    public static void download(IHttpClient httpClient, Context context){
 
         Response response = httpClient.getConfigFile();
 

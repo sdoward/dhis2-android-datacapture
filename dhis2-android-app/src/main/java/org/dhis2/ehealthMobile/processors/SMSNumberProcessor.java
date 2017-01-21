@@ -1,16 +1,10 @@
 package org.dhis2.ehealthMobile.processors;
 
 import android.content.Context;
-import android.content.Intent;
-import android.provider.Settings;
-import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
-import org.dhis2.ehealthMobile.io.holders.DatasetInfoHolder;
-import org.dhis2.ehealthMobile.network.HTTPClient;
+import org.dhis2.ehealthMobile.network.IHttpClient;
 import org.dhis2.ehealthMobile.network.Response;
-import org.dhis2.ehealthMobile.network.URLConstants;
-import org.dhis2.ehealthMobile.ui.activities.DataEntryActivity;
 import org.dhis2.ehealthMobile.utils.PrefUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -24,7 +18,7 @@ public class SMSNumberProcessor {
 
     public static String SMS_NUMBER = "smsNumber";
 
-    public static void download(HTTPClient httpClient, Context context){
+    public static void download(IHttpClient httpClient, Context context){
 
         Response response = httpClient.getSmsNumber();
 

@@ -55,7 +55,7 @@ public class MenuActivityTest extends BaseInstrumentationTest {
 		TextFileUtils.writeTextFile(getContext(), TextFileUtils.Directory.ROOT,
 				TextFileUtils.FileNames.ACCOUNT_INFO.toString(), new Gson().toJson(userAccount));
 
-		PrefUtils.initAppData(getContext(), "creds", username, serverUrl(""));
+	/*	PrefUtils.initAppData(getContext(), "creds", username, serverUrl(""));
 
 		enqueueJsonResponse(200, String.format("{\"smsNumber\": \"%s\"}", smsNumber));
 
@@ -75,7 +75,7 @@ public class MenuActivityTest extends BaseInstrumentationTest {
 		enqueueJsonResponse("api_optionSets_zldRzH14bAq");
 		enqueueJsonResponse("api_optionSets_JXuNf5J2jCB");
 		enqueueJsonResponse("api_optionSets_l0k2pkGQyjl");
-		enqueueJsonResponse("api_optionSets_Itt129Alfha");
+		enqueueJsonResponse("api_optionSets_Itt129Alfha");*/
 
 		rule.launchActivity(new Intent());
 	}
@@ -205,7 +205,7 @@ public class MenuActivityTest extends BaseInstrumentationTest {
 		clickViewWithText("IDSR Weekly Disease Report(WDR)");
 		clickViewWithText(R.string.choose_period);
 		onData(anything()).inAdapterView(withId(R.id.dates_listview)).atPosition(0).perform(click());
-		enqueueJsonResponse("api_dataSets_rq0LNr72Ndo_form");
+		//enqueueJsonResponse("api_dataSets_rq0LNr72Ndo_form");
 		clickViewWithText(R.string.open_form);
 		onView(withId(R.id.coordinator_layout_data_entry)).check(matches(isDisplayed()));
 

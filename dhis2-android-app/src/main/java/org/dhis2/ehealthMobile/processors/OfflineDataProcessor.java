@@ -37,8 +37,8 @@ import org.dhis2.ehealthMobile.R;
 import org.dhis2.ehealthMobile.io.handlers.ImportSummariesHandler;
 import org.dhis2.ehealthMobile.io.holders.DatasetInfoHolder;
 import org.dhis2.ehealthMobile.network.HTTPClient;
+import org.dhis2.ehealthMobile.network.IHttpClient;
 import org.dhis2.ehealthMobile.network.Response;
-import org.dhis2.ehealthMobile.network.URLConstants;
 import org.dhis2.ehealthMobile.utils.NotificationBuilder;
 import org.dhis2.ehealthMobile.utils.PrefUtils;
 import org.dhis2.ehealthMobile.utils.TextFileUtils;
@@ -51,7 +51,7 @@ public class OfflineDataProcessor {
     private OfflineDataProcessor() {
     }
 
-    public static void upload(HTTPClient httpClient, Context context) {
+    public static void upload(IHttpClient httpClient, Context context) {
         isRunning = true;
         uploadOfflineReports(httpClient, context);
         uploadProfileInfo(httpClient, context);
@@ -62,7 +62,7 @@ public class OfflineDataProcessor {
         return isRunning;
     }
 
-    private static void uploadProfileInfo(HTTPClient httpClient, Context context) {
+    private static void uploadProfileInfo(IHttpClient httpClient, Context context) {
         if (PrefUtils.accountInfoNeedsUpdate(context)) {
 
             String accInfo = TextFileUtils.readTextFile(context,
@@ -77,7 +77,7 @@ public class OfflineDataProcessor {
         }
     }
 
-    private static void uploadOfflineReports(HTTPClient httpClient, Context context) {
+    private static void uploadOfflineReports(IHttpClient httpClient, Context context) {
         String path = TextFileUtils.getDirectoryPath(context, TextFileUtils.Directory.OFFLINE_DATASETS);
         File directory = new File(path);
         if (!directory.exists()) {

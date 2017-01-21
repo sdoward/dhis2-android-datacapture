@@ -10,9 +10,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.squareup.okhttp.mockwebserver.MockResponse;
-import com.squareup.okhttp.mockwebserver.MockWebServer;
-
 import org.dhis2.ehealthMobile.utils.PrefUtils;
 import org.dhis2.ehealthMobile.utils.TextFileUtils;
 import org.hamcrest.Description;
@@ -24,9 +21,7 @@ import org.junit.runner.RunWith;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
 import java.util.Random;
-import java.util.concurrent.TimeUnit;
 
 import static android.support.test.InstrumentationRegistry.getInstrumentation;
 import static android.support.test.espresso.Espresso.onView;
@@ -44,12 +39,12 @@ public abstract class BaseInstrumentationTest {
 	private static final Random random = new Random();
 
 	protected UiDevice device;
-	private MockWebServer server;
+
+
 
 	@Before
 	public void setup() {
 		device = UiDevice.getInstance(getInstrumentation());
-		server = new MockWebServer();
 		clearData();
 	}
 
@@ -70,34 +65,6 @@ public abstract class BaseInstrumentationTest {
 
 	protected Context getContext() {
 		return getInstrumentation().getTargetContext();
-	}
-
-	protected String serverUrl(String path) {
-		return server.url(path).toString();
-	}
-
-	protected void enqueueJsonResponse(String jsonfile, long delayMs) {
-		enqueueResponse(new MockResponse()
-				.setResponseCode(HttpURLConnection.HTTP_OK)
-				.setBody(loadJson(jsonfile))
-				.addHeader("Content-Type", "application/json")
-				.setBodyDelay(delayMs, TimeUnit.MILLISECONDS));
-	}
-
-	protected void enqueueJsonResponse(String filename) {
-		enqueueJsonResponse(HttpURLConnection.HTTP_OK, loadJson(filename));
-	}
-
-	protected void enqueueJsonResponse(int code, String body) {
-		enqueueResponse(new MockResponse()
-				.setResponseCode(code)
-				.setBody(body)
-				.addHeader("Content-Type", "application/json"));
-	}
-
-
-	protected void enqueueResponse(MockResponse response) {
-		server.enqueue(response);
 	}
 
 	protected void checkViewDisplayed(int id) {
@@ -207,4 +174,5 @@ public abstract class BaseInstrumentationTest {
 			}
 		};
 	}
+
 }

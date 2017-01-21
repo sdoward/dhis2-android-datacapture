@@ -47,10 +47,9 @@ import org.dhis2.ehealthMobile.io.models.Form;
 import org.dhis2.ehealthMobile.io.models.Group;
 import org.dhis2.ehealthMobile.io.models.OptionSet;
 import org.dhis2.ehealthMobile.io.models.OrganizationUnit;
-import org.dhis2.ehealthMobile.network.HTTPClient;
+import org.dhis2.ehealthMobile.network.IHttpClient;
 import org.dhis2.ehealthMobile.network.NetworkException;
 import org.dhis2.ehealthMobile.network.Response;
-import org.dhis2.ehealthMobile.network.URLConstants;
 import org.dhis2.ehealthMobile.ui.fragments.AggregateReportFragment;
 import org.dhis2.ehealthMobile.utils.PrefUtils;
 import org.dhis2.ehealthMobile.utils.TextFileUtils;
@@ -81,7 +80,7 @@ public class FormsDownloadProcessor {
     private static final String OPTIONS = "options";
     private static final String CATEGORY_COMBO = "categoryCombo";
 
-    public static void updateDatasets(HTTPClient httpClient, Context context) {
+    public static void updateDatasets(IHttpClient httpClient, Context context) {
         PrefUtils.setResourceState(context,
                 PrefUtils.Resources.DATASETS,
                 PrefUtils.State.REFRESHING);
@@ -120,7 +119,7 @@ public class FormsDownloadProcessor {
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
     }
 
-    private static void downloadDatasets(HTTPClient httpClient, Context context) throws NetworkException, ParsingException {
+    private static void downloadDatasets(IHttpClient httpClient, Context context) throws NetworkException, ParsingException {
 
         Response response = httpClient.getDatasets();
         JsonObject jSource = buildJsonObject(response);
@@ -236,7 +235,7 @@ public class FormsDownloadProcessor {
         return ids;
     }
 
-    private static void updateOptionSets(HTTPClient httpClient, Context context, HashSet<String> ids)
+    private static void updateOptionSets(IHttpClient httpClient, Context context, HashSet<String> ids)
             throws NetworkException, ParsingException {
         if (ids == null || ids.size() == 0) {
             return;

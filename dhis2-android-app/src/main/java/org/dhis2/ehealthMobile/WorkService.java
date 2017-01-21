@@ -38,9 +38,8 @@ import android.util.Log;
 
 import org.dhis2.ehealthMobile.io.holders.DatasetInfoHolder;
 import org.dhis2.ehealthMobile.io.models.Field;
-import org.dhis2.ehealthMobile.io.models.Form;
 import org.dhis2.ehealthMobile.io.models.Group;
-import org.dhis2.ehealthMobile.network.HTTPClient;
+import org.dhis2.ehealthMobile.network.IHttpClient;
 import org.dhis2.ehealthMobile.processors.ConfigFileProcessor;
 import org.dhis2.ehealthMobile.processors.FormsDownloadProcessor;
 import org.dhis2.ehealthMobile.processors.LoginProcessor;
@@ -58,6 +57,8 @@ import org.dhis2.ehealthMobile.ui.fragments.MyProfileFragment;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
+import javax.inject.Inject;
 
 public class WorkService extends Service {
     public static final String METHOD = "method";
@@ -82,6 +83,9 @@ public class WorkService extends Service {
 
     // This ArrayList is used to track running tasks
     private ArrayList<Runnable> tasks;
+
+    @Inject
+    protected IHttpClient httpClient;
 
     @Override
     public void onCreate() {
@@ -133,7 +137,7 @@ public class WorkService extends Service {
             return;
         }
 
-        HTTPClient httpClient = HTTPClient.getInstance(this);
+        Dhis2App.get(this).getComponent().inject(this);
 
         final String methodName = extras.getString(METHOD);
         Log.i(TAG, methodName);

@@ -6,7 +6,6 @@ import android.support.test.rule.ActivityTestRule;
 import org.dhis2.ehealthMobile.R;
 import org.dhis2.ehealthMobile.io.holders.DatasetInfoHolder;
 import org.dhis2.ehealthMobile.ui.activities.DataEntryActivity;
-import org.dhis2.ehealthMobile.utils.PrefUtils;
 import org.dhis2.ehealthMobile.utils.TextFileUtils;
 import org.dhis2.ehealthmobile.BaseInstrumentationTest;
 import org.junit.Rule;
@@ -33,16 +32,16 @@ public class DataEntryActivityTest extends BaseInstrumentationTest {
 		String formId = "rq0LNr72Ndo";
 		TextFileUtils.writeTextFile(getContext(), TextFileUtils.Directory.DATASETS, formId, loadJson("api_dataSets_rq0LNr72Ndo_form"));
 
-		PrefUtils.initAppData(getContext(), "creds", username, serverUrl(""));
+		//PrefUtils.initAppData(getContext(), "creds", username, serverUrl(""));
 
-		enqueueJsonResponse("api_dataStore_android_config");
+		//enqueueJsonResponse("api_dataStore_android_config");
 
 		try {
 			Thread.sleep(1000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		enqueueJsonResponse("api_dataSets_rq0LNr72Ndo_form");
+	//	enqueueJsonResponse("api_dataSets_rq0LNr72Ndo_form");
 
 		DatasetInfoHolder datasetInfoHolder = new DatasetInfoHolder();
 		datasetInfoHolder.setPeriod("123");

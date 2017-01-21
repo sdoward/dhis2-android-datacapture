@@ -9,11 +9,9 @@ import com.google.gson.JsonObject;
 import org.dhis2.ehealthMobile.io.holders.DatasetInfoHolder;
 import org.dhis2.ehealthMobile.io.json.JsonHandler;
 import org.dhis2.ehealthMobile.io.json.ParsingException;
-import org.dhis2.ehealthMobile.network.HTTPClient;
+import org.dhis2.ehealthMobile.network.IHttpClient;
 import org.dhis2.ehealthMobile.network.Response;
-import org.dhis2.ehealthMobile.network.URLConstants;
 import org.dhis2.ehealthMobile.ui.activities.DataEntryActivity;
-import org.dhis2.ehealthMobile.utils.PrefUtils;
 
 /**
  * Created by george on 10/14/16.
@@ -22,7 +20,7 @@ import org.dhis2.ehealthMobile.utils.PrefUtils;
 public class SubmissionDetailsProcessor {
     public static String SUBMISSION_DETAILS = "submissionDetails";
 
-    public static void download(HTTPClient httpClient, Context context, DatasetInfoHolder info){
+    public static void download(IHttpClient httpClient, Context context, DatasetInfoHolder info){
 
         Response response = httpClient.getSubmissionDetails(info.getFormId(), info.getOrgUnitId(), info.getPeriod());
 

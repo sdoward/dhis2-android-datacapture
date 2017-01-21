@@ -62,7 +62,7 @@ public class HTTPClient implements IHttpClient{
 	private String baseUrl;
 	private String credentials;
 
-	private HTTPClient(Context context) {
+	public HTTPClient(Context context) {
 		baseUrl = PrefUtils.getServerURL(context);
 		credentials = PrefUtils.getCredentials(context);
 	}
