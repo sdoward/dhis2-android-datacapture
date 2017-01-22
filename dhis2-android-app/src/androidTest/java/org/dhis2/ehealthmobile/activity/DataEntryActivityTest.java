@@ -1,13 +1,15 @@
 package org.dhis2.ehealthmobile.activity;
 
 import android.content.Intent;
+import android.support.test.InstrumentationRegistry;
 import android.support.test.rule.ActivityTestRule;
 
 import org.dhis2.ehealthMobile.R;
 import org.dhis2.ehealthMobile.io.holders.DatasetInfoHolder;
+import org.dhis2.ehealthMobile.processors.ConfigFileProcessor;
 import org.dhis2.ehealthMobile.ui.activities.DataEntryActivity;
 import org.dhis2.ehealthMobile.utils.TextFileUtils;
-import org.dhis2.ehealthmobile.BaseInstrumentationTest;
+import org.dhis2.ehealthmobile.HttpClientInstrumentationTest;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -18,30 +20,18 @@ import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static org.hamcrest.Matchers.anything;
 
-public class DataEntryActivityTest extends BaseInstrumentationTest {
+public class DataEntryActivityTest extends HttpClientInstrumentationTest {
 
 	@Rule
 	public ActivityTestRule<DataEntryActivity> rule = new ActivityTestRule<>(DataEntryActivity.class, true, false);
-
-	String username = String.valueOf(randomLong());
 
 	@Override
 	public void setup(){
 		super.setup();
 
 		String formId = "rq0LNr72Ndo";
-		TextFileUtils.writeTextFile(getContext(), TextFileUtils.Directory.DATASETS, formId, loadJson("api_dataSets_rq0LNr72Ndo_form"));
-
-		//PrefUtils.initAppData(getContext(), "creds", username, serverUrl(""));
-
-		//enqueueJsonResponse("api_dataStore_android_config");
-
-		try {
-			Thread.sleep(1000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-	//	enqueueJsonResponse("api_dataSets_rq0LNr72Ndo_form");
+		TextFileUtils.writeTextFile(InstrumentationRegistry.getTargetContext(), TextFileUtils.Directory.DATASETS, formId, loadJson("api_dataSets_rq0LNr72Ndo_form"));
+		ConfigFileProcessor.download(this,InstrumentationRegistry.getTargetContext());
 
 		DatasetInfoHolder datasetInfoHolder = new DatasetInfoHolder();
 		datasetInfoHolder.setPeriod("123");
@@ -64,7 +54,7 @@ public class DataEntryActivityTest extends BaseInstrumentationTest {
 
 		onData(anything()).inAdapterView(withId(R.id.list_of_fields)).atPosition(0).check(matches(containsString("Acute Flaccid Paralysis")));
 		onData(anything()).inAdapterView(withId(R.id.list_of_fields)).atPosition(9).check(matches(containsString("Dengue Fever")));
-		onData(anything()).inAdapterView(withId(R.id.list_of_fields)).atPosition(44).check(matches(containsString("Tuberculosis")));
+		onData(anything()).inAdapterView(withId(R.id.list_of_fields)).atPosition(28).check(matches(containsString("Yellow Fever")));
 
 	}
 

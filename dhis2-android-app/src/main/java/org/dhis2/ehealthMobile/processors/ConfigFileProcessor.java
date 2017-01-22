@@ -31,8 +31,13 @@ public class ConfigFileProcessor {
 
         if (response.getCode() >= 200 && response.getCode() < 300) {
             String compulsoryDiseases, diseaseConfigs;
+
+
             try {
-                JSONObject obj = new JSONObject(response.getBody());
+                String configFile = response.getBody();
+                PrefUtils.saveConfigFile(context, configFile);
+                JSONObject obj = new JSONObject(configFile);
+
                 Iterator<String> keys = obj.keys();
                 while(keys.hasNext()){
                     String key = keys.next();

@@ -1,7 +1,7 @@
 package org.dhis2.ehealthmobile;
 
-import android.content.Context;
 import android.os.RemoteException;
+import android.support.test.InstrumentationRegistry;
 import android.support.test.espresso.Espresso;
 import android.support.test.espresso.matcher.BoundedMatcher;
 import android.support.test.runner.AndroidJUnit4;
@@ -55,16 +55,12 @@ public abstract class BaseInstrumentationTest {
 
 	private void clearData(){
 		// TODO: remove all stored data from shared preferences and files
-		TextFileUtils.removeFile(getContext(), TextFileUtils.Directory.ROOT, TextFileUtils.FileNames.ORG_UNITS_WITH_DATASETS);
-		PrefUtils.eraseData(getContext());
+		TextFileUtils.removeFile(getInstrumentation().getTargetContext(), TextFileUtils.Directory.ROOT, TextFileUtils.FileNames.ORG_UNITS_WITH_DATASETS);
+		PrefUtils.eraseData(getInstrumentation().getTargetContext());
 	}
 
 	protected long randomLong() {
 		return random.nextLong();
-	}
-
-	protected Context getContext() {
-		return getInstrumentation().getTargetContext();
 	}
 
 	protected void checkViewDisplayed(int id) {
@@ -81,7 +77,7 @@ public abstract class BaseInstrumentationTest {
 	}
 
 	protected void checkViewWithTextIsDisplayed(int stringId) {
-		checkViewWithTextIsDisplayed(getContext().getString(stringId));
+		checkViewWithTextIsDisplayed(InstrumentationRegistry.getTargetContext().getString(stringId));
 	}
 
 	protected void checkViewWithTextIsDisplayed(String text) {
@@ -134,7 +130,7 @@ public abstract class BaseInstrumentationTest {
 	protected String readRawTextFile(String filename) {
 
 		try {
-			InputStream inputStream = getClass().getClassLoader().getResourceAsStream(filename);
+			InputStream inputStream = InstrumentationRegistry.getContext().getAssets().open(filename);
 			BufferedReader r = new BufferedReader(new InputStreamReader(inputStream));
 			StringBuilder builder = new StringBuilder();
 			String line;

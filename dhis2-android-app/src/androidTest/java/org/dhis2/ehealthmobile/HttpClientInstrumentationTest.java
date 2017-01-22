@@ -1,6 +1,7 @@
 package org.dhis2.ehealthmobile;
 
 import android.content.Context;
+import android.support.test.InstrumentationRegistry;
 
 import org.dhis2.ehealthMobile.Dhis2App;
 import org.dhis2.ehealthMobile.di.DataModule;
@@ -9,16 +10,17 @@ import org.dhis2.ehealthMobile.network.Response;
 
 import java.net.HttpURLConnection;
 
-public class HttpClientInstrumentationTest extends BaseInstrumentationTest implements IHttpClient {
+public abstract class HttpClientInstrumentationTest extends BaseInstrumentationTest implements IHttpClient {
 
-	private static final Response DEFAULT_RESPONSE = new Response(HttpURLConnection.HTTP_NOT_IMPLEMENTED, "");
+	private static final Response DEFAULT_RESPONSE = new Response(HttpURLConnection.HTTP_OK, "{}");
 
 	private Response loginUserResponse = DEFAULT_RESPONSE;
+	private Response getSmsNumberResponse = DEFAULT_RESPONSE;
 
 	@Override
 	public void setup() {
 		super.setup();
-		Dhis2App.get(getContext())
+		Dhis2App.get(InstrumentationRegistry.getTargetContext())
 				.setDataModule(new DataModule(){
 					@Override
 					public IHttpClient provideHttpClient(Context context) {
@@ -42,9 +44,13 @@ public class HttpClientInstrumentationTest extends BaseInstrumentationTest imple
 		return DEFAULT_RESPONSE;
 	}
 
+	public void setSmsNumber(String number){
+		getSmsNumberResponse = new Response(HttpURLConnection.HTTP_OK, String.format("{\"smsNumber\": \"%s\"}", number));
+	}
+
 	@Override
 	public Response getSmsNumber() {
-		return DEFAULT_RESPONSE;
+		return getSmsNumberResponse;
 	}
 
 	@Override
@@ -54,22 +60,22 @@ public class HttpClientInstrumentationTest extends BaseInstrumentationTest imple
 
 	@Override
 	public Response getDatasets() {
-		return DEFAULT_RESPONSE;
+		return new Response(HttpURLConnection.HTTP_OK, loadJson("api_me_assignedDataSets"));
 	}
 
 	@Override
 	public Response getOptionSets(String id) {
-		return DEFAULT_RESPONSE;
+		return new Response(HttpURLConnection.HTTP_OK, loadJson("api_optionSets_"+id));
 	}
 
 	@Override
 	public Response getConfigFile() {
-		return DEFAULT_RESPONSE;
+		return new Response(HttpURLConnection.HTTP_OK, loadJson("api_dataStore_android_config"));
 	}
 
 	@Override
 	public Response getDatasetValues(String formId, String orgUnitId, String period, String categoryOptions) {
-		return DEFAULT_RESPONSE;
+		return new Response(HttpURLConnection.HTTP_OK, loadJson("api_dataSets_rq0LNr72Ndo_form"));
 	}
 
 	protected void setLoginUserResponse(int code, String body){

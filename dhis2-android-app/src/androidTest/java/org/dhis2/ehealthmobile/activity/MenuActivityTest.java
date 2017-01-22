@@ -1,6 +1,8 @@
 package org.dhis2.ehealthmobile.activity;
 
+import android.content.Context;
 import android.content.Intent;
+import android.support.test.InstrumentationRegistry;
 import android.support.test.espresso.contrib.DrawerActions;
 import android.support.test.rule.ActivityTestRule;
 
@@ -9,12 +11,15 @@ import com.google.gson.Gson;
 import org.dhis2.ehealthMobile.R;
 import org.dhis2.ehealthMobile.io.models.OrganizationUnit;
 import org.dhis2.ehealthMobile.io.models.useraccount.UserAccount;
+import org.dhis2.ehealthMobile.network.Response;
 import org.dhis2.ehealthMobile.ui.activities.MenuActivity;
 import org.dhis2.ehealthMobile.utils.PrefUtils;
 import org.dhis2.ehealthMobile.utils.TextFileUtils;
-import org.dhis2.ehealthmobile.BaseInstrumentationTest;
+import org.dhis2.ehealthmobile.HttpClientInstrumentationTest;
 import org.junit.Rule;
 import org.junit.Test;
+
+import java.net.HttpURLConnection;
 
 import static android.support.test.espresso.Espresso.onData;
 import static android.support.test.espresso.Espresso.onView;
@@ -24,12 +29,11 @@ import static android.support.test.espresso.matcher.ViewMatchers.isDescendantOfA
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
-import static junit.framework.Assert.fail;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.anything;
 import static org.hamcrest.core.AllOf.allOf;
 
-public class MenuActivityTest extends BaseInstrumentationTest {
+public class MenuActivityTest extends HttpClientInstrumentationTest {
 
 	@Rule
 	public ActivityTestRule<MenuActivity> rule = new ActivityTestRule<>(MenuActivity.class, true, false);
@@ -44,7 +48,6 @@ public class MenuActivityTest extends BaseInstrumentationTest {
 			.setEmail(String.valueOf(randomLong()))
 			.createUserAccount();
 
-	String configFileFormId = String.valueOf(randomLong());
 	String orgUnitBontheId = "iQgaTATK59f";
 	String orgUnitBontheLabel = String.valueOf(randomLong());
 
@@ -52,32 +55,29 @@ public class MenuActivityTest extends BaseInstrumentationTest {
 	public void setup() {
 		super.setup();
 
-		TextFileUtils.writeTextFile(getContext(), TextFileUtils.Directory.ROOT,
+		TextFileUtils.writeTextFile(InstrumentationRegistry.getTargetContext(), TextFileUtils.Directory.ROOT,
 				TextFileUtils.FileNames.ACCOUNT_INFO.toString(), new Gson().toJson(userAccount));
 
-	/*	PrefUtils.initAppData(getContext(), "creds", username, serverUrl(""));
+		PrefUtils.initAppData(getContext(), "creds", username, "http://www.something.com");
+		setSmsNumber(smsNumber);
 
-		enqueueJsonResponse(200, String.format("{\"smsNumber\": \"%s\"}", smsNumber));
+		rule.launchActivity(new Intent());
+	}
 
-		String configFile = loadJson("api_dataStore_android_config").replace("rq0LNr72Ndo", configFileFormId);
-		enqueueJsonResponse(200, configFile);
+	protected Context getContext() {
+		return InstrumentationRegistry.getInstrumentation().getTargetContext();
+	}
 
+	@Override
+	public Response getDatasets() {
 
 		String original = "\"id\": \"iQgaTATK59f\",\n" +
 				"      \"label\": \"Bonthe\",";
 		String replacement = String.format("\"id\": \"iQgaTATK59f\",\n" +
 				"      \"label\": \"%s\",", orgUnitBontheLabel);
 
-		String datasetsFile = loadJson("api_me_assignedDataSets").replace(original, replacement);
-		enqueueJsonResponse(200, datasetsFile);
-
-		enqueueJsonResponse("api_optionSets_zldRzH14bAq");
-		enqueueJsonResponse("api_optionSets_zldRzH14bAq");
-		enqueueJsonResponse("api_optionSets_JXuNf5J2jCB");
-		enqueueJsonResponse("api_optionSets_l0k2pkGQyjl");
-		enqueueJsonResponse("api_optionSets_Itt129Alfha");*/
-
-		rule.launchActivity(new Intent());
+		String body = loadJson("api_me_assignedDataSets").replace(original, replacement);
+		return new Response(HttpURLConnection.HTTP_OK, body);
 	}
 
 	@Test
@@ -119,14 +119,10 @@ public class MenuActivityTest extends BaseInstrumentationTest {
 
 		onView(withId(R.id.login_button)).check(matches(isDisplayed()));
 
-		try {
-			String userAccountDetails = TextFileUtils.readTextFile(getContext(),
-					TextFileUtils.Directory.ROOT,
-					TextFileUtils.FileNames.ACCOUNT_INFO.toString());
-			fail("TextFileUtils.readTextFile throws an exception if the file doesn't exists");
-		}catch(IllegalArgumentException e){
-			assertThat(e).isNotNull();
-		}
+		String userAccountDetails = TextFileUtils.readTextFile(getContext(),
+				TextFileUtils.Directory.ROOT,
+				TextFileUtils.FileNames.ACCOUNT_INFO.toString());
+		assertThat(userAccountDetails).isNullOrEmpty();
 
 		assertThat(PrefUtils.getUserName(getContext())).isNullOrEmpty();
 
@@ -137,8 +133,6 @@ public class MenuActivityTest extends BaseInstrumentationTest {
 	@Test
 	public void shouldHaveDownloadedSmsNumber() throws InterruptedException {
 		onView(withId(R.id.swipe_refresh_layout_aggregate_report)).check(matches(isDisplayed()));
-		Thread.sleep(1000);
-
 		assertThat(PrefUtils.getSmsNumber(getContext())).isEqualTo(smsNumber);
 	}
 
@@ -146,8 +140,7 @@ public class MenuActivityTest extends BaseInstrumentationTest {
 	public void shouldHaveDownloadedConfigFile(){
 		onView(withId(R.id.swipe_refresh_layout_aggregate_report)).check(matches(isDisplayed()));
 
-		assertThat(PrefUtils.getDiseaseConfigs(getContext(), configFileFormId).length()).isGreaterThan(1);
-		assertThat(PrefUtils.getCompulsoryDiseases(getContext(), configFileFormId).length()).isGreaterThan(1);
+		assertThat(PrefUtils.getConfigFile(InstrumentationRegistry.getTargetContext())).isNotEmpty();
 	}
 
 	@Test
@@ -205,7 +198,7 @@ public class MenuActivityTest extends BaseInstrumentationTest {
 		clickViewWithText("IDSR Weekly Disease Report(WDR)");
 		clickViewWithText(R.string.choose_period);
 		onData(anything()).inAdapterView(withId(R.id.dates_listview)).atPosition(0).perform(click());
-		//enqueueJsonResponse("api_dataSets_rq0LNr72Ndo_form");
+
 		clickViewWithText(R.string.open_form);
 		onView(withId(R.id.coordinator_layout_data_entry)).check(matches(isDisplayed()));
 

@@ -54,6 +54,7 @@ public class PrefUtils {
 	public static final String SHOULD_BE_SQUASHED = "shouldBeSquashed";
 	public static final String COMPULSORY_DISEASES = "compulsoryDiseases";
 	public static final String DISEASE_CONFIGS = "diseaseConfigs";
+	public static final String CONFIG_FILE = "configFile";
 
 	private PrefUtils() { }
 
@@ -161,6 +162,14 @@ public class PrefUtils {
 		PreferenceManager.getDefaultSharedPreferences(context).edit()
 				.putString(formId+DISEASE_CONFIGS, diseaseConfig)
 				.commit();
+	}
+
+	public static void saveConfigFile(Context context, String configFile){
+		PreferenceManager.getDefaultSharedPreferences(context).edit().putString(CONFIG_FILE, configFile).commit();
+	}
+
+	public static String getConfigFile(Context context){
+		return PreferenceManager.getDefaultSharedPreferences(context).getString(CONFIG_FILE, "");
 	}
 
 	public static String getDiseaseConfigs(Context context, String formId){
