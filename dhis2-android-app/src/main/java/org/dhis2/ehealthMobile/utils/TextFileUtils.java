@@ -77,7 +77,7 @@ public final class TextFileUtils {
         String path = getDirectoryPath(context, dir);
         File directory = new File(path);
         if (!directory.exists()) {
-            throw new IllegalArgumentException("Specified diretory doesn't exist");
+            throw new IllegalArgumentException("Specified directory doesn't exist");
         }
 
         File file = new File(path, name);

@@ -69,7 +69,7 @@ public class LoginProcessorTest {
                 final RecordedRequest request;
                 String accountInfo = TextFileUtils.readTextFile(context,
                         TextFileUtils.Directory.ROOT,
-                        TextFileUtils.FileNames.ACCOUNT_INFO);
+                        TextFileUtils.FileNames.ACCOUNT_INFO.toString());
 
                 try {
                     request = server.takeRequest();
