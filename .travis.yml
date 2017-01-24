@@ -33,15 +33,20 @@ cache:
     - $HOME/.android/build-cache
 
 before_script:
-  # Create and start emulator
+  # Create emulator
   - echo no | android create avd --force -n test -t android-22 --abi armeabi-v7a
+  # Run the build first (which is quite resource hungry) before we start the emulator
+  - ./gradlew assembleAndroidTest -PdisablePreDex --continue --info
+
+script:
+  # Unit tests
+  - ./gradlew test -PdisablePreDex --continue --info
+  # Start the emulator
   - emulator -avd test -no-skin -no-audio -no-window &
   - android-wait-for-emulator
   - adb shell input keyevent 82 &
-
-script:
+  # Execute intrumentation tests against the emulator
   - ./gradlew connectedCheck -PdisablePreDex --continue --info
-  - ./gradlew test -PdisablePreDex --continue --info
 
 notifications:
   slack:
