@@ -34,10 +34,12 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Base64;
@@ -49,6 +51,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import org.dhis2.ehealthMobile.BuildConfig;
 import org.dhis2.ehealthMobile.R;
 import org.dhis2.ehealthMobile.WorkService;
 import org.dhis2.ehealthMobile.network.HTTPClient;
@@ -58,23 +61,25 @@ import org.dhis2.ehealthMobile.utils.AppPermissions;
 import org.dhis2.ehealthMobile.utils.ToastManager;
 import org.dhis2.ehealthMobile.utils.ViewUtils;
 
-import java.util.HashMap;
+import hu.supercluster.paperwork.Paperwork;
 
 public class LoginActivity extends AppCompatActivity {
     public static final String TAG = LoginActivity.class.getSimpleName();
     public static final String USERNAME = "username";
     public static final String SERVER = "server";
     public static final String CREDENTIALS = "creds";
+    private static final String DEV_URL = "devUrl";
+    private static final String PROD_URL = "prodUrl";
 
     private Button mLoginButton;
     private EditText mUsername;
     private EditText mPassword;
     private ImageView mDhis2Logo;
+    private CardView mLoginCardView;
 
-    // Disabled serverUrl EditText in order to allow
-    // developers to build app with custom server address
-    private EditText mServerUrl;
     private ProgressBar mProgressBar;
+    private Paperwork config;
+
 
     // BroadcastReceiver which aim is to listen
     // for network response on login post request
@@ -105,14 +110,15 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         mDhis2Logo = (ImageView) findViewById(R.id.dhis2_logo);
-        mLoginButton = (Button) findViewById(R.id.login_button);
-
-        mServerUrl = (EditText) findViewById(R.id.server_url);
+        mLoginCardView = (CardView) findViewById(R.id.login_card_view);
         mUsername = (EditText) findViewById(R.id.username);
         mPassword = (EditText) findViewById(R.id.password);
+        mLoginButton = (Button) findViewById(R.id.login_button);
 
         mProgressBar = (ProgressBar) findViewById(R.id.progress_bar);
         mProgressBar.setVisibility(View.GONE);
+
+        config = new Paperwork(this);
 
         // textwatcher is responsible for watching
         // after changes in all fields
@@ -132,7 +138,6 @@ public class LoginActivity extends AppCompatActivity {
             }
         };
 
-        mServerUrl.addTextChangedListener(textWatcher);
         mUsername.addTextChangedListener(textWatcher);
         mPassword.addTextChangedListener(textWatcher);
 
@@ -157,8 +162,6 @@ public class LoginActivity extends AppCompatActivity {
             boolean loginInProcess = savedInstanceState.getBoolean(TAG, false);
 
             if (loginInProcess) {
-                ViewUtils.hideAndDisableViews(mDhis2Logo, mServerUrl, mUsername, mPassword, mLoginButton);
-                //ViewUtils.hideAndDisableViews(mDhis2Logo, mUsername, mPassword, mLoginButton);
                 showProgress();
             }
         }
@@ -208,9 +211,7 @@ public class LoginActivity extends AppCompatActivity {
     // Activates *login button*,
     // if all necessary fields are full
     private void checkEditTextFields() {
-        String tempUrl = mServerUrl.getText().toString();
-        //Server address will be retrieved from .xml resources
-        //String tempUrl = getString(R.string.default_server_url);
+        String tempUrl = getServerUrl();
         String tempUsername = mUsername.getText().toString();
         String tempPassword = mPassword.getText().toString();
 
@@ -223,10 +224,7 @@ public class LoginActivity extends AppCompatActivity {
 
     // loginUser() is called when user clicks *LoginButton*
     private void loginUser() {
-        String tmpServer = mServerUrl.getText().toString();
-        //Server address will be retrieved from .xml resources
-        //String tmpServer = getString(R.string.default_server_url);
-
+        String tmpServer = getServerUrl();
         String user = mUsername.getText().toString();
         String pass = mPassword.getText().toString();
         String pair = String.format("%s:%s", user, pass);
@@ -257,13 +255,17 @@ public class LoginActivity extends AppCompatActivity {
 
     private void showProgress() {
         ViewUtils.perfomOutAnimation(this, R.anim.out_up, true,
-                mDhis2Logo, mServerUrl, mUsername, mPassword, mLoginButton);
+                mDhis2Logo, mLoginCardView, mUsername, mPassword, mLoginButton);
         ViewUtils.enableViews(mProgressBar);
     }
 
     private void hideProgress() {
         ViewUtils.perfomInAnimation(this, R.anim.in_down,
-                mDhis2Logo, mServerUrl, mUsername, mPassword, mLoginButton);
+                mDhis2Logo, mLoginCardView, mUsername, mPassword, mLoginButton);
         ViewUtils.hideAndDisableViews(mProgressBar);
+    }
+
+    private String getServerUrl(){
+        return (BuildConfig.DEBUG) ? config.get(DEV_URL) : config.get(PROD_URL);
     }
 }
