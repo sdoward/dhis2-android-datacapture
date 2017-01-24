@@ -7,6 +7,10 @@ Get the APK from the release page:
 
 https://github.com/dhis2/dhis2-android-datacapture/releases
 
+###Paperwork (Config file)
+1. Edit paperwork.json.tmpl and replace the values accordingly.
+2. Rename paperwork.json.tmpl to paperwork.json
+
 #Project structure
 
 A guide to the project structure
