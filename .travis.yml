@@ -23,6 +23,16 @@ before_install:
   - mkdir $ANDROID_HOME/licenses
   - echo 8933bad161af4178b1185d1a37fbf41ea5269c55 > $ANDROID_HOME/licenses/android-sdk-license
 
+before_cache:
+  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+
+cache:
+  directories:
+    - $HOME/.gradle/caches/
+    - $HOME/.gradle/wrapper/
+    - $HOME/.android/build-cache
+
 before_script:
   # Create and start emulator
   - echo no | android create avd --force -n test -t android-24 --abi armeabi-v7a
@@ -33,3 +43,7 @@ before_script:
 script:
   - ./gradlew connectedCheck -PdisablePreDex --continue --info
   - ./gradlew test -PdisablePreDex --continue --info
+
+notifications:
+  slack:
+    secure: bQ5WyR02XNEjXs7AvDHy2VlyuFZQ8k4hmxwbswI0C+fwEBjTqYSHiy1+oQBJCR2k9ahtaMOwDCoCDvNsEnWqwiklvMnb+logs6dIMFnovYFEUcL6JtogIrqV3syjj505EghdsVIqHrbUyixOLPesTZEMi4d1MwCMBcgZSQOYOzqwkNvoHo67Zoxh92cJXAFw5olTjABLGUoXXIuHO/++psAYoZ1aMNCc8lHl7N4d/UKouJ0yPg7gvXEN9ykzl5wYzSFgf925InAhSzfOpwrFQTSpH8JFyLBHP38Tga34+9Ws1VPSK7cRwkUFJsvT+nb87osgA+BC09Q68haUS0O42Kc3AYQGEqo0TNGLZHBieO0F+hFAVIC7h1IiJc5W/8XWf7t6Ut+H7AOzxg0UonLt8tZmhP5ODycdYON1R7S5Cs9d9V8QGQAgAjR9zydW/QpAtV7BPtGIgtIaGCx2BjpMABrQ/OdooXeOd06Ly9sO4LSPZ3XNHSwSmBi3Kpw9vNANlfR+KtUlPhxML+hK8IQuZnOOgN1KHaQU73lFek5qo0+HOwAMxflxYgeAB+dQbQXNwZtBs6UUUsA/lX1MJnuMyxRRc0fjtQId2PZSy3l6w5r96AKpZK7jpvavaqXwAKfh+aj1sgzHXAsfrFsaB1OOi0iD3dkzXM+c/GErWyrP5jc=
