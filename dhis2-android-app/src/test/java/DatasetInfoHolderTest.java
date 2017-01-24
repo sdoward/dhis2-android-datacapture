@@ -67,7 +67,7 @@ public class DatasetInfoHolderTest {
 
     @Test
     public void shouldBuildKey(){
-        assertThat(DatasetInfoHolder.buildKey(datasetInfo), is(DummyTestData.DATASETINFO_KEY));
+        assertThat(DatasetInfoHolder.getSubmissionKey(datasetInfo), is(DummyTestData.DATASETINFO_KEY));
     }
 
 }
