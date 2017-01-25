@@ -30,6 +30,7 @@ android {
             testCoverageEnabled = true
         }
     }
+
     productFlavors{
         development{
             applicationIdSuffix ".dev"
@@ -39,9 +40,7 @@ android {
             applicationIdSuffix ".training"
             versionNameSuffix "-training"
         }
-        production {
-
-        }
+        production {}
     }
 
     sourceSets {
@@ -52,6 +51,7 @@ android {
             res.srcDir('training/res')
         }
     }
+
     configurations.all {
         resolutionStrategy.force 'com.android.support:support-annotations:24.2.0'
     }
