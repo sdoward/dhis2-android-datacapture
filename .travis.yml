@@ -42,7 +42,7 @@ before_script:
 
 script:
   - ./gradlew connectedCheck -PdisablePreDex --continue --info
-  - ./gradlew test -PdisablePreDex --continue --info
+  - ./gradlew testDevelopmentDebugUnitTest -PdisablePreDex --continue --info
 
 notifications:
   slack:
