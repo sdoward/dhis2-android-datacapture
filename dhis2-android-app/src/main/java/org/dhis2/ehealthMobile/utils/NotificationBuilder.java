@@ -40,8 +40,7 @@ import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
 
 import org.dhis2.ehealthMobile.R;
-import org.dhis2.ehealthMobile.ui.activities.LauncherActivity;
-import org.dhis2.ehealthMobile.ui.activities.MenuActivity;
+import org.dhis2.ehealthMobile.ui.activities.NotificationActivity;
 
 public class NotificationBuilder {
 	public static final String NOTIFICATION_TITLE = "notificationTitle";
@@ -55,13 +54,13 @@ public class NotificationBuilder {
 
 	public static void fireNotification(Context context, String title, String message, long[] vibrationPattern) {
 		int id = (title + message).hashCode();
-		Intent notificationIntent = new Intent(context, LauncherActivity.class);
+		Intent notificationIntent = getNotificationIntent(context,title, message);
 		PendingIntent contentIntent = PendingIntent.getActivity(context,
 				id, notificationIntent,
 				PendingIntent.FLAG_CANCEL_CURRENT);
 
-		Notification notification = buildNotification(context, contentIntent, title, message, vibrationPattern );
-
+		Notification notification = buildNotification(context, contentIntent, title, message, vibrationPattern);
+		context.startActivity(notificationIntent);
 		showNotification(context, notification, id);
 	}
 
@@ -84,6 +83,19 @@ public class NotificationBuilder {
 				.getSystemService(Activity.NOTIFICATION_SERVICE);
 		notification.flags |=  Notification.FLAG_AUTO_CANCEL;
 		notificationManager.notify(id, notification);
+	}
+
+	private static Intent getNotificationIntent(Context context, String title, String message){
+		Intent intent = new Intent(context, NotificationActivity.class);
+
+		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+				| Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS
+				| Intent.FLAG_ACTIVITY_NO_USER_ACTION);
+		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		intent.putExtra(NOTIFICATION_TITLE, title);
+		intent.putExtra(NOTIFICATION_MESSAGE, message);
+
+		return intent;
 	}
 
 }

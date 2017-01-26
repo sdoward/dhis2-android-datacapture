@@ -1,0 +1,78 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/notification_content_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/color_primary_default"
+    android:orientation="vertical"
+    tools:context="org.dhis2.ehealthMobile.ui.activities.NotificationActivity">
+
+     <ImageView
+         android:id="@+id/notification_icon"
+         android:layout_width="match_parent"
+         android:layout_height="225dp"
+         android:src="@drawable/ic_notifications_white_48dp"
+         android:layout_marginTop="50dp"
+         android:padding="5dp"/>
+
+    <TextView
+        android:id="@+id/fullscreen_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:keepScreenOn="true"
+        android:text="@string/dummy_content"
+        android:textColor="@color/notification_text"
+        android:textSize="35sp"
+        android:textStyle="bold"
+        android:paddingTop="25dp"
+        android:paddingBottom="25dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"/>
+
+    <TextView
+        android:id="@+id/fullscreen_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:keepScreenOn="true"
+        android:gravity="center"
+        android:textAlignment="center"
+        android:text="@string/dummy_content"
+        android:textColor="@color/notification_text"
+        android:textSize="25sp"
+        android:textStyle="bold"
+        android:paddingTop="10dp"
+        android:paddingBottom="25dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"/>
+
+    <!-- This FrameLayout insets its children based on system windows using
+         android:fitsSystemWindows. -->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true">
+
+        <LinearLayout
+            android:id="@+id/fullscreen_content_controls"
+            style="?metaButtonBarStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|center_horizontal"
+            android:background="@color/black_overlay"
+            android:orientation="horizontal"
+            tools:ignore="UselessParent">
+
+            <Button
+                android:id="@+id/notification_confirmation_button"
+                style="?metaButtonBarButtonStyle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/notification_confirm_text"
+                android:textColor="@color/notification_text"/>
+
+        </LinearLayout>
+    </FrameLayout>
+
+</LinearLayout>
