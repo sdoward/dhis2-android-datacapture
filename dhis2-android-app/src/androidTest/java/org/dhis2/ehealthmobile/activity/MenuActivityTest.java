@@ -126,7 +126,6 @@ public class MenuActivityTest extends HttpClientInstrumentationTest {
 
 		assertThat(PrefUtils.getUserName(getContext())).isNullOrEmpty();
 
-		// TODO: why delete the server url? typing it's so annoying...
 		assertThat(PrefUtils.getServerURL(getContext())).isNullOrEmpty();
 	}
 
