@@ -49,16 +49,23 @@ public class HeaderRow extends Row{
 			holder = (HeaderRowHolder) view.getTag();
 		}
 
-//		holder.textView.setText(fieldGroup.getLabel());
 		holder.columnsContainer.setLabels(fieldGroup);
-
 
 		return view;
 	}
 
 	@Override
 	public int getViewType() {
+		/*
+			the view type for header row must be generated at runtime because
+			different configuration of columns will have different view structures
 
+			the smallest value for the view type should be FieldType.values().length * 10,
+			in case columns.size() is 0, the final integer will be equal to the number of
+			field types with a 0 appended at the end
+
+			since computing the view type requires some computation the value is cached
+		 */
 		if(viewType == 0) {
 			StringBuilder builder = new StringBuilder();
 			builder.append(String.valueOf(FieldType.values().length));
