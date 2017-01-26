@@ -45,8 +45,6 @@ public class ColumnsContainer extends LinearLayout {
 		for(Integer i : columnLevels)
 			rowWidth *= i;
 
-		Random random = new Random();
-
 		for(int i=0;i<columnLevels.length;i++){
 			LinearLayout row = new LinearLayout(getContext());
 			row.setLayoutParams(new LayoutParams(rowWidth, ViewGroup.LayoutParams.WRAP_CONTENT));
@@ -58,9 +56,7 @@ public class ColumnsContainer extends LinearLayout {
 			for(int j=0;j<labelRow.length;j++){
 				TextView label = new TextView(getContext());
 				label.setLayoutParams(new LayoutParams(labelWidth, ViewGroup.LayoutParams.WRAP_CONTENT));
-				label.setText("X");
 				label.setGravity(Gravity.CENTER);
-				label.setBackgroundColor(0xff000000 + random.nextInt() % 0xffffff);
 				row.addView(label);
 			}
 			addView(row);
@@ -79,7 +75,6 @@ public class ColumnsContainer extends LinearLayout {
 			for (int j = 0; j < labelRow.length; j++) {
 				TextView textView = (TextView) row.getChildAt(j);
 				textView.setText(labelRow[j]);
-				//((TextView) row.getChildAt(j)).setText(label);
 			}
 		}
 	}
