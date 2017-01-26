@@ -493,9 +493,9 @@ public class DataEntryActivity extends BaseActivity implements LoaderManager.Loa
             // we need to check if connection is there first
             if (NetworkUtils.checkConnection(this)) {
                 getCompletionDate();
-            }else{
-                compulsoryData = PrefUtils.getConfigString(getApplicationContext(), infoHolder.getFormId(), ConfigFileProcessor.COMPULSORY_DISEASES);
             }
+
+            compulsoryData = PrefUtils.getConfigString(getApplicationContext(), infoHolder.getFormId(), ConfigFileProcessor.COMPULSORY_DISEASES);
 
         }
     }
