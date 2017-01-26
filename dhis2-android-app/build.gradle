@@ -30,7 +30,7 @@ android {
     buildTypes {
         debug {
             // Run code coverage reports by default on debug builds.
-            testCoverageEnabled = false
+            testCoverageEnabled = true
         }
     }
     configurations.all {
@@ -61,6 +61,7 @@ dependencies {
     annotationProcessor 'com.google.dagger:dagger-compiler:2.8'
 
     debugCompile 'com.amitshekhar.android:debug-db:0.4.0'
+    compile 'hu.supercluster:paperwork:1.2.7'
 
 
     testCompile 'junit:junit:4.12'
