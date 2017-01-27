@@ -4,6 +4,7 @@ import com.google.gson.annotations.SerializedName;
 
 public class ConfigFile {
 
+	// TODO: isolate IDSR specific code
 	@SerializedName("IDSR Weekly Diseaase Report(WDR)")
 	public IDSRWeeklyDiseaseReport weeklyDiseaseReport;
 }

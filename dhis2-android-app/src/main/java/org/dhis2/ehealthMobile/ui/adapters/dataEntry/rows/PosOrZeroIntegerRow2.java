@@ -60,6 +60,7 @@ import java.util.ArrayList;
 public class PosOrZeroIntegerRow2 extends Row {
 
     public static final String TAG = PosOrZeroIntegerRow2.class.getSimpleName();
+    // TODO: isolate IDSR specific code
     public static final String PREFIX = " EIDSR-";
 
     private final LayoutInflater inflater;

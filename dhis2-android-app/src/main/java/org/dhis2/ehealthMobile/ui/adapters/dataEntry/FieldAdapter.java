@@ -157,6 +157,8 @@ public class FieldAdapter extends BaseAdapter {
 	private Map<Integer, Integer> positionToRowTypeMap;
 
 
+	// TODO: since this constructor is called with an info parameter set to null in the profile fragment
+	// TODO: it might make sense to extract a BaseFieldAdapter without the DatasetInfoHolder in order to simplify this class
 	public FieldAdapter(DatasetInfoHolder info, Group group, Context context) {
 		ArrayList<Field> fields = group.getFields();
 		ArrayList<Field> groupedFields = new ArrayList<>();
@@ -198,6 +200,7 @@ public class FieldAdapter extends BaseAdapter {
 				case INTEGER_ZERO_OR_POSITIVE:
 					//Changed from the others to support grouping of Diseases
 					//Specific test case for eidsr form
+					// TODO: isolate IDSR specific code
 					handleIntegerOrZeroRow2(info, field, groupedFields, previousFieldId);
 
 					groupedFields.add(field);

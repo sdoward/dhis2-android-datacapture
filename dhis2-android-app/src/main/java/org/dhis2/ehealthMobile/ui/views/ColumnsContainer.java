@@ -57,6 +57,12 @@ public class ColumnsContainer extends LinearLayout {
 				TextView label = new TextView(getContext());
 				label.setLayoutParams(new LayoutParams(labelWidth, ViewGroup.LayoutParams.WRAP_CONTENT));
 				label.setGravity(Gravity.CENTER);
+
+				// a visual help that might help debugging
+				// TODO: remove when production ready
+				label.setText("X");
+				label.setBackgroundColor(0xff000000 + new Random().nextInt() % 0xffffff);
+
 				row.addView(label);
 			}
 			addView(row);

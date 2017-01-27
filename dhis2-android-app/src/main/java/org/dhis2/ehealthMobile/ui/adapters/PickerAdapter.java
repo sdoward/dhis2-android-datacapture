@@ -312,6 +312,8 @@ public class PickerAdapter extends RecyclerView.Adapter {
         }
 
         public PickerAdapter build() {
+
+            // TODO: this will throw an IllegalArgumentException saying "bla bla must not be null" instead of a NullPointerException...
             checkNotNull(context, "context must not be null");
             checkNotNull(fragmentManager, "fragmentManager must not be null");
 
