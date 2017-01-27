@@ -44,6 +44,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
+import org.dhis2.ehealthMobile.Dhis2App;
 import org.dhis2.ehealthMobile.R;
 import org.dhis2.ehealthMobile.WorkService;
 import org.dhis2.ehealthMobile.io.Constants;
@@ -80,6 +81,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+
+import javax.inject.Inject;
 
 import static android.text.TextUtils.isEmpty;
 
@@ -132,6 +135,8 @@ public class DataEntryActivity extends BaseActivity implements LoaderManager.Loa
     private EditText commentField;
     private IsDisabled isDisabled;
 
+    @Inject
+    protected AppPermissions appPermissions;
 
     public static void navigateTo(Activity activity, DatasetInfoHolder info) {
         if (info != null && activity != null) {
@@ -149,6 +154,8 @@ public class DataEntryActivity extends BaseActivity implements LoaderManager.Loa
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_data_entry);
+
+        Dhis2App.get(this).getComponent().inject(this);
 
         if(getIntent().hasExtra(KEY_DATASET_INFO_HOLDER))
             infoHolder = getIntent().getParcelableExtra(KEY_DATASET_INFO_HOLDER);
@@ -256,7 +263,7 @@ public class DataEntryActivity extends BaseActivity implements LoaderManager.Loa
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        AppPermissions.handleRequestResults(requestCode, permissions, grantResults, new AppPermissions.AppPermissionsCallback() {
+        appPermissions.handleRequestResults(requestCode, permissions, grantResults, new AppPermissions.AppPermissionsCallback() {
             @Override
             public void onPermissionGranted(String permission) {
                 upload();
@@ -265,7 +272,7 @@ public class DataEntryActivity extends BaseActivity implements LoaderManager.Loa
             @Override
             public void onPermissionDenied(String permission) {
                 if(ActivityCompat.shouldShowRequestPermissionRationale(DataEntryActivity.this, Manifest.permission.SEND_SMS)){
-                    AppPermissions.showPermissionRationaleDialog(DataEntryActivity.this, permission);
+                    appPermissions.showPermissionRationaleDialog(DataEntryActivity.this, permission);
                 }else {
                     upload();
                 }
@@ -618,16 +625,16 @@ public class DataEntryActivity extends BaseActivity implements LoaderManager.Loa
             intent.putExtra(Group.TAG, groups);
 
             boolean hasInternet = NetworkUtils.checkConnection(getApplicationContext());
-            boolean hasPermission = AppPermissions.isPermissionGranted(getApplicationContext(),
+            boolean hasPermission = appPermissions.isPermissionGranted(getApplicationContext(),
                     Manifest.permission.SEND_SMS);
-            boolean canShowRationale = AppPermissions.canShowRationale(this, Manifest.permission.SEND_SMS);
+            boolean canShowRationale = appPermissions.canShowRationale(this, Manifest.permission.SEND_SMS);
             if(!hasInternet && hasPermission){
                 intent.putExtra(WorkService.METHOD, WorkService.METHOD_SEND_VIA_SMS);
                 startService(intent);
                 finish();
             }else if(!hasInternet && canShowRationale){
                 //When a previous requiredPermissions request hasn't been made and rejected
-                AppPermissions.requestPermission(this);
+                appPermissions.requestPermission(this);
             }else{
                 intent.putExtra(WorkService.METHOD, WorkService.METHOD_UPLOAD_DATASET);
                 startService(intent);

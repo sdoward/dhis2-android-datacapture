@@ -1,18 +1,26 @@
 package org.dhis2.ehealthmobile.activity;
 
+import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.support.test.InstrumentationRegistry;
 import android.support.test.rule.ActivityTestRule;
 
 import com.google.gson.Gson;
 
+import org.dhis2.ehealthMobile.Dhis2App;
 import org.dhis2.ehealthMobile.R;
+import org.dhis2.ehealthMobile.di.AppPermissionsModule;
 import org.dhis2.ehealthMobile.io.models.useraccount.UserAccount;
 import org.dhis2.ehealthMobile.ui.activities.LoginActivity;
+import org.dhis2.ehealthMobile.utils.AppPermissions;
 import org.dhis2.ehealthMobile.utils.TextFileUtils;
 import org.dhis2.ehealthmobile.HttpClientInstrumentationTest;
 import org.junit.Rule;
 import org.junit.Test;
 
 import java.net.HttpURLConnection;
+
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.RootMatchers.withDecorView;
@@ -31,7 +39,29 @@ public class LoginActivityTest extends HttpClientInstrumentationTest {
 
 
 	@Rule
-	public ActivityTestRule<LoginActivity> rule = new ActivityTestRule<>(LoginActivity.class);
+	public ActivityTestRule<LoginActivity> rule = new ActivityTestRule<>(LoginActivity.class, true, false);
+
+	@Override
+	public void setup() {
+		super.setup();
+		Dhis2App.get(InstrumentationRegistry.getTargetContext()).setAppPermissionsModule(new AppPermissionsModule(){
+			@Override
+			public AppPermissions provideAppPermissions() {
+				return new AppPermissions(){
+					@Override
+					public int checkPermission(Context context, String permission) {
+						return PackageManager.PERMISSION_GRANTED;
+					}
+					@Override
+					public boolean isPermissionGranted(Context context, String permission) {
+						return true;
+					}
+				};
+			}
+		});
+
+		rule.launchActivity(new Intent());
+	}
 
 	protected void typeLoginData(String username, String password){
 

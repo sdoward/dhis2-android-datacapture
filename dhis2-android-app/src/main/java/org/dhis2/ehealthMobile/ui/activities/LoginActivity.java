@@ -51,6 +51,7 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import org.dhis2.ehealthMobile.BuildConfig;
+import org.dhis2.ehealthMobile.Dhis2App;
 import org.dhis2.ehealthMobile.R;
 import org.dhis2.ehealthMobile.WorkService;
 import org.dhis2.ehealthMobile.network.HTTPClient;
@@ -59,6 +60,8 @@ import org.dhis2.ehealthMobile.network.Response;
 import org.dhis2.ehealthMobile.utils.AppPermissions;
 import org.dhis2.ehealthMobile.utils.ToastManager;
 import org.dhis2.ehealthMobile.utils.ViewUtils;
+
+import javax.inject.Inject;
 
 import hu.supercluster.paperwork.Paperwork;
 
@@ -79,6 +82,8 @@ public class LoginActivity extends AppCompatActivity {
     private ProgressBar mProgressBar;
     private Paperwork config;
 
+    @Inject
+    protected AppPermissions appPermissions;
 
     // BroadcastReceiver which aim is to listen
     // for network response on login post request
@@ -152,8 +157,10 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        if(!AppPermissions.isPermissionGranted(getApplicationContext(), Manifest.permission.SEND_SMS)){
-            AppPermissions.requestPermission(this);
+        Dhis2App.get(this).getComponent().inject(this);
+
+        if(!appPermissions.isPermissionGranted(getApplicationContext(), Manifest.permission.SEND_SMS)){
+            appPermissions.requestPermission(this);
         }
 
         // Restoring state of activity from saved bundle
@@ -195,13 +202,13 @@ public class LoginActivity extends AppCompatActivity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        AppPermissions.handleRequestResults(requestCode, permissions, grantResults, new AppPermissions.AppPermissionsCallback() {
+        appPermissions.handleRequestResults(requestCode, permissions, grantResults, new AppPermissions.AppPermissionsCallback() {
             @Override
             public void onPermissionGranted(String permission) {}
 
             @Override
             public void onPermissionDenied(String permission) {
-                AppPermissions.showPermissionRationaleDialog(LoginActivity.this, permission);
+                appPermissions.showPermissionRationaleDialog(LoginActivity.this, permission);
             }
         });
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);

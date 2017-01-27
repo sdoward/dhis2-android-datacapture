@@ -25,20 +25,20 @@ public class AppPermissions {
     public static final int MY_PERMISSIONS = 1;
     public static String[] requiredPermissions = new String[]{Manifest.permission.SEND_SMS};
 
-    private AppPermissions(){
+    public AppPermissions(){
 
     }
 
-    public static int checkPermission(Context context, String permission){
+    public int checkPermission(Context context, String permission){
         return  ContextCompat.checkSelfPermission(context,
                 permission);
     }
 
-    public static boolean isPermissionGranted(Context context, String permission){
+    public boolean isPermissionGranted(Context context, String permission){
         return PackageManager.PERMISSION_GRANTED == checkPermission(context, permission);
     }
 
-    public static void showPermissionRationaleDialog(final Activity activity, String permission){
+    public void showPermissionRationaleDialog(final Activity activity, String permission){
         permission = permission.split("\\.")[permission.split("\\.").length-1];
         String title = activity.getString(R.string.sms_permission_dialog_title);
         String message = activity.getString(R.string.sms_permission_dialog_message, permission);
@@ -58,12 +58,12 @@ public class AppPermissions {
         dialog.show();
     }
 
-    public static void requestPermission(Activity activity ) {
+    public void requestPermission(Activity activity ) {
             ActivityCompat.requestPermissions(activity,requiredPermissions,
                     MY_PERMISSIONS);
     }
 
-    public static void handleRequestResults(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults, AppPermissionsCallback callback){
+    public void handleRequestResults(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults, AppPermissionsCallback callback){
         switch (requestCode){
             case AppPermissions.MY_PERMISSIONS:{
                 int index = 0;
@@ -84,7 +84,7 @@ public class AppPermissions {
         }
     }
 
-    public static boolean canShowRationale(Activity activity, String permission){
+    public boolean canShowRationale(Activity activity, String permission){
         return ActivityCompat.shouldShowRequestPermissionRationale(activity, permission);
     }
 
