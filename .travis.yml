@@ -41,7 +41,6 @@ before_script:
   - adb shell input keyevent 82 &
 
 script:
-  - ./gradlew connectedCheck -PdisablePreDex --continue --info
   - ./gradlew test -PdisablePreDex --continue --info
 
 notifications:
