@@ -89,4 +89,12 @@
 
     <include layout="@layout/progress_bar" />
 
+    <include layout="@layout/text_view_training_stamp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="25dp"
+        android:layout_below="@+id/login_card_view"
+        android:layout_centerInParent="true"/>
+
+
 </RelativeLayout>

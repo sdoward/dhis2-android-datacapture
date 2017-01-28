@@ -49,6 +49,7 @@ public final class TextFileUtils {
         ROOT(""),
         DATASETS("datasets"),
         OFFLINE_DATASETS("offlineDatasets"),
+        IN_PROGRESS_DATASETS("inProgressDatasets"),
         OPTION_SETS("optionSets");
 
         private String directory;
@@ -61,10 +62,6 @@ public final class TextFileUtils {
         public String toString() {
             return directory;
         }
-    }
-
-    public static String readTextFile(Context context, Directory dir, FileNames name) {
-        return readTextFile(context, dir, name.toString());
     }
 
     /**
@@ -80,7 +77,7 @@ public final class TextFileUtils {
         String path = getDirectoryPath(context, dir);
         File directory = new File(path);
         if (!directory.exists()) {
-            throw new IllegalArgumentException("Specified diretory doesn't exist");
+            throw new IllegalArgumentException("Specified directory doesn't exist");
         }
 
         File file = new File(path, name);
@@ -109,10 +106,6 @@ public final class TextFileUtils {
             e.printStackTrace();
             throw new RuntimeException(file.getName() + " IOException");
         }
-    }
-
-    public static void writeTextFile(Context context, Directory dir, FileNames name, String data) {
-        writeTextFile(context, dir, name.toString(), data);
     }
 
     /**
@@ -168,7 +161,7 @@ public final class TextFileUtils {
         }
     }
 
-    public static void removeDirectory(Context context, Directory dir) {
+    private static void removeDirectory(Context context, Directory dir) {
         if (Directory.ROOT == dir) {
             Log.e(TAG, "Can't remove application's diretory");
             return;
@@ -187,7 +180,7 @@ public final class TextFileUtils {
      * Erases all files from FileNames list
      * <p/>
      *
-     * @param context
+     * @param context Context
      */
     public static void eraseData(Context context) {
         for (Directory dir : Directory.values()) {
@@ -198,13 +191,9 @@ public final class TextFileUtils {
         }
     }
 
-    public static boolean doesFileExist(Context context, Directory dir, FileNames name) {
-        return doesFileExist(context, dir, name.toString());
+    public static File findFile(Context context, Directory dir, String name) {
+        String path = getDirectoryPath(context, dir);
+        return new File(path, name);
     }
 
-    public static boolean doesFileExist(Context context, Directory dir, String name) {
-        String path = getDirectoryPath(context, dir);
-        File file = new File(path, name);
-        return file.exists();
-    }
 }

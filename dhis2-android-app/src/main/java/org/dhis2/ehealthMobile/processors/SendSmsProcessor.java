@@ -137,7 +137,7 @@ public class SendSmsProcessor {
 
     //Saves the dataset locally for future upload.
     private static void saveDataset(Context context, String data, DatasetInfoHolder info) {
-        String key = DatasetInfoHolder.buildKey(info);
+        String key = DatasetInfoHolder.getSubmissionKey(info);
         Gson gson = new Gson();
         String jsonReportInfo = gson.toJson(info);
         PrefUtils.saveOfflineReportInfo(context, key, jsonReportInfo);

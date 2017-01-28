@@ -57,6 +57,7 @@ import org.dhis2.ehealthMobile.io.models.eidsr.Disease;
 import org.dhis2.ehealthMobile.network.HTTPClient;
 import org.dhis2.ehealthMobile.network.NetworkUtils;
 import org.dhis2.ehealthMobile.network.Response;
+import org.dhis2.ehealthMobile.processors.ReportUploadProcessor;
 import org.dhis2.ehealthMobile.processors.ConfigFileProcessor;
 import org.dhis2.ehealthMobile.processors.SubmissionDetailsProcessor;
 import org.dhis2.ehealthMobile.ui.adapters.dataEntry.FieldAdapter;
@@ -73,6 +74,7 @@ import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -243,6 +245,10 @@ public class DataEntryActivity extends BaseActivity implements LoaderManager.Loa
 
     @Override
     public void onLoaderReset(Loader<Form> loader) {
+    }
+
+    private void restartLoader() {
+        getSupportLoaderManager().restartLoader(LOADER_FORM_ID, null, this).forceLoad();
     }
 
     @Override
@@ -481,7 +487,6 @@ public class DataEntryActivity extends BaseActivity implements LoaderManager.Loa
 
             // we need to check if connection is there first
             if (NetworkUtils.checkConnection(this)) {
-                getLatestValues();
                 getCompletionDate();
             }
 
@@ -511,7 +516,7 @@ public class DataEntryActivity extends BaseActivity implements LoaderManager.Loa
     }
 
     private void showProgressBar() {
-        ViewUtils.hideAndDisableViews(persistentButtonsFooter, uploadButton, dataEntryListView);
+        ViewUtils.hideAndDisableViews(persistentButtonsFooter, uploadButton, dataEntryListView,submissionDetailsLayout);
         ViewUtils.enableViews(progressBarLayout);
     }
 
@@ -580,20 +585,21 @@ public class DataEntryActivity extends BaseActivity implements LoaderManager.Loa
             return;
         }
 
-            ArrayList<Group> groups = new ArrayList<>();
-            for (FieldAdapter adapter : adapters) {
-                groups.add(adapter.getGroup());
-            }
+        ArrayList<Group> groups = new ArrayList<>();
+        for (FieldAdapter adapter : adapters) {
+            groups.add(adapter.getGroup());
+        }
 
-            //Add the comment in list view footer to group data.
-            addFooterCommentToGroup(groups.get(0));
+        //Add the comment in list view footer to group data.
+        addFooterCommentToGroup(groups.get(0));
 
-            DatasetInfoHolder info = getIntent().getExtras()
-                    .getParcelable(DatasetInfoHolder.TAG);
+        DatasetInfoHolder info = getIntent().getExtras()
+                .getParcelable(DatasetInfoHolder.TAG);
 
         if(isInvalidForm(groups)){
             showCompulsoryFieldsDialog();
         }else {
+            removeInProgressDataset(getApplicationContext(), info);
             Intent intent = new Intent(this, WorkService.class);
             intent.putExtra(DatasetInfoHolder.TAG, info);
             intent.putExtra(Group.TAG, groups);
@@ -645,6 +651,7 @@ public class DataEntryActivity extends BaseActivity implements LoaderManager.Loa
     }
 
     private void getCompletionDate(){
+        showProgressBar();
         DatasetInfoHolder info = getIntent().getExtras()
                 .getParcelable(DatasetInfoHolder.TAG);
 
@@ -678,12 +685,24 @@ public class DataEntryActivity extends BaseActivity implements LoaderManager.Loa
                         loadGroupsIntoAdapters(form.getGroups());
                         handleSubmissionDetails(form.getGroups());
                         setupCommentRowAsFooter(form);
+                        DatasetInfoHolder info = getIntent().getExtras()
+                                .getParcelable(DatasetInfoHolder.TAG);
+                        String key = DatasetInfoHolder.getSubmissionKey(info);
+                        if(TextFileUtils.findFile(
+                                getApplicationContext(), TextFileUtils.Directory.IN_PROGRESS_DATASETS, key).exists()){
+                            removeInProgressDataset(getApplicationContext(), info);
+                        }
                     }
                 }
 
                 if (intent.getExtras().containsKey(SubmissionDetailsProcessor.SUBMISSION_DETAILS)) {
                     if(intent.getExtras().getString(SubmissionDetailsProcessor.SUBMISSION_DETAILS) != null){
                         handleCompletionDate(intent.getExtras().getString(SubmissionDetailsProcessor.SUBMISSION_DETAILS));
+                        //Get form values if it has a completed date.
+                        getLatestValues();
+                    }else{
+                        //Without completion date restart the data loader to load either an empty, in progress or offline form
+                        restartLoader();
                     }
                 }
             }
@@ -711,8 +730,8 @@ public class DataEntryActivity extends BaseActivity implements LoaderManager.Loa
 
         @Override
         public Form loadInBackground() {
-            if (infoHolder.getFormId() != null && TextFileUtils.doesFileExist(
-                    getContext(), TextFileUtils.Directory.DATASETS, infoHolder.getFormId())) {
+            if (infoHolder.getFormId() != null && TextFileUtils.findFile(
+                    getContext(), TextFileUtils.Directory.DATASETS, infoHolder.getFormId()).exists()) {
                 Form form = loadForm();
 
                 // try to fit values
@@ -748,7 +767,7 @@ public class DataEntryActivity extends BaseActivity implements LoaderManager.Loa
                 return;
             }
 
-            String reportKey = DatasetInfoHolder.buildKey(infoHolder);
+            String reportKey = DatasetInfoHolder.getSubmissionKey(infoHolder);
             if (isEmpty(reportKey)) {
                 return;
             }
@@ -795,14 +814,16 @@ public class DataEntryActivity extends BaseActivity implements LoaderManager.Loa
                 return null;
             }
 
-            if (TextFileUtils.doesFileExist(
-                    getContext(), TextFileUtils.Directory.OFFLINE_DATASETS, reportKey)) {
-                String report = TextFileUtils.readTextFile(
-                        getContext(), TextFileUtils.Directory.OFFLINE_DATASETS, reportKey);
+            File progressFile = TextFileUtils.findFile(getContext(), TextFileUtils.Directory.IN_PROGRESS_DATASETS, reportKey);
 
-                if (!isEmpty(report)) {
-                    return report;
-                }
+            if(progressFile.exists()){
+                return TextFileUtils.readTextFile(progressFile);
+            }
+
+
+            File offlineDatasetFile = TextFileUtils.findFile(getContext(), TextFileUtils.Directory.OFFLINE_DATASETS, reportKey);
+            if (offlineDatasetFile.exists()) {
+                return TextFileUtils.readTextFile(offlineDatasetFile);
             }
 
             return null;
@@ -866,7 +887,6 @@ public class DataEntryActivity extends BaseActivity implements LoaderManager.Loa
         DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern(Constants.DATE_COMPLETED_FORMAT);
         String text = getResources().getString(R.string.completion_date_prefix) +" "+ dateTime.toString(dateTimeFormatter);
         completionDate.setText(text);
-
     }
 
     private void handleSubmissionDetails(ArrayList<Group> groups){
@@ -953,4 +973,52 @@ public class DataEntryActivity extends BaseActivity implements LoaderManager.Loa
         }
         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+
+        ArrayList<Group> groups = new ArrayList<>();
+        DatasetInfoHolder info  = new DatasetInfoHolder();
+        if(adapters != null) {
+            for (FieldAdapter adapter : adapters) {
+                groups.add(adapter.getGroup());
+            }
+            if(groups.size() > 0){
+                //Add the comment in list view footer to group data.
+                addFooterCommentToGroup(groups.get(0));
+                info = getIntent().getExtras()
+                        .getParcelable(DatasetInfoHolder.TAG);
+            }
+            if(!isFormBlank(groups)){
+                String data = ReportUploadProcessor.prepareContent(info, groups);
+                saveInProgressDataset(getApplicationContext(), data, info);
+            }
+        }
+    }
+
+    private void saveInProgressDataset(Context context, String data, DatasetInfoHolder info) {
+        String key = DatasetInfoHolder.getSubmissionKey(info);
+        TextFileUtils.writeTextFile(context, TextFileUtils.Directory.IN_PROGRESS_DATASETS, key, data);
+    }
+
+    private void removeInProgressDataset(Context context, DatasetInfoHolder info){
+        String key = DatasetInfoHolder.getSubmissionKey(info);
+        File file = TextFileUtils.findFile(getApplicationContext(), TextFileUtils.Directory.IN_PROGRESS_DATASETS, key);
+        TextFileUtils.removeFile(file);
+    }
+
+    private Boolean isFormBlank(ArrayList<Group> groups){
+
+        for(Group group: groups){
+            for(Field field: group.getFields()){
+                if(!field.getValue().equals("")){
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
 }

@@ -25,3 +25,6 @@ build
 #Windows
 *.db
 
+#Paperwork (Config)
+dhis2-android-app/src/main/assets/paperwork.json
+

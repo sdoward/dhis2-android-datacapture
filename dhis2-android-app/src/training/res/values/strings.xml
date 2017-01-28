@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="training_badge_title">Training Version</string>
+    <string name="app_name">(Training) DHIS2 eHealth Data Capture</string>
+</resources>

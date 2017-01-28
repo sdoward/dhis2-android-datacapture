@@ -27,9 +27,31 @@ android {
     buildTypes {
         debug {
             // Run code coverage reports by default on debug builds.
-            testCoverageEnabled = false
+            testCoverageEnabled = true
         }
     }
+
+    productFlavors{
+        development{
+            applicationIdSuffix ".dev"
+            versionNameSuffix "-dev"
+        }
+        training {
+            applicationIdSuffix ".training"
+            versionNameSuffix "-training"
+        }
+        production {}
+    }
+
+    sourceSets {
+        trainingDebug {
+            res.srcDir('training/res')
+        }
+        trainingRelease{
+            res.srcDir('training/res')
+        }
+    }
+
     configurations.all {
         resolutionStrategy.force 'com.android.support:support-annotations:24.2.0'
     }
@@ -97,6 +119,7 @@ dependencies {
 
 
     debugCompile 'com.amitshekhar.android:debug-db:0.4.0'
+    compile 'hu.supercluster:paperwork:1.2.7'
 
 
 }

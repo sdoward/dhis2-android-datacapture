@@ -168,7 +168,7 @@ public class MenuActivity extends BaseActivity implements OnNavigationItemSelect
         username.setText(PrefUtils.getUserName(getApplicationContext()));
         String userAccountDetails = TextFileUtils.readTextFile(getApplicationContext(),
                 TextFileUtils.Directory.ROOT,
-                TextFileUtils.FileNames.ACCOUNT_INFO);
+                TextFileUtils.FileNames.ACCOUNT_INFO.toString());
         //Initial(s) used if user account details is unavailable
         String initials = getFirstLetterInUpperCase(username.getText().toString());
 

@@ -1,9 +1,15 @@
 # dhis2-android-datacapture
+[![Build Status](https://travis-ci.org/eHealthAfrica/dhis2-android-datacapture.svg?branch=develop)](https://travis-ci.com/eHealthAfrica/dhis2-android-datacapture)
+
 Android application for DHIS 2 for capture and validation of routine data.
 
 Get the APK from the release page:
 
 https://github.com/dhis2/dhis2-android-datacapture/releases
+
+###Paperwork (Config file)
+1. Edit paperwork.json.tmpl and replace the values accordingly.
+2. Rename paperwork.json.tmpl to paperwork.json
 
 #Project structure
 

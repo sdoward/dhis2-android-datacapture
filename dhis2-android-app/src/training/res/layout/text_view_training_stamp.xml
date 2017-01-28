@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:text="@string/training_badge_title"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="25dp"
+    android:id="@+id/training_badge"
+    android:textColor="@color/training_badge_title"
+    android:background="@drawable/drawable_training_badge_bg"
+    android:textStyle="bold"
+    android:padding="8dp"
+    android:textAlignment="center"
+    android:gravity="center">
+
+
+</TextView>
