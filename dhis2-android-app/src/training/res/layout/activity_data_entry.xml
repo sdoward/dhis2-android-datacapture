@@ -33,8 +33,6 @@
             android:layout_height="wrap_content" />
 
         <include layout="@layout/submission_details_view"/>
-        <include layout="@layout/listview_header"/>
-
         <android.support.v4.widget.NestedScrollView
             android:layout_width="match_parent"
             android:layout_height="0dp"

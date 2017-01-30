@@ -142,7 +142,6 @@ public class LoginActivity extends AppCompatActivity {
         mUsername.addTextChangedListener(textWatcher);
         mPassword.addTextChangedListener(textWatcher);
 
-        mServerUrl.setText(ResourcesUtils.getStringFromStringId(this, "loginServerUrl"));
         mUsername.setText(ResourcesUtils.getStringFromStringId(this, "loginUsername"));
         mPassword.setText(ResourcesUtils.getStringFromStringId(this, "loginPassword"));
 
