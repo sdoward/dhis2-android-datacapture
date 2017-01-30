@@ -63,6 +63,8 @@
     <string name="option_female">Female</string>
     <string name="option_other">Other</string>
 
+    <string name="info_placeholder">No information available</string>
+
     <!-- toasts and notifications -->
     <string name="check_connection">Please check connection</string>
     <string name="wrong_url">Wrong URL</string>
