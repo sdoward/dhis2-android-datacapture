@@ -2,6 +2,7 @@ package org.dhis2.ehealthmobile.activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.espresso.contrib.DrawerActions;
 import android.support.test.rule.ActivityTestRule;
@@ -16,11 +17,14 @@ import org.dhis2.ehealthMobile.ui.activities.MenuActivity;
 import org.dhis2.ehealthMobile.utils.PrefUtils;
 import org.dhis2.ehealthMobile.utils.TextFileUtils;
 import org.dhis2.ehealthmobile.HttpClientInstrumentationTest;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
 import java.net.HttpURLConnection;
 
+import static android.support.test.InstrumentationRegistry.getInstrumentation;
+import static android.support.test.InstrumentationRegistry.getTargetContext;
 import static android.support.test.espresso.Espresso.onData;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
@@ -55,7 +59,7 @@ public class MenuActivityTest extends HttpClientInstrumentationTest {
 	public void setup() {
 		super.setup();
 
-		TextFileUtils.writeTextFile(InstrumentationRegistry.getTargetContext(), TextFileUtils.Directory.ROOT,
+		TextFileUtils.writeTextFile(getTargetContext(), TextFileUtils.Directory.ROOT,
 				TextFileUtils.FileNames.ACCOUNT_INFO.toString(), new Gson().toJson(userAccount));
 
 		PrefUtils.initAppData(getContext(), "creds", username, "http://www.something.com");
@@ -65,7 +69,18 @@ public class MenuActivityTest extends HttpClientInstrumentationTest {
 	}
 
 	protected Context getContext() {
-		return InstrumentationRegistry.getInstrumentation().getTargetContext();
+		return getInstrumentation().getTargetContext();
+	}
+
+	@Before
+	public void grantSMSPermission() {
+		// In M+, trying to call a number will trigger a runtime dialog. Make sure
+		// the permission is granted before running this test.
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+			getInstrumentation().getUiAutomation().executeShellCommand(
+					"pm grant " + getTargetContext().getPackageName()
+							+ " android.permission.SEND_SMS");
+		}
 	}
 
 	@Override
@@ -138,8 +153,7 @@ public class MenuActivityTest extends HttpClientInstrumentationTest {
 	@Test
 	public void shouldHaveDownloadedConfigFile(){
 		onView(withId(R.id.swipe_refresh_layout_aggregate_report)).check(matches(isDisplayed()));
-
-		assertThat(PrefUtils.getConfigFile(InstrumentationRegistry.getTargetContext())).isNotEmpty();
+		assertThat(PrefUtils.getConfigFile(getTargetContext())).isNotEmpty();
 	}
 
 	@Test
