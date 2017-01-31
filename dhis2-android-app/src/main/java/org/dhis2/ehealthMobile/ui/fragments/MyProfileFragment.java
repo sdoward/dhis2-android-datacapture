@@ -34,7 +34,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager;
@@ -43,12 +42,13 @@ import android.support.v4.content.Loader;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -60,7 +60,7 @@ import org.dhis2.ehealthMobile.io.models.Group;
 import org.dhis2.ehealthMobile.network.HTTPClient;
 import org.dhis2.ehealthMobile.network.NetworkUtils;
 import org.dhis2.ehealthMobile.network.Response;
-import org.dhis2.ehealthMobile.ui.adapters.dataEntry.FieldAdapter;
+import org.dhis2.ehealthMobile.ui.adapters.profile.ProfileAdapter;
 import org.dhis2.ehealthMobile.utils.PrefUtils;
 import org.dhis2.ehealthMobile.utils.PrefUtils.Resources;
 import org.dhis2.ehealthMobile.utils.PrefUtils.State;
@@ -82,10 +82,9 @@ public class MyProfileFragment extends Fragment implements LoaderManager.LoaderC
     private static final String IS_REFRESHING = "isRefreshing";
 
     private SwipeRefreshLayout mSwipeRefreshLayout;
-    private ListView mList;
+    private RecyclerView mList;
     private ProgressBar mProgressBar;
-    private FloatingActionButton mUploadButton;
-    private FieldAdapter mAdapter;
+    private ProfileAdapter mAdapter;
     private boolean mIsRefreshing;
 
     private BroadcastReceiver mOnProfileInfoUploadListener = new BroadcastReceiver() {
@@ -93,7 +92,6 @@ public class MyProfileFragment extends Fragment implements LoaderManager.LoaderC
         @Override
         public void onReceive(Context con, Intent intent) {
             hideProgressInActionBar();
-            showUploadButton(true);
 
             int code = intent.getExtras().getInt(Response.CODE);
             Context context = getActivity();
@@ -151,11 +149,9 @@ public class MyProfileFragment extends Fragment implements LoaderManager.LoaderC
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_my_profile, container, false);
         mSwipeRefreshLayout = (SwipeRefreshLayout) root.findViewById(R.id.ptr_layout);
-        mList = (ListView) mSwipeRefreshLayout.findViewById(R.id.list_of_fields);
+        mList = (RecyclerView) mSwipeRefreshLayout.findViewById(R.id.recycler_view_for_fields);
         mProgressBar = (ProgressBar) root.findViewById(R.id.progress_bar);
-        mUploadButton = (FloatingActionButton) root.findViewById(R.id.upload_button);
 
-        ViewUtils.hideAndDisableViews(mList, mUploadButton, mProgressBar);
 
         OnRefreshListener listener = new OnRefreshListener() {
 
@@ -173,13 +169,9 @@ public class MyProfileFragment extends Fragment implements LoaderManager.LoaderC
         mSwipeRefreshLayout.setOnRefreshListener(listener);
         mSwipeRefreshLayout.setColorScheme(blue, grey, blue, grey);
 
-        mUploadButton.setOnClickListener(new OnClickListener() {
-
-            @Override
-            public void onClick(View arg0) {
-                startUpload();
-            }
-        });
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
+        mList.setLayoutManager(mLayoutManager);
+        mList.setItemAnimator(new DefaultItemAnimator());
 
         // restoring previous state of fragment
         restoreFromPreviousState(savedInstanceState);
@@ -221,7 +213,6 @@ public class MyProfileFragment extends Fragment implements LoaderManager.LoaderC
 
         if (isRefreshing) {
             showProgressInActionBar();
-            hideUploadButton(false);
         } else {
             boolean needsUpdate = state == State.OUT_OF_DATE;
             boolean isConnectionAvailable = NetworkUtils.checkConnection(getActivity());
@@ -241,7 +232,6 @@ public class MyProfileFragment extends Fragment implements LoaderManager.LoaderC
 
     private void loadData() {
         showProgressBar(false);
-        hideUploadButton(false);
         setEnabledSwipeRefreshLayout(false);
 
         getLoaderManager().restartLoader(MY_PROFILE_LOADER_ID, null, this).forceLoad();
@@ -275,31 +265,16 @@ public class MyProfileFragment extends Fragment implements LoaderManager.LoaderC
 
     private void onLoadFinished(Group group, boolean withAnimation) {
         Log.i("onLoadFinished()", "isCalled");
-        mAdapter = new FieldAdapter(null, group, getActivity());
+        mAdapter = new ProfileAdapter(group, getActivity());
         mList.setAdapter(mAdapter);
 
         hideProgressBar(withAnimation);
         setEnabledSwipeRefreshLayout(true);
 
-        if (mSwipeRefreshLayout != null && !mSwipeRefreshLayout.isRefreshing()) {
-            showUploadButton(withAnimation);
-        }
     }
 
     @Override
     public void onLoaderReset(Loader<Group> loader) {
-    }
-
-    private void startUpload() {
-        if (getActivity() != null && mAdapter != null) {
-            showProgressInActionBar();
-            hideUploadButton(true);
-
-            Intent intent = new Intent(getActivity(), WorkService.class);
-            intent.putExtra(WorkService.METHOD, WorkService.METHOD_UPLOAD_PROFILE_INFO);
-            intent.putParcelableArrayListExtra(GROUP, mAdapter.getGroup().getFields());
-            getActivity().startService(intent);
-        }
     }
 
     private void startUpdate() {
@@ -312,7 +287,6 @@ public class MyProfileFragment extends Fragment implements LoaderManager.LoaderC
         if (isConnectionAvailable) {
             System.out.println("startUpdate() is called from MyProfileFragment");
             showProgressInActionBar();
-            hideUploadButton(true);
 
             Intent intent = new Intent(getActivity(), WorkService.class);
             intent.putExtra(WorkService.METHOD, WorkService.METHOD_UPDATE_PROFILE_INFO);
@@ -339,22 +313,6 @@ public class MyProfileFragment extends Fragment implements LoaderManager.LoaderC
             ViewUtils.perfomInAnimation(getActivity(), R.anim.fade_in, mList);
         } else {
             ViewUtils.enableViews(mList);
-        }
-    }
-
-    private void showUploadButton(boolean withAnimation) {
-        if (withAnimation) {
-            ViewUtils.perfomInAnimation(getActivity(), R.anim.fade_in, mUploadButton);
-        } else {
-            ViewUtils.enableViews(mUploadButton);
-        }
-    }
-
-    private void hideUploadButton(boolean withAnimation) {
-        if (withAnimation) {
-            ViewUtils.perfomOutAnimation(getActivity(), R.anim.fade_out, true, mUploadButton);
-        } else {
-            ViewUtils.hideAndDisableViews(mUploadButton);
         }
     }
 
