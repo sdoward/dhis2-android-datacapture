@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">DHIS2 Data Capture</string>
+    <string name="app_name">DHIS2 eHealth Data Capture</string>
     <string name="title_activity_launcher">LauncherActivity</string>
     <string name="title_activity_login">LoginActivity</string>
     <string name="desc">stub image</string>
@@ -35,6 +35,14 @@
     <string name="login_button">Log in</string>
     <string name="log_out">Log out</string>
     <string name="save">Save</string>
+
+
+    <string name="list_view_header_title">Disease/Condition/Event</string>
+    <string name="list_view_header_under_5_title">&lt; 5 Years old</string>
+    <string name="list_view_header_case_title">Cases</string>
+    <string name="list_view_header_death_title">Deaths</string>
+    <string name="list_view_header_over_5_title">&gt; 5 Years old</string>
+    <string name="toolbar_week_prefix">Week</string>
 
     <!-- account -->
     <string name="first_name">First name</string>
@@ -80,6 +88,7 @@
     <string name="choose_program">Choose program</string>
     <string name="choose_unit">Choose organisation unit</string>
     <string name="choose_period">Choose period</string>
+    <string name="search">Search</string>
 
     <!-- String resources for single event without registration fragment -->
     <string name="longitude">Longitude</string>
@@ -104,4 +113,32 @@
     <string name="swipe_to_update">Swipe to update</string>
     <string name="no_forms_found">No forms found assigned to current user</string>
 
+    <!-- Validation strings -->
+    <string name="validation_alert_dialog_title">Validation</string>
+    <string name="validation_alert_dialog_confirmation">Confirm</string>
+    <string name="validation_alert_dialog_rejection">Delete Value</string>
+
+    <!-- Additional Diseases -->
+    <string name="additional_diseases_title">Additional Diseases</string>
+    <string name="add_disease_title">Add Disease</string>
+    <string name="submit_button_title">Submit</string>
+    <string name="delete_disease_dialog_title">Delete disease?</string>
+    <string name="delete_disease_dialog_confirmation">OK</string>
+    <string name="delete_disease_dialog_rejection">Cancel</string>
+
+    <!-- Compulsory Data -->
+    <string name="compulsory_data_dialog_title">Compulsory Data</string>
+    <string name="compulsory_data_dialog_message">Submission of the form with blank fields is not possible.</string>
+    <string name="compulsory_data_dialog_confirmation">OK</string>
+
+    <!--Submission details -->
+    <string name="completion_date_prefix">Last submission on:</string>
+    <string name="submission_method_prefix">"Form submission via "</string>
+    <string name="completion_date_example">Completed on: 13th October 2016</string>
+    <string name="timely_title">Timely</string>
+
+    <!-- SMS permission dialog -->
+    <string name="sms_permission_dialog_title">Permission Required</string>
+    <string name="sms_permission_dialog_message">The DHIS2 eHealth app requires %s permission in order to function properly</string>
+    <string name="sms_permission_dialog_confirmation">OK</string>
 </resources>
