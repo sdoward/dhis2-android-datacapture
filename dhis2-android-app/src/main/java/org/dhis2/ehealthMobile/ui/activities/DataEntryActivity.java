@@ -57,14 +57,14 @@ import org.dhis2.ehealthMobile.io.models.eidsr.Disease;
 import org.dhis2.ehealthMobile.network.HTTPClient;
 import org.dhis2.ehealthMobile.network.NetworkUtils;
 import org.dhis2.ehealthMobile.network.Response;
-import org.dhis2.ehealthMobile.processors.ReportUploadProcessor;
 import org.dhis2.ehealthMobile.processors.ConfigFileProcessor;
+import org.dhis2.ehealthMobile.processors.ReportUploadProcessor;
 import org.dhis2.ehealthMobile.processors.SubmissionDetailsProcessor;
 import org.dhis2.ehealthMobile.ui.adapters.dataEntry.FieldAdapter;
 import org.dhis2.ehealthMobile.ui.adapters.dataEntry.rows.PosOrZeroIntegerRow2;
 import org.dhis2.ehealthMobile.ui.fragments.AdditionalDiseasesFragment;
-import org.dhis2.ehealthMobile.utils.FormUtils;
 import org.dhis2.ehealthMobile.utils.AppPermissions;
+import org.dhis2.ehealthMobile.utils.FormUtils;
 import org.dhis2.ehealthMobile.utils.IsDisabled;
 import org.dhis2.ehealthMobile.utils.PrefUtils;
 import org.dhis2.ehealthMobile.utils.TextFileUtils;
@@ -77,6 +77,7 @@ import org.joda.time.format.DateTimeFormatter;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -967,12 +968,25 @@ public class DataEntryActivity extends BaseActivity implements LoaderManager.Loa
     }
 
     private void addFooterCommentToGroup(Group group){
-        Field comment = new Field();
         if(commentField != null) {
-            comment.setDataElement(Constants.COMMENT_FIELD);
-            comment.setValue(commentField.getText().toString());
-            comment.setCategoryOptionCombo(Constants.DEFAULT_CATEGORY_COMBO);
-            group.addField(comment);
+            deleteCommentField(group);
+            group.addField(getCommentField());
+        }
+    }
+
+    private Field getCommentField(){
+        Field comment = new Field();
+        comment.setDataElement(Constants.COMMENT_FIELD);
+        comment.setValue(commentField.getText().toString());
+        comment.setCategoryOptionCombo(Constants.DEFAULT_CATEGORY_COMBO);
+        return comment;
+    }
+
+    private void deleteCommentField(Group group){
+        Iterator<Field> iterator = group.getFields().iterator();
+        while (iterator.hasNext()){
+            if(Constants.COMMENT_FIELD.equals(iterator.next().getDataElement()))
+                iterator.remove();
         }
     }
 

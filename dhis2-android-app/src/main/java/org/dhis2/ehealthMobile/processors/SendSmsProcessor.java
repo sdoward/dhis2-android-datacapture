@@ -61,7 +61,9 @@ public class SendSmsProcessor {
 
         // The date generated here is the current day of the week within the
         // given week number, which DHIS2 seems to be fine with.
-        int weekNumber = Integer.parseInt(info.getPeriodLabel().substring(1,3));
+        // e.g. periodLabel = W3 2017-01-22 2017-01-29
+        String weekNumStr = info.getPeriodLabel().split(" ")[0].replaceAll("W", "");
+        int weekNumber = Integer.parseInt(weekNumStr);
         DateTime period = new DateTime().withWeekOfWeekyear(weekNumber);
         DateTimeFormatter format = DateTimeFormat.forPattern(periodFormat);
         message += period.toString(format) + cmdSeparator;
@@ -100,9 +102,8 @@ public class SendSmsProcessor {
      */
     private static String sanitiseValue(final String dataValue) {
         String sanitisedValue = dataValue;
-        sanitisedValue = sanitisedValue.replace(cmdSeparator, "_");
         sanitisedValue = sanitisedValue.replace(dVSeparator, "_");
-        sanitisedValue = sanitisedValue.replace(kVSeparator, "_");
+        sanitisedValue = sanitisedValue.replace(kVSeparator, "-");
 
         return sanitisedValue;
     }
