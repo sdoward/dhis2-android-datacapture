@@ -103,6 +103,7 @@ public class SendSmsProcessor {
     private static String sanitiseValue(final String dataValue) {
         String sanitisedValue = dataValue;
         sanitisedValue = sanitisedValue.replace(dVSeparator, "_");
+        sanitisedValue = sanitisedValue.replace(kVSeparator, "-");
 
         return sanitisedValue;
     }
