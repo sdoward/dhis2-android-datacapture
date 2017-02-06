@@ -29,12 +29,21 @@
 
 package org.dhis2.ehealthMobile.ui.activities;
 
+import org.dhis2.ehealthMobile.BuildConfig;
+import org.dhis2.ehealthMobile.R;
+import org.dhis2.ehealthMobile.WorkService;
+import org.dhis2.ehealthMobile.network.HTTPClient;
+import org.dhis2.ehealthMobile.network.NetworkUtils;
+import org.dhis2.ehealthMobile.network.Response;
+import org.dhis2.ehealthMobile.utils.AppPermissions;
+import org.dhis2.ehealthMobile.utils.ToastManager;
+import org.dhis2.ehealthMobile.utils.ViewUtils;
+
 import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.content.LocalBroadcastManager;
@@ -51,18 +60,6 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import org.dhis2.ehealthMobile.BuildConfig;
-import org.dhis2.ehealthMobile.R;
-import org.dhis2.ehealthMobile.WorkService;
-import org.dhis2.ehealthMobile.network.HTTPClient;
-import org.dhis2.ehealthMobile.network.NetworkUtils;
-import org.dhis2.ehealthMobile.network.Response;
-import org.dhis2.ehealthMobile.utils.AppPermissions;
-import org.dhis2.ehealthMobile.utils.ToastManager;
-import org.dhis2.ehealthMobile.utils.ViewUtils;
-
-import hu.supercluster.paperwork.Paperwork;
-
 public class LoginActivity extends AppCompatActivity {
     public static final String TAG = LoginActivity.class.getSimpleName();
     public static final String USERNAME = "username";
@@ -78,8 +75,6 @@ public class LoginActivity extends AppCompatActivity {
     private CardView mLoginCardView;
 
     private ProgressBar mProgressBar;
-    private Paperwork config;
-
 
     // BroadcastReceiver which aim is to listen
     // for network response on login post request
@@ -117,8 +112,6 @@ public class LoginActivity extends AppCompatActivity {
 
         mProgressBar = (ProgressBar) findViewById(R.id.progress_bar);
         mProgressBar.setVisibility(View.GONE);
-
-        config = new Paperwork(this);
 
         // textwatcher is responsible for watching
         // after changes in all fields
@@ -211,7 +204,7 @@ public class LoginActivity extends AppCompatActivity {
     // Activates *login button*,
     // if all necessary fields are full
     private void checkEditTextFields() {
-        String tempUrl = getServerUrl();
+        String tempUrl = BuildConfig.serverUrl;
         String tempUsername = mUsername.getText().toString();
         String tempPassword = mPassword.getText().toString();
 
@@ -224,7 +217,7 @@ public class LoginActivity extends AppCompatActivity {
 
     // loginUser() is called when user clicks *LoginButton*
     private void loginUser() {
-        String tmpServer = getServerUrl();
+        String tmpServer = BuildConfig.serverUrl;
         String user = mUsername.getText().toString();
         String pass = mPassword.getText().toString();
         String pair = String.format("%s:%s", user, pass);
@@ -265,7 +258,4 @@ public class LoginActivity extends AppCompatActivity {
         ViewUtils.hideAndDisableViews(mProgressBar);
     }
 
-    private String getServerUrl(){
-        return (BuildConfig.DEBUG) ? config.get(DEV_URL) : config.get(PROD_URL);
-    }
 }

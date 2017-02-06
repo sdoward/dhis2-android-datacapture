@@ -26,10 +26,15 @@ android {
 
     buildTypes {
         debug {
-            // Run code coverage reports by default on debug builds.
             testCoverageEnabled = true
+            buildConfigField "String", "serverUrl", "\"https://my-development-environment-url\""
+        }
+
+        release {
+            buildConfigField "String", "serverUrl", "\"https:///my-prduction-environment-url\""
         }
     }
+
 
     productFlavors{
         development{
@@ -115,7 +120,6 @@ dependencies {
 
 
     debugCompile 'com.amitshekhar.android:debug-db:0.4.0'
-    compile 'hu.supercluster:paperwork:1.2.7'
 
 
 }
