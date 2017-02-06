@@ -1,32 +1,10 @@
 package org.dhis2.ehealthMobile.ui.fragments;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.os.Bundle;
-import android.support.annotation.ColorInt;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.AsyncTaskLoader;
-import android.support.v4.content.Loader;
-import android.support.v4.content.LocalBroadcastManager;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-import android.widget.Toast;
+import static org.dhis2.ehealthMobile.utils.ViewUtils.perfomInAnimation;
+import static org.dhis2.ehealthMobile.utils.ViewUtils.perfomOutAnimation;
 
 import com.google.gson.JsonArray;
 import com.google.gson.reflect.TypeToken;
-
 import org.dhis2.ehealthMobile.R;
 import org.dhis2.ehealthMobile.WorkService;
 import org.dhis2.ehealthMobile.io.holders.DatasetInfoHolder;
@@ -48,17 +26,36 @@ import org.dhis2.ehealthMobile.utils.PrefUtils;
 import org.dhis2.ehealthMobile.utils.TextFileUtils;
 import org.dhis2.ehealthMobile.utils.ToastManager;
 import org.dhis2.ehealthMobile.utils.date.DateHolder;
-import org.json.JSONException;
-import org.json.JSONObject;
+
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
+import android.os.Bundle;
+import android.support.annotation.ColorInt;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.AsyncTaskLoader;
+import android.support.v4.content.Loader;
+import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
-
-import static org.dhis2.ehealthMobile.utils.ViewUtils.perfomInAnimation;
-import static org.dhis2.ehealthMobile.utils.ViewUtils.perfomOutAnimation;
 
 public class AggregateReportFragment extends Fragment
         implements LoaderManager.LoaderCallbacks<Picker> {
@@ -74,6 +71,8 @@ public class AggregateReportFragment extends Fragment
     private static final String STATE_PICKERS_TWO = "state:pickersTwo";
     private static final String STATE_PICKERS_PERIOD = "state:pickersPeriod";
     private static final String STATE_IS_REFRESHING = "state:isRefreshing";
+
+    private NetworkUtils networkUtils;
 
     // generic picker adapters
     private PickerAdapter pickerAdapterOne;
@@ -102,6 +101,7 @@ public class AggregateReportFragment extends Fragment
 
     @Override
     public void onViewCreated(View root, Bundle savedInstanceState) {
+        networkUtils = new NetworkUtils((ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE));
         setupStubLayout(root);
         setupDataEntryButton(root);
         setupPickerRecyclerViews(root, savedInstanceState);
@@ -303,7 +303,7 @@ public class AggregateReportFragment extends Fragment
 
         if (!isRefreshing) {
             boolean needsUpdate = datasetState == PrefUtils.State.OUT_OF_DATE;
-            boolean isConnectionAvailable = NetworkUtils.checkConnection(getActivity());
+            boolean isConnectionAvailable = networkUtils.checkConnection();
 
             if (needsUpdate && isConnectionAvailable) {
                 downloadConfigFile();
@@ -535,7 +535,7 @@ public class AggregateReportFragment extends Fragment
             return;
         }
 
-        boolean isConnectionAvailable = NetworkUtils.checkConnection(context);
+        boolean isConnectionAvailable = networkUtils.checkConnection();
         if (isConnectionAvailable) {
             showProgressBar();
 
@@ -696,7 +696,7 @@ public class AggregateReportFragment extends Fragment
             return;
         }
 
-        boolean isConnectionAvailable = NetworkUtils.checkConnection(context);
+        boolean isConnectionAvailable = networkUtils.checkConnection();
         if (isConnectionAvailable) {
             showProgressBar();
             Intent intent = new Intent(getContext(), WorkService.class);

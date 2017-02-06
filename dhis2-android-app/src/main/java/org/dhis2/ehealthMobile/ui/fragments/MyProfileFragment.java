@@ -52,6 +52,7 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import org.dhis2.ehealthMobile.EHealthAfricaApplication;
 import org.dhis2.ehealthMobile.R;
 import org.dhis2.ehealthMobile.WorkService;
 import org.dhis2.ehealthMobile.io.handlers.UserAccountHandler;
@@ -80,6 +81,8 @@ public class MyProfileFragment extends Fragment implements LoaderManager.LoaderC
 
     private static final int MY_PROFILE_LOADER_ID = TAG.length();
     private static final String IS_REFRESHING = "isRefreshing";
+
+    private final NetworkUtils networkUtils = EHealthAfricaApplication.getNetworkUtils();
 
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private RecyclerView mList;
@@ -215,7 +218,7 @@ public class MyProfileFragment extends Fragment implements LoaderManager.LoaderC
             showProgressInActionBar();
         } else {
             boolean needsUpdate = state == State.OUT_OF_DATE;
-            boolean isConnectionAvailable = NetworkUtils.checkConnection(getActivity());
+            boolean isConnectionAvailable = networkUtils.checkConnection();
 
             if (needsUpdate && isConnectionAvailable) {
                 startUpdate();
@@ -283,7 +286,7 @@ public class MyProfileFragment extends Fragment implements LoaderManager.LoaderC
             return;
         }
 
-        boolean isConnectionAvailable = NetworkUtils.checkConnection(context);
+        boolean isConnectionAvailable = networkUtils.checkConnection();
         if (isConnectionAvailable) {
             System.out.println("startUpdate() is called from MyProfileFragment");
             showProgressInActionBar();

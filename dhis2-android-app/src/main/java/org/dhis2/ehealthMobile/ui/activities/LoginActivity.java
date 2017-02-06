@@ -29,12 +29,22 @@
 
 package org.dhis2.ehealthMobile.ui.activities;
 
+import hu.supercluster.paperwork.Paperwork;
+import org.dhis2.ehealthMobile.EHealthAfricaApplication;
+import org.dhis2.ehealthMobile.R;
+import org.dhis2.ehealthMobile.WorkService;
+import org.dhis2.ehealthMobile.network.HTTPClient;
+import org.dhis2.ehealthMobile.network.NetworkUtils;
+import org.dhis2.ehealthMobile.network.Response;
+import org.dhis2.ehealthMobile.utils.AppPermissions;
+import org.dhis2.ehealthMobile.utils.ToastManager;
+import org.dhis2.ehealthMobile.utils.ViewUtils;
+
 import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.content.LocalBroadcastManager;
@@ -51,18 +61,6 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import org.dhis2.ehealthMobile.BuildConfig;
-import org.dhis2.ehealthMobile.R;
-import org.dhis2.ehealthMobile.WorkService;
-import org.dhis2.ehealthMobile.network.HTTPClient;
-import org.dhis2.ehealthMobile.network.NetworkUtils;
-import org.dhis2.ehealthMobile.network.Response;
-import org.dhis2.ehealthMobile.utils.AppPermissions;
-import org.dhis2.ehealthMobile.utils.ToastManager;
-import org.dhis2.ehealthMobile.utils.ViewUtils;
-
-import hu.supercluster.paperwork.Paperwork;
-
 public class LoginActivity extends AppCompatActivity {
     public static final String TAG = LoginActivity.class.getSimpleName();
     public static final String USERNAME = "username";
@@ -70,6 +68,9 @@ public class LoginActivity extends AppCompatActivity {
     public static final String CREDENTIALS = "creds";
     private static final String DEV_URL = "devUrl";
     private static final String PROD_URL = "prodUrl";
+
+
+    private final NetworkUtils networkUtils = EHealthAfricaApplication.getNetworkUtils();
 
     private Button mLoginButton;
     private EditText mUsername;
@@ -229,7 +230,7 @@ public class LoginActivity extends AppCompatActivity {
         String pass = mPassword.getText().toString();
         String pair = String.format("%s:%s", user, pass);
 
-        if (NetworkUtils.checkConnection(LoginActivity.this)) {
+        if (networkUtils.checkConnection()) {
             showProgress();
 
             String server = tmpServer + (tmpServer.endsWith("/") ? "" : "/");
@@ -266,6 +267,6 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private String getServerUrl(){
-        return (BuildConfig.DEBUG) ? config.get(DEV_URL) : config.get(PROD_URL);
+        return "url";
     }
 }
