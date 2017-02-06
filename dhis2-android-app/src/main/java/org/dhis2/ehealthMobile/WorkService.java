@@ -29,17 +29,10 @@
 
 package org.dhis2.ehealthMobile;
 
-import android.app.Service;
-import android.content.Context;
-import android.content.Intent;
-import android.os.Bundle;
-import android.os.IBinder;
-import android.util.Log;
-
 import org.dhis2.ehealthMobile.io.holders.DatasetInfoHolder;
 import org.dhis2.ehealthMobile.io.models.Field;
-import org.dhis2.ehealthMobile.io.models.Form;
 import org.dhis2.ehealthMobile.io.models.Group;
+import org.dhis2.ehealthMobile.network.NetworkUtils;
 import org.dhis2.ehealthMobile.processors.ConfigFileProcessor;
 import org.dhis2.ehealthMobile.processors.FormsDownloadProcessor;
 import org.dhis2.ehealthMobile.processors.LoginProcessor;
@@ -53,6 +46,13 @@ import org.dhis2.ehealthMobile.processors.SendSmsProcessor;
 import org.dhis2.ehealthMobile.processors.SubmissionDetailsProcessor;
 import org.dhis2.ehealthMobile.ui.activities.LoginActivity;
 import org.dhis2.ehealthMobile.ui.fragments.MyProfileFragment;
+
+import android.app.Service;
+import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
+import android.os.IBinder;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
@@ -78,6 +78,9 @@ public class WorkService extends Service {
     private static final String TAG = WorkService.class.getSimpleName();
 
     private ExecutorService executor;
+
+    private final NetworkUtils networkUtils = EHealthAfricaApplication.getNetworkUtils();
+    private final ReportUploadProcessor reportUploadProcessor = new ReportUploadProcessor(networkUtils);
 
     // This ArrayList is used to track running tasks
     private ArrayList<Runnable> tasks;
@@ -163,7 +166,7 @@ public class WorkService extends Service {
         if (METHOD_UPLOAD_DATASET.equals(methodName)) {
             DatasetInfoHolder info = extras.getParcelable(DatasetInfoHolder.TAG);
             ArrayList<Group> groups = extras.getParcelableArrayList(Group.TAG);
-            ReportUploadProcessor.upload(context, info, groups);
+            reportUploadProcessor.upload(context, info, groups);
         }
 
         if (METHOD_OFFLINE_DATA_UPLOAD.equals(methodName)) {

@@ -1,5 +1,41 @@
 package org.dhis2.ehealthMobile.ui.activities;
 
+import static android.text.TextUtils.isEmpty;
+
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import org.dhis2.ehealthMobile.EHealthAfricaApplication;
+import org.dhis2.ehealthMobile.R;
+import org.dhis2.ehealthMobile.WorkService;
+import org.dhis2.ehealthMobile.io.Constants;
+import org.dhis2.ehealthMobile.io.holders.DatasetInfoHolder;
+import org.dhis2.ehealthMobile.io.json.JsonHandler;
+import org.dhis2.ehealthMobile.io.json.ParsingException;
+import org.dhis2.ehealthMobile.io.models.Field;
+import org.dhis2.ehealthMobile.io.models.Form;
+import org.dhis2.ehealthMobile.io.models.Group;
+import org.dhis2.ehealthMobile.io.models.eidsr.Disease;
+import org.dhis2.ehealthMobile.network.HTTPClient;
+import org.dhis2.ehealthMobile.network.NetworkUtils;
+import org.dhis2.ehealthMobile.network.Response;
+import org.dhis2.ehealthMobile.processors.ConfigFileProcessor;
+import org.dhis2.ehealthMobile.processors.ReportUploadProcessor;
+import org.dhis2.ehealthMobile.processors.SubmissionDetailsProcessor;
+import org.dhis2.ehealthMobile.ui.adapters.dataEntry.FieldAdapter;
+import org.dhis2.ehealthMobile.ui.adapters.dataEntry.rows.PosOrZeroIntegerRow2;
+import org.dhis2.ehealthMobile.ui.fragments.AdditionalDiseasesFragment;
+import org.dhis2.ehealthMobile.utils.AppPermissions;
+import org.dhis2.ehealthMobile.utils.FormUtils;
+import org.dhis2.ehealthMobile.utils.IsDisabled;
+import org.dhis2.ehealthMobile.utils.PrefUtils;
+import org.dhis2.ehealthMobile.utils.TextFileUtils;
+import org.dhis2.ehealthMobile.utils.ToastManager;
+import org.dhis2.ehealthMobile.utils.ViewUtils;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+
 import android.Manifest;
 import android.animation.ObjectAnimator;
 import android.app.Activity;
@@ -40,40 +76,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-
-import org.dhis2.ehealthMobile.R;
-import org.dhis2.ehealthMobile.WorkService;
-import org.dhis2.ehealthMobile.io.Constants;
-import org.dhis2.ehealthMobile.io.holders.DatasetInfoHolder;
-import org.dhis2.ehealthMobile.io.json.JsonHandler;
-import org.dhis2.ehealthMobile.io.json.ParsingException;
-import org.dhis2.ehealthMobile.io.models.Field;
-import org.dhis2.ehealthMobile.io.models.Form;
-import org.dhis2.ehealthMobile.io.models.Group;
-import org.dhis2.ehealthMobile.io.models.eidsr.Disease;
-import org.dhis2.ehealthMobile.network.HTTPClient;
-import org.dhis2.ehealthMobile.network.NetworkUtils;
-import org.dhis2.ehealthMobile.network.Response;
-import org.dhis2.ehealthMobile.processors.ConfigFileProcessor;
-import org.dhis2.ehealthMobile.processors.ReportUploadProcessor;
-import org.dhis2.ehealthMobile.processors.SubmissionDetailsProcessor;
-import org.dhis2.ehealthMobile.ui.adapters.dataEntry.FieldAdapter;
-import org.dhis2.ehealthMobile.ui.adapters.dataEntry.rows.PosOrZeroIntegerRow2;
-import org.dhis2.ehealthMobile.ui.fragments.AdditionalDiseasesFragment;
-import org.dhis2.ehealthMobile.utils.AppPermissions;
-import org.dhis2.ehealthMobile.utils.FormUtils;
-import org.dhis2.ehealthMobile.utils.IsDisabled;
-import org.dhis2.ehealthMobile.utils.PrefUtils;
-import org.dhis2.ehealthMobile.utils.TextFileUtils;
-import org.dhis2.ehealthMobile.utils.ToastManager;
-import org.dhis2.ehealthMobile.utils.ViewUtils;
-import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -81,8 +83,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-
-import static android.text.TextUtils.isEmpty;
 
 public class DataEntryActivity extends BaseActivity implements LoaderManager.LoaderCallbacks<Form>, AdditionalDiseasesFragment.AdditionalDiseaseOnClickListener{
     public static final String TAG = DataEntryActivity.class.getSimpleName();
@@ -96,6 +96,8 @@ public class DataEntryActivity extends BaseActivity implements LoaderManager.Loa
 
     // loader ids
     private static final int LOADER_FORM_ID = 896927645;
+
+    private final NetworkUtils networkUtils = EHealthAfricaApplication.getNetworkUtils();
 
     // views
     private View uploadButton;
@@ -151,7 +153,6 @@ public class DataEntryActivity extends BaseActivity implements LoaderManager.Loa
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_data_entry);
-
 
         setupToolbar();
         setupFormSpinner();
@@ -492,7 +493,7 @@ public class DataEntryActivity extends BaseActivity implements LoaderManager.Loa
             downloadAttempted = true;
 
             // we need to check if connection is there first
-            if (NetworkUtils.checkConnection(this)) {
+            if (networkUtils.checkConnection()) {
                 getCompletionDate();
             }
 
@@ -616,7 +617,7 @@ public class DataEntryActivity extends BaseActivity implements LoaderManager.Loa
             intent.putExtra(DatasetInfoHolder.TAG, info);
             intent.putExtra(Group.TAG, groups);
 
-            boolean hasInternet = NetworkUtils.checkConnection(getApplicationContext());
+            boolean hasInternet = networkUtils.checkConnection();
             boolean hasPermission = AppPermissions.isPermissionGranted(getApplicationContext(),
                     Manifest.permission.SEND_SMS);
             boolean canShowRationale = AppPermissions.canShowRationale(this, Manifest.permission.SEND_SMS);

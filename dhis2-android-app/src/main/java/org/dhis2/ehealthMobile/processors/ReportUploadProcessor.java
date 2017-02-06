@@ -29,13 +29,9 @@
 
 package org.dhis2.ehealthMobile.processors;
 
-import android.content.Context;
-import android.util.Log;
-
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-
 import org.dhis2.ehealthMobile.R;
 import org.dhis2.ehealthMobile.io.Constants;
 import org.dhis2.ehealthMobile.io.handlers.ImportSummariesHandler;
@@ -55,13 +51,19 @@ import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 
+import android.content.Context;
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class ReportUploadProcessor {
     public static final String TAG = ReportUploadProcessor.class.getSimpleName();
 
-    private ReportUploadProcessor() {
+    private final NetworkUtils networkUtils;
+
+    public ReportUploadProcessor(NetworkUtils networkUtils) {
+        this.networkUtils = networkUtils;
     }
 
     /**
@@ -71,11 +73,11 @@ public class ReportUploadProcessor {
      * @param groups ArrayList<Group>
      */
 
-    public static void upload(Context context, DatasetInfoHolder info, ArrayList<Group> groups) {
+    public void upload(Context context, DatasetInfoHolder info, ArrayList<Group> groups) {
         String data = prepareContent(info, groups);
 
 
-        if (!NetworkUtils.checkConnection(context)) {
+        if (!networkUtils.checkConnection()) {
             saveDataset(context, data, info);
             return;
         }

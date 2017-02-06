@@ -29,41 +29,23 @@
 
 package org.dhis2.ehealthMobile.network;
 
-import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
 public class NetworkUtils {
-    private NetworkUtils() { }
 
-    /**
-     * Checks if the device is connected to WIFI
-     * @param context Context
-     * @return Boolean
-     */
+    private final ConnectivityManager connectivityManager;
 
-    public static boolean isConnectedWifi(Context context){
-        NetworkInfo info = NetworkUtils.getNetworkInfo(context);
-        return (info != null && info.isConnected() && info.getType() == ConnectivityManager.TYPE_WIFI);
-    }
-
-    //Ges the network info
-    public static NetworkInfo getNetworkInfo(Context context){
-        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        return cm.getActiveNetworkInfo();
+    public NetworkUtils(ConnectivityManager connectivityManager) {
+        this.connectivityManager = connectivityManager;
     }
 
     /**
      * Checks if the device has an internet connection
-     * @param context Context
      * @return Boolean
      */
-
-    public static boolean checkConnection(Context context) {
-        ConnectivityManager cManager = (ConnectivityManager) context
-                .getSystemService(Context.CONNECTIVITY_SERVICE);
-
-        NetworkInfo networkInfo = cManager.getActiveNetworkInfo();
+    public boolean checkConnection() {
+        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
         if (networkInfo == null || !networkInfo.isConnected()
                 || !networkInfo.isAvailable()) {
             return false;
